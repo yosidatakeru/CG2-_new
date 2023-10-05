@@ -64,6 +64,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
+
 #pragma region ウィンドウオブジェクトの生成
 	HWND hwnd = CreateWindow(
 		w.lpszClassName,//クラス名
