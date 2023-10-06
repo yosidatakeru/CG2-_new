@@ -135,8 +135,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	assert(SUCCEEDED(hr));
 
-
-
 #pragma endregion
 
 
@@ -215,6 +213,59 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	
 #pragma endregion
+
+
+
+
+
+#pragma region DebugLayer(デバックレイヤー)
+#ifdef _DEBUG
+	ID3D12InfoQueue* infoQueue = nullptr;
+	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue))))
+	{
+		//やばいエラー時に泊まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+
+		//エラー時に泊まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+
+		//警告に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+
+		//解放
+		infoQueue->Release();
+
+
+		//制御するメッセージのID
+		D3D12_MESSAGE_ID denyIds[] =
+		{
+			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+		};
+
+		//抑制する
+		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+		D3D12_INFO_QUEUE_FILTER filter{};
+		filter.DenyList.NumIDs = _countof(denyIds);
+		filter.DenyList.pIDList = denyIds;
+		filter.DenyList.NumSeverities = _countof(severities);
+		filter.DenyList.pSeverityList = severities;
+		//指定したメッセージの表示を抑制する
+		infoQueue->PushStorageFilter(&filter);
+
+
+	}
+
+
+
+#endif // _DEBUG
+
+
+
+
+
+
+#pragma endregion
+
 
 
 
@@ -370,6 +421,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//これから書き込むバックバッファのインデックスを取得
 		UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 	
+
+
+
+  #pragma region TransitionBarrierを張るコード
+
+		//TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+	//今回のバリアはTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//Noneにする
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//バリアを張る対象のリソース。現在のバックバッファに対して行う
+	barrier.Transition.pResource = swapChainResources[backBufferIndex];
+
+	//遷移前(現在)のResourceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	//遷移後のResourceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
+
+
+  #pragma endregion
+
+
+
+
+
+
 		//画面先のRTVを設定する
 		commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
 
@@ -386,6 +466,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion
 
 
+#pragma region FenceとEventを生成する
+		//初期値０でFenceを作る
+		ID3D12Fence* fence = nullptr;
+		uint64_t fenceValue = 0;
+		hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+		assert(SUCCEEDED(hr));
+
+		//FenceのSignalを待つためのイベントを作成する
+		HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+		assert(fenceEvent != nullptr);
+
+#pragma endregion
+
 
 
 #pragma region コマンドをキックする
@@ -397,6 +490,38 @@ commandQueue->ExecuteCommandLists(1, commandLists);
 
 //GPUとOSに画面交換を行う言う通知する
 swapChain->Present(1, 0);
+
+
+#pragma region GPUにシグナルを送る
+
+//Fenceの値を更新
+fenceValue++;
+//	//GPUがここまでたどりついた時に、Fenceの値を代入するようSignalを送る
+commandQueue->Signal(fence, fenceValue);
+
+#pragma endregion
+
+
+
+
+#pragma region Fenceの値を確認してGPUを待つ
+
+//Fenceの値が指定したSignal値にたどりついているか確認する
+//GetCompletedValueの初期値はFence作成時に渡した初期値
+	if (fence->GetCompletedValue() < fenceValue) {
+		//指定したSignalにたどりついていないので、たどり着くまで待つようにイベントを設定する
+		fence->SetEventOnCompletion(fenceValue, fenceEvent);
+		//イベントを待つ
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
+
+#pragma endregion
+
+
+
+
+
+
 
 //次のフレーム用のコマンドリストを準備
 hr = commandAllocator->Release();
@@ -410,7 +535,9 @@ assert(SUCCEEDED(hr));
 
 
 
-#pragma endregion
+
+
+
 
 	//ウィンドウの固定
 	//ゲームループ
