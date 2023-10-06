@@ -9,9 +9,14 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
+
+
+
+
+
 #pragma region ウィンドウプロシージャ
 //システムメッセージを処理する関数
-LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	switch (msg)
 	{
@@ -56,16 +61,21 @@ std::string ConvertString(const std::wstring& str);
 
 
 
+
 //Windowsアプリエントリ-ポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	MSG msg{};//メッセージ
 
 
+
+
+
+
 #pragma region ウィンドウの生成(設定)
 	//ウィンドウサイズ
-	const int window_width = 1280;//横
-	const int window_height = 720;//縦
+	const int32_t kClienWidth = 1280;//横
+	const int32_t kClientHeight = 720;//縦
 	//ウィンドウクラスの設定
 	WNDCLASSEX  w{};
 	w.cbSize = sizeof(WNDCLASSEX);
@@ -78,7 +88,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	RegisterClassEx(&w);
 
 	//ウィンドウサイズ{X座標, Y座標　横幅, 縦幅 }
-	RECT wrc = { 0,0,window_width,window_height };
+	RECT wrc = { 0,0,kClienWidth , kClientHeight};
 
 	//自動でサイズを修正する
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
@@ -109,7 +119,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	ShowWindow(hwnd, SW_SHOW);
 
 #pragma endregion
-
 
 
 
@@ -210,6 +219,197 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
+#pragma region CommandQueueを生成
+	//コマンドキュを生成
+	ID3D12CommandQueue* commandQueue = nullptr;
+
+	D3D12_COMMAND_QUEUE_DESC commandQurDesc{};
+
+	hr = device->CreateCommandQueue(&commandQurDesc,
+		IID_PPV_ARGS(&commandQueue));
+	assert(SUCCEEDED(hr));
+#pragma endregion
+
+
+
+#pragma region CommandListを生成
+	//コマンドアロケータを生成
+	ID3D12CommandAllocator* commandAllocator = nullptr;
+
+	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+
+	assert(SUCCEEDED(hr));
+
+
+	//コマンドリストの生成
+	ID3D12GraphicsCommandList* commandList = nullptr;
+
+	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr,
+		IID_PPV_ARGS(&commandList));
+
+	assert(SUCCEEDED(hr));
+
+#pragma endregion
+
+
+
+#pragma region CSwapChainを生成する
+
+//コマンドキューを使うためコマンドキュー生成後、メインループ前に行う
+//スワップチェーン生成
+	IDXGISwapChain4* swapChain = nullptr;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	swapChainDesc.Width = kClienWidth;//画面幅。ウィンドウクライアント領域をおマジものにしておく
+	
+	swapChainDesc.Height = kClientHeight;//画面の高さ。ウィンドウのクライアント領域を同じものにしておく
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//色の形式
+	swapChainDesc.SampleDesc.Count = 1;//マルチサンプル
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;//描画ターゲットとして利用する
+	swapChainDesc.BufferCount = 2;//ダブルバッファ
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;//モニタの移したら中身の破壊
+
+	//コマンドキューウィンドウハンドル　設定を渡して生成する
+	hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue, hwnd, &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
+	assert(SUCCEEDED(hr));
+
+#pragma endregion
+
+
+
+
+
+
+#pragma region DescriptorHeapを生成する
+	//ディスクリプターの生成
+	
+	ID3D12DescriptorHeap* rtvDescriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
+	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;//レンダーターゲットビュー用
+	rtvDescriptorHeapDesc.NumDescriptors = 2;//ダブルバッファ用に２つ。多くてもかまわない
+	hr = device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
+	//ディスクリプタヒープが作られなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma endregion
+
+
+#pragma region SwapChainからResourceを引っ張てくる
+	
+	//swapChainから	Resourceを引っ張てくる
+	ID3D12Resource* swapChainResources[2] = { nullptr };
+	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0]));
+
+	assert(SUCCEEDED(hr));
+
+	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[1]));
+
+	assert(SUCCEEDED(hr));
+#pragma endregion
+
+
+
+
+#pragma region RTVを作る
+
+
+
+	//RTVを作る
+	//RTVの設定
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;				//出力結果をSRGBに変換して書き込む
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;			//2dテクスチャとして書き込む
+	//ディスクリプタの先頭を取得する
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	//RTVを２つ作るのでディスクリプタを２つ用意
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2] = {};
+	//まず1つ目を作る。１つ目は最初の所に作る。作る場所をこちらで指定してあげる必要がある
+	rtvHandles[0] = rtvStartHandle;
+	device->CreateRenderTargetView(swapChainResources[0], &rtvDesc, rtvHandles[0]);
+	//２つ目のディスクリプタハンドルを得る(自力で)
+	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	//２つ目を作る
+	device->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandles[1]);
+
+
+
+	//DescriptorHandleとDescriptorHeap
+	typedef struct D3D12_CPU_DESCRIPTOR_HANDLE {
+		SIZE_T ptr;
+	}D3D12_CPU_DESCRIPTOR_HANDLE;
+
+	////Descriptorの位置を決める
+	rtvHandles[0] = rtvStartHandle;
+
+	
+	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	
+
+
+
+#pragma endregion
+
+
+
+
+
+
+#pragma region コマンドを積み込んで確定させる
+
+	//これから書き込むバックバッファのインデックスを取得
+		UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	
+		//画面先のRTVを設定する
+		commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
+
+		//指定した色で画面全体をクリアする
+		float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色。RGBA順
+
+		commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+
+		//コマンドリストの内容を確定させる。すべてのコマンドを積んでからＣｌｏｓｅすること
+		hr = commandList->Close();
+		assert(SUCCEEDED(hr));
+	
+
+#pragma endregion
+
+
+
+
+#pragma region コマンドをキックする
+
+//GPUにコマンドリストの実行を行わせる
+ID3D12CommandList* commandLists[] = { commandList };
+
+commandQueue->ExecuteCommandLists(1, commandLists);
+
+//GPUとOSに画面交換を行う言う通知する
+swapChain->Present(1, 0);
+
+//次のフレーム用のコマンドリストを準備
+hr = commandAllocator->Release();
+assert(SUCCEEDED(hr));
+
+hr = commandList->Reset(commandAllocator, nullptr);
+assert(SUCCEEDED(hr));
+
+
+#pragma endregion
+
+
+
 #pragma endregion
 
 	//ウィンドウの固定
@@ -217,15 +417,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	while (true)
 	{
 		//メッセージがある?
-		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);//キー入力メッセージの処理
 			DispatchMessage(&msg);//プロシージャにメッセージを送る
 		}
-		//xボタンで終了のメッセージが来たらゲームループを抜ける
-		if (msg.message == WM_QUIT)
+		else
 		{
-			break;
+
 		}
 
 
