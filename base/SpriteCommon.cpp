@@ -57,6 +57,23 @@ void SpriteCommon::PsoGenerate()
 		descriptionRootSignature.Flags =
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 		
+
+
+
+
+		//Material設定
+		D3D12_ROOT_PARAMETER rootParameters[1] = {};
+		rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		rootParameters[0].Descriptor.ShaderRegister = 0;
+
+		descriptionRootSignature.pParameters = rootParameters;
+		descriptionRootSignature.NumParameters = _countof(rootParameters);
+
+
+
+
+
 		hr = D3D12SerializeRootSignature(&descriptionRootSignature,
 			D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 		if (FAILED(hr)) {
@@ -145,31 +162,7 @@ void SpriteCommon::PsoGenerate()
 		#pragma endregion
 
 		#pragma region VertexResourceを生成する
-			////VertexResourceを生成
-			//頂点リソース用のヒープを設定
-			D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-			uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-			//頂点リソースの設定
-			D3D12_RESOURCE_DESC vertexResourceDesc{};
-			//バッファリソース。テクスチャの場合はまた別の設定をする
-			vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-			vertexResourceDesc.Width = sizeof(Vector4) * 3;
-			//バッファの場合はこれらは1にする決まり
-			vertexResourceDesc.Height = 1;
-			vertexResourceDesc.DepthOrArraySize = 1;
-			vertexResourceDesc.MipLevels = 1;
-			vertexResourceDesc.SampleDesc.Count = 1;
-			//バッファの場合はこれにする決まり
-			vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-			
-			hr = directXCommon->GetDevice()->CreateCommittedResource(
-				&uploadHeapProperties,
-				D3D12_HEAP_FLAG_NONE,
-				&vertexResourceDesc,
-				D3D12_RESOURCE_STATE_GENERIC_READ,
-				nullptr, IID_PPV_ARGS(&vertexResource));
-			assert(SUCCEEDED(hr));
-		
+			vertexResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3);
 		#pragma endregion
 
 
@@ -187,6 +180,23 @@ void SpriteCommon::PsoGenerate()
 		
 		#pragma endregion
 
+#pragma region マテリアル用Resourceにデータを書き込む
+			//Resourceにデータを書き込む
+			materialResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3); ;
+
+			//マテリアルにデータを書き込む
+			Vector4* materialData = nullptr;
+
+			//書き込むためのアドレスを取得
+			materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+
+			//今回は赤を書き込む(ここで色を変えられる)
+			*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+
+
+#pragma endregion
+
+
 		#pragma region Resourceにデータを書き込む
 			//Resourceにデータを書き込む
 			Vector4* vertexData = nullptr;
@@ -201,12 +211,12 @@ void SpriteCommon::PsoGenerate()
 			
 		#pragma endregion
 
-		
+
 		#pragma region ViewportとScissor
 		
 		
 		
-			
+
 		
 		
 		#pragma endregion
@@ -221,6 +231,8 @@ void SpriteCommon::PsoGenerate()
 			directXCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 			//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
 			directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			//マテリアルCBufferの場所を設定
+			directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 			//描画(DrawCall)３兆点で１つのインスタンス。
 			directXCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 		#pragma endregion
@@ -240,7 +252,9 @@ void SpriteCommon::Releases()
 	}
 	rootSignature->Release();
 	pixelShaderBlob->Release();
+	materialResource->Release();
 	vertexShaderBlob->Release();
+	
 }
 
 
@@ -327,6 +341,38 @@ IDxcBlob* SpriteCommon::CompileShader(const std::wstring& filePath, const wchar_
 
 #pragma endregion
 
+}
+
+ID3D12Resource* SpriteCommon::CreateBufferResource(ID3D12Device* device, size_t sizeInbyte)
+{
+	ID3D12Resource* RssultResource;
+	//頂点リソース用のヒープの設定
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+
+	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD; //UploadHeapを使う
+
+	//頂点リソースの設定
+	D3D12_RESOURCE_DESC ResourceDesc{};
+
+
+	//バッファリソース。テクスチャの場合はまた別の設定をする
+	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	ResourceDesc.Width = sizeInbyte; //リソースのサイズ。今回はvector4を3頂点分
+
+	//バッファの場合はこれらは1にする決まり
+	ResourceDesc.Height = 1;
+	ResourceDesc.DepthOrArraySize = 1;
+	ResourceDesc.MipLevels = 1;
+	ResourceDesc.SampleDesc.Count = 1;
+
+	//バッファの場合はこれにする決まり
+	ResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	HRESULT hr;
+	hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+		&ResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&RssultResource));
+	assert(SUCCEEDED(hr));
+
+	return RssultResource;
 }
 
 

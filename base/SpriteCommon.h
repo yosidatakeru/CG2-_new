@@ -53,8 +53,9 @@ private:
 
   D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 
-
+ ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInbyte);
 
   //D3D12_VIEWPORT viewport{};
+ ID3D12Resource* materialResource = nullptr;
 };
 
