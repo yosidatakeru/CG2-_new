@@ -14,7 +14,8 @@ struct PixelShaderOutput
 PixelShaderOutput main() 
 {
 	PixelShaderOutput output;
-	output.color =   gMaterial.color;//float32_t4(30.0, 0.0, 0.0, 0.0);
+
+	output.color =   gMaterial.color;
 
 	return output;
 }

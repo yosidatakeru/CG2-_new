@@ -2,6 +2,7 @@
 #include <dxgidebug.h>
 #include <dxcapi.h>
 #include"DirectXCommon.h"
+
 class SpriteCommon
 {
 public:
@@ -9,7 +10,7 @@ public:
 	void Initialize(DirectXCommon* directXCommon);
 
 	//更新
-	void Update();
+	void Update(Transform transform);
 
 	void Releases();;
 
@@ -57,5 +58,10 @@ private:
 
   //D3D12_VIEWPORT viewport{};
  ID3D12Resource* materialResource = nullptr;
+
+ ID3D12Resource* wvpResource = nullptr;
+
+ Matrix4x4* wvpData = nullptr;
+ Transform* transform=nullptr;
 };
 

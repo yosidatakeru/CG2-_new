@@ -15,14 +15,15 @@
 
 
 //Winodwsアプリでもエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) 
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	//出力ウィンドウへの文字出力
 	OutputDebugStringA("Hello,DirectX!\n");
 #pragma region ポインタ置き場
-	WinApp* winApp= nullptr;
+	WinApp* winApp = nullptr;
 	DirectXCommon* directXCommon = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
+	
 #pragma endregion
 
 #pragma region WinApp初期化
@@ -33,13 +34,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
-	
+
 #pragma region DirectX初期化
-	
+
 	directXCommon = new DirectXCommon();
 	directXCommon->Initialize(winApp);
 #pragma endregion
-	
 
 
 
@@ -48,21 +48,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
-directXCommon->PreDraw();
+
+	directXCommon->PreDraw();
 
 #pragma region	三角形の描画
-spriteCommon = new SpriteCommon();
-spriteCommon->Initialize(directXCommon);
+	spriteCommon = new SpriteCommon();
+	spriteCommon->Initialize(directXCommon);
 #pragma endregion
+	
+	directXCommon->PosDeaw();
 
-directXCommon->PosDeaw();
 
-
-
+	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	////メインループ
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true)
 	{
+		
 		//Windowにメッセージが来てたら最優先で処理させる
 		if (winApp->Update()==true)
 		{
@@ -71,7 +73,7 @@ directXCommon->PosDeaw();
 		else {
 			//ゲームの処理
 
-			
+			spriteCommon->Update(transform);
 
 		}
 
@@ -87,7 +89,6 @@ directXCommon->PosDeaw();
 
 	directXCommon->Releases();
 
-	
 	CloseWindow(winApp->GetHwnd());
 
 #pragma endregion

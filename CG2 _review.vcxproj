@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="base\Base.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
+    <ClCompile Include="base\MyFunction.cpp" />
     <ClCompile Include="base\SpriteCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
@@ -34,8 +35,12 @@
   <ItemGroup>
     <ClInclude Include="base\Base.h" />
     <ClInclude Include="base\DirectXCommon.h" />
+    <ClInclude Include="base\Matrix4x4.h" />
     <ClInclude Include="base\MyFunction.h" />
     <ClInclude Include="base\SpriteCommon.h" />
+    <ClInclude Include="base\Transform.h" />
+    <ClInclude Include="base\Vector3.h" />
+    <ClInclude Include="base\Vector4.h" />
     <ClInclude Include="base\WinApp.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

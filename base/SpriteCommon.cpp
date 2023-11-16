@@ -4,6 +4,7 @@
 
 
 
+
 void SpriteCommon::Initialize(DirectXCommon* directXCommon)
 {
 	this->directXCommon = directXCommon;
@@ -17,9 +18,7 @@ void SpriteCommon::Initialize(DirectXCommon* directXCommon)
 	PsoGenerate();
 }
 
-void SpriteCommon::Update()
-{
-}
+
 
 
 
@@ -38,8 +37,7 @@ void SpriteCommon::DXCInitialize()
 	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
 	assert(SUCCEEDED(hr));
 
-	//現時点でincludeはしないが、includeに対応
-	
+
 	/*hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
 	assert(SUCCEEDED(hr));*/
 
@@ -62,11 +60,13 @@ void SpriteCommon::PsoGenerate()
 
 
 		//Material設定
-		D3D12_ROOT_PARAMETER rootParameters[1] = {};
+		D3D12_ROOT_PARAMETER rootParameters[2] = {};
 		rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 		rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		rootParameters[0].Descriptor.ShaderRegister = 0;
-
+		rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+		rootParameters[1].Descriptor.ShaderRegister = 0;
 		descriptionRootSignature.pParameters = rootParameters;
 		descriptionRootSignature.NumParameters = _countof(rootParameters);
 
@@ -178,8 +178,7 @@ void SpriteCommon::PsoGenerate()
 			vertexBufferView.StrideInBytes = sizeof(Vector4);
 		
 		
-		#pragma endregion
-
+		
 #pragma region マテリアル用Resourceにデータを書き込む
 			//Resourceにデータを書き込む
 			materialResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3); ;
@@ -196,6 +195,27 @@ void SpriteCommon::PsoGenerate()
 
 #pragma endregion
 
+
+
+#pragma endregion
+
+			////Resourceにデータを書き込む
+		    wvpResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Matrix4x4)); ;
+
+			//書き込むためのアドレスを取得
+			wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+
+
+			*wvpData = MakeIdentity4x4();
+
+			//新しく引数作った方が良いかも
+
+		
+#pragma region 
+		
+
+
+#pragma endregion
 
 		#pragma region Resourceにデータを書き込む
 			//Resourceにデータを書き込む
@@ -229,15 +249,38 @@ void SpriteCommon::PsoGenerate()
 			directXCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature);
 			directXCommon->GetCommandList()->SetPipelineState(graphicsPipelineState);
 			directXCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+			
 			//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
 			directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			
 			//マテリアルCBufferの場所を設定
 			directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+			
+			//wvp用のCBufferの場所を設定
+			directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+			
 			//描画(DrawCall)３兆点で１つのインスタンス。
 			directXCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+
+		
+
 		#pragma endregion
 
 }
+
+
+
+
+
+void SpriteCommon::Update(Transform transform)
+{
+	transform.rotate.y += 0.03f;
+	
+	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+
+	*wvpData = worldMatrix;
+}
+
 
 
 
@@ -253,6 +296,7 @@ void SpriteCommon::Releases()
 	rootSignature->Release();
 	pixelShaderBlob->Release();
 	materialResource->Release();
+	wvpResource->Release();
 	vertexShaderBlob->Release();
 	
 }
