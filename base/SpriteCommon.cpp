@@ -161,110 +161,7 @@ void SpriteCommon::PsoGenerate()
 		
 		#pragma endregion
 
-		#pragma region VertexResourceを生成する
-			vertexResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3);
-		#pragma endregion
-
-
-		#pragma region  VertexBufferViewを作成
-			////VertexBufferViewを作成
-			//頂点バッファビューを作成する
-			D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-			//リソースの先頭のアドレスから使う
-			vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-			//使用するリソースのサイズは頂点３つ分のサイズ
-			vertexBufferView.SizeInBytes = sizeof(Vector4) * 3;
-			//１頂点あたりのサイズ
-			vertexBufferView.StrideInBytes = sizeof(Vector4);
 		
-		
-		
-#pragma region マテリアル用Resourceにデータを書き込む
-			//Resourceにデータを書き込む
-			materialResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3); ;
-
-			//マテリアルにデータを書き込む
-			Vector4* materialData = nullptr;
-
-			//書き込むためのアドレスを取得
-			materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-
-			//今回は赤を書き込む(ここで色を変えられる)
-			*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-
-
-#pragma endregion
-
-
-
-#pragma endregion
-
-			////Resourceにデータを書き込む
-		    wvpResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Matrix4x4)); ;
-
-			//書き込むためのアドレスを取得
-			wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-
-
-			*wvpData = MakeIdentity4x4();
-
-			//新しく引数作った方が良いかも
-
-		
-#pragma region 
-		
-
-
-#pragma endregion
-
-		#pragma region Resourceにデータを書き込む
-			//Resourceにデータを書き込む
-			Vector4* vertexData = nullptr;
-			//書き込むためのアドレスを取得
-			vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-			//左下
-			vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
-			//上
-			vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
-			//右下
-			vertexData[2] = { 0.5f,-0.5f,0.0f,1.0f };
-			
-		#pragma endregion
-
-
-		#pragma region ViewportとScissor
-		
-		
-		
-
-		
-		
-		#pragma endregion
-		
-		
-		#pragma region コマンドを積む
-			directXCommon->GetCommandList()->RSSetViewports(1, directXCommon->GetViewport()); //&viewport);
-
-			//RootSignatureを設定。PSOに設定しているけど別途設定が必要
-			directXCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature);
-			directXCommon->GetCommandList()->SetPipelineState(graphicsPipelineState);
-			directXCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-			
-			//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
-			directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			
-			//マテリアルCBufferの場所を設定
-			directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-			
-			//wvp用のCBufferの場所を設定
-			directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-			
-			//描画(DrawCall)３兆点で１つのインスタンス。
-			directXCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
-
-		
-
-		#pragma endregion
 
 }
 
@@ -279,6 +176,116 @@ void SpriteCommon::Update(Transform transform)
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 
 	*wvpData = worldMatrix;
+}
+
+void SpriteCommon::Draw()
+{
+
+
+#pragma region VertexResourceを生成する
+	vertexResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3);
+#pragma endregion
+
+
+#pragma region  VertexBufferViewを作成
+	////VertexBufferViewを作成
+	//頂点バッファビューを作成する
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	//リソースの先頭のアドレスから使う
+	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	//使用するリソースのサイズは頂点３つ分のサイズ
+	vertexBufferView.SizeInBytes = sizeof(Vector4) * 3;
+	//１頂点あたりのサイズ
+	vertexBufferView.StrideInBytes = sizeof(Vector4);
+
+
+
+#pragma region マテリアル用Resourceにデータを書き込む
+	//Resourceにデータを書き込む
+	materialResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3); ;
+
+	//マテリアルにデータを書き込む
+	Vector4* materialData = nullptr;
+
+	//書き込むためのアドレスを取得
+	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+
+	//今回は赤を書き込む(ここで色を変えられる)
+	*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+
+
+#pragma endregion
+
+
+
+#pragma endregion
+
+	////Resourceにデータを書き込む
+	wvpResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Matrix4x4)); ;
+
+	//書き込むためのアドレスを取得
+	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+
+
+	*wvpData = MakeIdentity4x4();
+
+	//新しく引数作った方が良いかも
+
+
+#pragma region 
+
+
+
+#pragma endregion
+
+#pragma region Resourceにデータを書き込む
+	//Resourceにデータを書き込む
+	Vector4* vertexData = nullptr;
+	//書き込むためのアドレスを取得
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	//左下
+	vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
+	//上
+	vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
+	//右下
+	vertexData[2] = { 0.5f,-0.5f,0.0f,1.0f };
+
+#pragma endregion
+
+
+#pragma region ViewportとScissor
+
+
+
+
+
+
+#pragma endregion
+
+
+#pragma region コマンドを積む
+	directXCommon->GetCommandList()->RSSetViewports(1, directXCommon->GetViewport()); //&viewport);
+
+	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
+	directXCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature);
+	directXCommon->GetCommandList()->SetPipelineState(graphicsPipelineState);
+	directXCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
+	directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	//マテリアルCBufferの場所を設定
+	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+
+	//wvp用のCBufferの場所を設定
+	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+
+	//描画(DrawCall)３兆点で１つのインスタンス。
+	directXCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+
+
+
+#pragma endregion
 }
 
 

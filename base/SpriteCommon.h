@@ -12,6 +12,8 @@ public:
 	//更新
 	void Update(Transform transform);
 
+	void Draw();
+
 	void Releases();;
 
 private:

@@ -49,14 +49,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
-	directXCommon->PreDraw();
+	
 
 #pragma region	三角形の描画
 	spriteCommon = new SpriteCommon();
 	spriteCommon->Initialize(directXCommon);
 #pragma endregion
 	
-	directXCommon->PosDeaw();
+	
 
 
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
@@ -73,12 +73,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		else {
 			//ゲームの処理
 
-			spriteCommon->Update(transform);
+			
 
 		}
-
-		
-
+		directXCommon->PreDraw();
+		spriteCommon->Draw();
+		//spriteCommon->Update(transform);
+		directXCommon->PosDeaw();
 	}
 
 
