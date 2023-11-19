@@ -76,9 +76,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			
 
 		}
+		
 		directXCommon->PreDraw();
+		transform.rotate.y += 0.03f;
 		spriteCommon->Draw();
-		//spriteCommon->Update(transform);
+		
+		spriteCommon->Update(transform);
+		
+		
 		directXCommon->PosDeaw();
 	}
 

@@ -160,8 +160,12 @@ void SpriteCommon::PsoGenerate()
 			assert(SUCCEEDED(hr));
 		
 		#pragma endregion
+			vertexResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3);
+			//Resourceにデータを書き込む
+			materialResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3); ;
 
-		
+			////Resourceにデータを書き込む
+			wvpResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Matrix4x4)); ;
 
 }
 
@@ -171,19 +175,23 @@ void SpriteCommon::PsoGenerate()
 
 void SpriteCommon::Update(Transform transform)
 {
-	transform.rotate.y += 0.03f;
+	
 	
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 
 	*wvpData = worldMatrix;
 }
 
+
+
+
+
 void SpriteCommon::Draw()
 {
 
 
 #pragma region VertexResourceを生成する
-	vertexResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3);
+	
 #pragma endregion
 
 
@@ -201,9 +209,7 @@ void SpriteCommon::Draw()
 
 
 #pragma region マテリアル用Resourceにデータを書き込む
-	//Resourceにデータを書き込む
-	materialResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Vector4) * 3); ;
-
+	
 	//マテリアルにデータを書き込む
 	Vector4* materialData = nullptr;
 
@@ -220,9 +226,7 @@ void SpriteCommon::Draw()
 
 #pragma endregion
 
-	////Resourceにデータを書き込む
-	wvpResource = CreateBufferResource(directXCommon->GetDevice(), sizeof(Matrix4x4)); ;
-
+	
 	//書き込むためのアドレスを取得
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 
