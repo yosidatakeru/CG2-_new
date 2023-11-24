@@ -15,6 +15,9 @@ public:
 	void Draw();
 
 	void Releases();;
+	ID3D12Resource* GetwvpResource() const { return wvpResource; }
+
+	Matrix4x4* GetWvpData()const { return wvpData; }
 
 private:
 	void PsoGenerate();
