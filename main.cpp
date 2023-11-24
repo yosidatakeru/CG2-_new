@@ -57,17 +57,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion
 	
 	
-
+	Matrix4x4* camera = nullptr;
 
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-30.0f} };
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
-	Matrix4x4 viewMatrix = Inverse(cameraMatrix);
-	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(winApp->kClientWidth) / float(winApp->kClientHeight), 0.1f, 100.f);
-	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
-
+	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-15.0f} };
 	
+	spriteCommon->GetwvpResource()->Map(0, nullptr, reinterpret_cast<void**>(&camera));
 	////メインループ
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true)
@@ -86,11 +81,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		
 		directXCommon->PreDraw();
-		transform.rotate.y += 0.03f;
-		spriteCommon->Draw();
 		
-		spriteCommon->Update(transform);
-		*spriteCommon->GetWvpData() = worldViewProjectionMatrix;
+		
+		spriteCommon->Draw();
+		transform.rotate.y += 0.03f;
+		
+		spriteCommon->Update(transform,cameraTransform);
+		
+		
+		
+		
 		
 		directXCommon->PosDeaw();
 	}

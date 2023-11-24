@@ -10,7 +10,7 @@ public:
 	void Initialize(DirectXCommon* directXCommon);
 
 	//更新
-	void Update(Transform transform);
+	void Update(Transform transform, Transform cameraTransform);
 
 	void Draw();
 
@@ -18,6 +18,7 @@ public:
 	ID3D12Resource* GetwvpResource() const { return wvpResource; }
 
 	Matrix4x4* GetWvpData()const { return wvpData; }
+
 
 private:
 	void PsoGenerate();
@@ -68,5 +69,6 @@ private:
 
  Matrix4x4* wvpData = nullptr;
  Transform* transform=nullptr;
+ 
 };
 
