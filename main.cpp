@@ -2,6 +2,7 @@
 #include"base/Base.h"
 #include"base/DirectXCommon.h"
 #include"base/SpriteCommon.h"
+#include"base/ImGuiManager.h"
 
 
 
@@ -23,7 +24,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	WinApp* winApp = nullptr;
 	DirectXCommon* directXCommon = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
-	
+	ImGuiManager* imGuiManager = nullptr;
 #pragma endregion
 
 #pragma region WinApp初期化
@@ -55,6 +56,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	spriteCommon = new SpriteCommon();
 	spriteCommon->Initialize(directXCommon);
 #pragma endregion
+
+#pragma region ImGuiの初期化
+	imGuiManager = new ImGuiManager();
+	imGuiManager->Initialize(winApp,directXCommon);
+#pragma endregion
 	
 	
 	Matrix4x4* camera = nullptr;
@@ -81,18 +87,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		
 		directXCommon->PreDraw();
-		
+		imGuiManager->BeginFlame(directXCommon);
 		
 		spriteCommon->Draw();
+		
 		transform.rotate.y += 0.03f;
 		
 		spriteCommon->Update(transform,cameraTransform);
 		
 		
-		
-		
-		
+		imGuiManager->EndFlame(directXCommon);
 		directXCommon->PosDeaw();
+
+		
 	}
 
 
@@ -102,6 +109,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	spriteCommon->Releases();
 
 	directXCommon->Releases();
+
+	imGuiManager->Release();
 
 	CloseWindow(winApp->GetHwnd());
 

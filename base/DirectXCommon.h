@@ -40,6 +40,13 @@ public:
 	 //IDxcUtils* GetDxcUtils() const { return dxcUtils; }
 
 	 D3D12_VIEWPORT* GetViewport(){ return &viewport; }
+
+	 DXGI_SWAP_CHAIN_DESC1 GeSwapChainDesc() const { return swapChainDesc; }
+
+	 D3D12_RENDER_TARGET_VIEW_DESC GetRtvDesc()const { return rtvDesc; }
+
+	 ID3D12DescriptorHeap* GetSrvDescriptorHeap() const { return srvDescriptorHeap; }
+
 private:
 	//デバイスの初期化
 	void InitializeDevice();
@@ -121,5 +128,7 @@ private:
 	
 	//ビューポート
 	D3D12_VIEWPORT viewport{};
+
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 };
 
