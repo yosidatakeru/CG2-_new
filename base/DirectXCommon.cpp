@@ -254,19 +254,16 @@ void DirectXCommon::InitializeRenderTargetView()
 {
 #pragma region DescriptorHeapを生成
 
-	////DescriptorHeap(RTV用)を生成する
-	//ディスクリプタヒープの生成
-
 	
-	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;	//レンダーターゲットビュー用
-	rtvDescriptorHeapDesc.NumDescriptors = 2;
-	
-	//ダブルバッファ用に２つ。多くてもOK
-	hr = device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
-	//ディスクリプタヒープが作れなかったので起動できない
-	assert(SUCCEEDED(hr));
+	////ディスクリプタヒープの生成
+	//RTV用のヒープディスクリプタの数は２。RTVはhader内で触る物でないのでShaderVisibleはfales
+ rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 
+ ID3D12DescriptorHeap* srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 #pragma endregion
+
+
+
 
 #pragma region SwapChainからResourceを引っ張ってくる
 	////SwapChainからResourceを引っ張ってくる
@@ -277,6 +274,9 @@ void DirectXCommon::InitializeRenderTargetView()
 	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
 	assert(SUCCEEDED(hr));
 #pragma endregion
+
+
+
 
 
 #pragma region RTVを作る
@@ -313,18 +313,14 @@ void DirectXCommon::InitializeRenderTargetView()
 
 
 
-	
-
-
-
-
-
-
-
-
-
 
 }
+
+
+
+
+
+
 
 
 
@@ -355,6 +351,8 @@ void DirectXCommon::InitializeFence()
 #pragma endregion
 
 }
+
+
 
 void DirectXCommon::PreDraw()
 {
@@ -536,3 +534,21 @@ void DirectXCommon::Releases()
 
 
 
+
+#pragma region DEscriptorHeapの作成関数
+ID3D12DescriptorHeap* DirectXCommon::CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible)
+{
+	ID3D12DescriptorHeap* descriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+
+	descriptorHeapDesc.Type = heapType;
+	descriptorHeapDesc.NumDescriptors = numDescriptors;
+	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+
+	assert(SUCCEEDED(hr));
+
+	return descriptorHeap;
+}
+
+#pragma endregion
