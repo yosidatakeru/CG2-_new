@@ -1,12 +1,17 @@
 #include"WinApp.h"
 
-
 #pragma region ウィンドウプロシージャ
 //Window Procedure(関数)
 LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+	
 	switch (msg)
 	{
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+		{
+			return true;
+		}
+
 		//ウィンドウが破棄された
 	case WM_DESTROY:
 		//OSに対してアプリの終了を伝える
@@ -92,5 +97,4 @@ bool WinApp::Update()
 
 	return false;
 }
-
 

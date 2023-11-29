@@ -13,14 +13,17 @@
   <ItemGroup>
     <ClCompile Include="base\Base.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
+    <ClCompile Include="base\externals\imgui\imgui.cpp" />
+    <ClCompile Include="base\externals\imgui\imgui_demo.cpp" />
+    <ClCompile Include="base\externals\imgui\imgui_draw.cpp" />
+    <ClCompile Include="base\externals\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="base\externals\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="base\externals\imgui\imgui_tables.cpp" />
+    <ClCompile Include="base\externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="base\ImGuiManager.cpp" />
     <ClCompile Include="base\MyFunction.cpp" />
     <ClCompile Include="base\SpriteCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
-    <ClCompile Include="externals\imgui\imgui.cpp" />
-    <ClCompile Include="externals\imgui\imgui_demo.cpp" />
-    <ClCompile Include="externals\imgui\imgui_draw.cpp" />
-    <ClCompile Include="externals\imgui\imgui_tables.cpp" />
-    <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +43,15 @@
   <ItemGroup>
     <ClInclude Include="base\Base.h" />
     <ClInclude Include="base\DirectXCommon.h" />
+    <ClInclude Include="base\externals\imgui\imconfig.h" />
+    <ClInclude Include="base\externals\imgui\imgui.h" />
+    <ClInclude Include="base\externals\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="base\externals\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="base\externals\imgui\imgui_internal.h" />
+    <ClInclude Include="base\externals\imgui\imstb_rectpack.h" />
+    <ClInclude Include="base\externals\imgui\imstb_textedit.h" />
+    <ClInclude Include="base\externals\imgui\imstb_truetype.h" />
+    <ClInclude Include="base\ImGuiManager.h" />
     <ClInclude Include="base\Matrix4x4.h" />
     <ClInclude Include="base\MyFunction.h" />
     <ClInclude Include="base\SpriteCommon.h" />
@@ -47,15 +59,9 @@
     <ClInclude Include="base\Vector3.h" />
     <ClInclude Include="base\Vector4.h" />
     <ClInclude Include="base\WinApp.h" />
-    <ClInclude Include="externals\imgui\imconfig.h" />
-    <ClInclude Include="externals\imgui\imgui.h" />
-    <ClInclude Include="externals\imgui\imgui_internal.h" />
-    <ClInclude Include="externals\imgui\imstb_rectpack.h" />
-    <ClInclude Include="externals\imgui\imstb_textedit.h" />
-    <ClInclude Include="externals\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="externals\imgui\LICENSE.txt" />
+    <Text Include="base\externals\imgui\LICENSE.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

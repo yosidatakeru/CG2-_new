@@ -259,7 +259,7 @@ void DirectXCommon::InitializeRenderTargetView()
 	//RTV用のヒープディスクリプタの数は２。RTVはhader内で触る物でないのでShaderVisibleはfales
  rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 
- ID3D12DescriptorHeap* srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+ srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 #pragma endregion
 
 
@@ -510,6 +510,7 @@ void DirectXCommon::Releases()
 	////解放処理
 	CloseHandle(fenceEvent);
 	fence->Release();
+	srvDescriptorHeap->Release();
 	rtvDescriptorHeap->Release();
 	swapChainResources[0]->Release();
 	swapChainResources[1]->Release();
