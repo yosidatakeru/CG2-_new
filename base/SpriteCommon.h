@@ -10,15 +10,17 @@ public:
 	void Initialize(DirectXCommon* directXCommon);
 
 	//更新
-	void Update(Transform transform, Transform cameraTransform);
+	//void Update(Transform transform, Transform cameraTransform);
 
 	void Draw();
 
 	void Releases();;
-	ID3D12Resource* GetwvpResource() const { return wvpResource; }
 
-	Matrix4x4* GetWvpData()const { return wvpData; }
 
+
+	ID3D12RootSignature* GetRootSignature() const { return rootSignature; }
+
+	ID3D12PipelineState* GetGraphicsPipelineState() const {return graphicsPipelineState;}
 
 private:
 	void PsoGenerate();
@@ -40,8 +42,7 @@ private:
   IDxcUtils* dxcUtils = nullptr;
   
 
-  //実際に頂点リソースを作る
-  ID3D12Resource* vertexResource = nullptr;
+  
 
   //実際に生成
   ID3D12PipelineState* graphicsPipelineState = nullptr;
@@ -60,15 +61,16 @@ private:
 
   D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 
- ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInbyte);
-
+ 
   //D3D12_VIEWPORT viewport{};
- ID3D12Resource* materialResource = nullptr;
-
- ID3D12Resource* wvpResource = nullptr;
+ 
 
  Matrix4x4* wvpData = nullptr;
  Transform* transform=nullptr;
  
+
+ 
+
+
 };
 

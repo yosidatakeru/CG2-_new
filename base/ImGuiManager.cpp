@@ -38,7 +38,7 @@ void ImGuiManager::EndFlame(DirectXCommon* directXcommon_)
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), directXcommon->GetCommandList());
 	
 	
-	//ImGui::DestroyContext();
+	
 
 }
 
@@ -47,4 +47,5 @@ void ImGuiManager::Release()
 
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 }

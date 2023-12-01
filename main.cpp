@@ -3,6 +3,7 @@
 #include"base/DirectXCommon.h"
 #include"base/SpriteCommon.h"
 #include"base/ImGuiManager.h"
+#include"Sprite.h"
 
 
 
@@ -18,20 +19,27 @@
 //Winodwsアプリでもエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	//出力ウィンドウへの文字出力
-	OutputDebugStringA("Hello,DirectX!\n");
+	//COMの初期化
+
+	CoInitializeEx(0, COINIT_MULTITHREADED);
+	
+
+
 #pragma region ポインタ置き場
 	WinApp* winApp = nullptr;
 	DirectXCommon* directXCommon = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
 	ImGuiManager* imGuiManager = nullptr;
+	Sprite* sprite = nullptr;
 #pragma endregion
+
+
+
 
 #pragma region WinApp初期化
 	winApp = new WinApp();
 	winApp->Initialize();
 #pragma endregion
-
 
 
 
@@ -43,19 +51,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion
 
 
-
-
-
-
-
-
-
-	
-
 #pragma region	三角形の描画
 	spriteCommon = new SpriteCommon();
 	spriteCommon->Initialize(directXCommon);
+	sprite = new Sprite();
+	sprite->Initialize(directXCommon, spriteCommon);
 #pragma endregion
+
+
 
 #pragma region ImGuiの初期化
 	imGuiManager = new ImGuiManager();
@@ -65,10 +68,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	Matrix4x4* camera = nullptr;
 
+
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-15.0f} };
+	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
 	
-	spriteCommon->GetwvpResource()->Map(0, nullptr, reinterpret_cast<void**>(&camera));
+
+	sprite->GetwvpResource()->Map(0, nullptr, reinterpret_cast<void**>(&camera));
+
+
 	////メインループ
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (true)
@@ -87,16 +94,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		
 		directXCommon->PreDraw();
+
 		imGuiManager->BeginFlame(directXCommon);
 		
-		spriteCommon->Draw();
+		sprite->Draw(directXCommon);
 		
-		transform.rotate.y += 0.03f;
+		transform.rotate.y += 0.08f;
 		
-		spriteCommon->Update(transform,cameraTransform);
+		sprite->Update(transform,cameraTransform);
 		
 		
 		imGuiManager->EndFlame(directXCommon);
+		
 		directXCommon->PosDeaw();
 
 		
@@ -106,6 +115,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma region 解放処理
 	
+	sprite->Releases();
 	spriteCommon->Releases();
 
 	directXCommon->Releases();
@@ -113,6 +123,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	imGuiManager->Release();
 
 	CloseWindow(winApp->GetHwnd());
+
 
 #pragma endregion
 
@@ -122,7 +133,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	////リソースリークチェック
 	IDXGIDebug1* debug;
-	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
+	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) 
+	{
 		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
 		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
 		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
@@ -136,6 +148,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	delete directXCommon;
 	delete spriteCommon;
 #pragma endregion
+
+
+	//COMの終了処理
+	CoUninitialize();
 	return 0;
 }
 
