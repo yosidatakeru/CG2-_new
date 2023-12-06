@@ -22,10 +22,10 @@
     <ClCompile Include="base\externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="base\ImGuiManager.cpp" />
     <ClCompile Include="base\MyFunction.cpp" />
+    <ClCompile Include="base\Sprite.cpp" />
     <ClCompile Include="base\SpriteCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.PS.hlsl">
@@ -55,12 +55,14 @@
     <ClInclude Include="base\ImGuiManager.h" />
     <ClInclude Include="base\Matrix4x4.h" />
     <ClInclude Include="base\MyFunction.h" />
+    <ClInclude Include="base\Sprite.h" />
     <ClInclude Include="base\SpriteCommon.h" />
     <ClInclude Include="base\Transform.h" />
+    <ClInclude Include="base\Vector2.h" />
     <ClInclude Include="base\Vector3.h" />
     <ClInclude Include="base\Vector4.h" />
+    <ClInclude Include="base\VertexData.h" />
     <ClInclude Include="base\WinApp.h" />
-    <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="base\externals\imgui\LICENSE.txt" />
