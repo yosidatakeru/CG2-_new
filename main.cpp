@@ -99,7 +99,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		
 		sprite->Draw(directXCommon);
 		
-		transform.rotate.y += 0.08f;
+		//transform.rotate.y += 0.08f;
 		
 		sprite->Update(transform,cameraTransform);
 		

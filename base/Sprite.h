@@ -41,8 +41,9 @@ private:
 	ID3D12Resource* materialResource = nullptr;
 
 	ID3D12Resource* wvpResource = nullptr;
+	ID3D12Resource* textureResource = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
-
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 };
 
