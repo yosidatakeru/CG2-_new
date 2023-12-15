@@ -19,6 +19,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 
 
+
 #pragma region  VertexBufferViewを作成
 	////VertexBufferViewを作成
 	//頂点バッファビューを作成する
@@ -72,8 +73,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 
 	//今回は赤を書き込む(ここで色を変えられる)
-	*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-
+	*materialData = color_;
 
 #pragma endregion
 

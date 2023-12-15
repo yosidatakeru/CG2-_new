@@ -43,6 +43,6 @@ private:
 	ID3D12Resource* wvpResource = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
-
+	Vector4 color_{ 1.0f, 0.0f, 0.0f, 1.0f };
 };
 
