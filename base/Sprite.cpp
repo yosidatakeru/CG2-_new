@@ -6,7 +6,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
 	vertexResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 3);
-	
+
 	//Resourceにデータを書き込む
 	materialResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Vector4) * 3); ;
 
@@ -15,6 +15,16 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 
 
+	///ここ直すかも
+	
+
+	transfoms[kNumInstance];
+	for (uint32_t index=0; index<kNumInstance; ++index)
+	{
+		transfoms[index].scale = { 1.0f, 1.0f, 1.0f };
+		transfoms[index].rotate = { 0.0f, 0.0f, 0.0f };
+		transfoms[index].translate = { index * 0.1f, index * 0.1f, index * 0.1f };
+	}
 
 
 
@@ -29,8 +39,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	vertexBufferView.SizeInBytes = sizeof(VertexData) * 3;
 	//１頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
-
-
+	
 
 }
 
@@ -48,6 +57,20 @@ void Sprite::Update(Transform transform, Transform cameraTransform)
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 
 	*wvpData = worldViewProjectionMatrix;
+	
+	Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
+
+	for (uint32_t index = 0; index < kNumInstance; ++index) 
+	{
+		Matrix4x4 worldMatrix =
+		MakeAffineMatrix(transfoms[index].scale, transfoms[index].rotate, transfoms[index].translate);
+		Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+		instancingData[index].WVP = worldViewProjectionMatrix;
+		instancingData[index].World = worldMatrix;
+
+		
+	}
+
 }
 
 
@@ -88,7 +111,37 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 	*wvpData = MakeIdentity4x4();
 
-	//新しく引数作った方が良いかも
+	//instancingの作成
+	
+	instancingResource =
+	CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix) * kNumInstance);
+	//書き込むあだれす
+
+	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
+	//単位行列を書き込んでおく
+	for (uint32_t index = 0; index < kNumInstance; ++index)
+	{
+		instancingData[index].WVP    = MakeIdentity4x4();
+		instancingData[index].World = MakeIdentity4x4();
+	}
+
+	
+
+
+	const uint32_t desriptorSizeSRV = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	//SRVの作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC  instancingSrvDesc{};
+	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc.Buffer.FirstElement = 0;
+	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc.Buffer.NumElements = kNumInstance;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = GetCPUDescriptorHandle(directXCommon->GetSrvDescriptorHeap(), desriptorSizeSRV, 3);
+	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU = GetGPUDescriptorHandle(directXCommon->GetSrvDescriptorHeap(), desriptorSizeSRV, 3);
+	directXCommon->GetDevice()->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
 
 
 #pragma region 
@@ -139,10 +192,12 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	//wvp用のCBufferの場所を設定
-	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+	//directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+
+	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
 
 	//描画(DrawCall)３兆点で１つのインスタンス。
-	directXCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+	directXCommon->GetCommandList()->DrawInstanced(3, kNumInstance, 0, 0);
 	
 
 #pragma endregion
@@ -150,9 +205,11 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 void Sprite::Releases()
 {
+
 	vertexResource->Release();
 	materialResource->Release();
 	wvpResource->Release();
+	instancingResource->Release();
 }
 
 
@@ -192,6 +249,9 @@ void Sprite::LoadTexture(const std::string& filePath)
 	//SRVの生成
 	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
 }
+
+
+
 
 
 
@@ -324,5 +384,25 @@ void Sprite::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchIm
 
 
 
+D3D12_CPU_DESCRIPTOR_HANDLE Sprite::GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
+{
 
 
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
+
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE Sprite::GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
+{
+
+
+
+
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (descriptorSize * index);
+	return handleGPU;
+
+
+}

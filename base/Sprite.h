@@ -3,6 +3,7 @@
 #include"DirectXCommon.h"
 #include"externals/DirectXTex/DirectXTex.h"
 #include"VertexData.h"
+#include<wrl.h>
 class Sprite
 {
 public:
@@ -43,6 +44,17 @@ private:
 	ID3D12Resource* wvpResource = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
-
+	struct TransformationMatrix
+	{
+		Matrix4x4 WVP;
+		Matrix4x4 World;
+	};
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	TransformationMatrix* instancingData = nullptr;
+	const uint32_t kNumInstance = 10;
+	 
+	Transform transfoms[10] ;
+	Microsoft::WRL::ComPtr<ID3D12Resource>instancingResource;
 };
 

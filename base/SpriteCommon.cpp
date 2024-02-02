@@ -56,6 +56,12 @@ void SpriteCommon::PsoGenerate()
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 		
 
+		D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
+		descriptorRangeForInstancing[0].BaseShaderRegister = 0;
+		descriptorRangeForInstancing[0].NumDescriptors= 1;
+		descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
 
 
 
@@ -64,9 +70,11 @@ void SpriteCommon::PsoGenerate()
 		rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 		rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		rootParameters[0].Descriptor.ShaderRegister = 0;
-		rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	
+		rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-		rootParameters[1].Descriptor.ShaderRegister = 0;
+		rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
+		rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
 		descriptionRootSignature.pParameters = rootParameters;
 		descriptionRootSignature.NumParameters = _countof(rootParameters);
 
@@ -136,10 +144,10 @@ void SpriteCommon::PsoGenerate()
 
 	#pragma region ShaderをCompileする
 		//ShaderをCompileする
-		 vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+		 vertexShaderBlob = CompileShader(L"Particle.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 		assert(vertexShaderBlob != nullptr);
 	
-		 pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+		 pixelShaderBlob = CompileShader(L"Particle.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 		assert(pixelShaderBlob != nullptr);
 	#pragma endregion
 
