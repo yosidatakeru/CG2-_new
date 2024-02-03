@@ -29,7 +29,17 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	CreatLight();
 	CreateMAterial();
 
-	
+	////Resourceにデータを書き込む
+	cameraResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(CameraForGPU)); ;
+
+
+	//書き込むためのアドレスを取得
+	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData));
+
+
+	cameraData->WorldPosition = { 0.0f,0.0f,-5.0f };
+
+	//新しく引数作った方が良いかも
 
 	CreateWVP();
 
@@ -105,6 +115,9 @@ void Sprite::Draw(Transform transform, Transform cameraTransform)
 	//ライト用
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
+	//ライトカメラ
+	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
+
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon_->GetCommandList()->DrawInstanced(kNumSphereVerices, 1, 0, 0);
 
@@ -124,7 +137,7 @@ void Sprite::Releases()
 	materialResource->Release();
 	
 	wvpResource->Release();
-	
+	cameraResource->Release();
 	
 }
 
@@ -254,7 +267,7 @@ void Sprite::CreateMAterial()
 	//今回は赤を書き込む(ここで色を変えられる)
 	materialData->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	materialData->enableLighting = true;
-
+	materialData->shininess = 70;
 
 #pragma endregion
 

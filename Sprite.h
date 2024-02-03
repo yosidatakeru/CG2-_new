@@ -17,6 +17,7 @@ public:
 	{
 		Vector4 color;
 		int32_t enableLighting;
+		float shininess;
 	};
 
 	struct TransformationMatrix
@@ -32,7 +33,11 @@ public:
 		float intensity; //!<輝度
 	};
 
-	
+	struct CameraForGPU
+	{
+		Vector3 WorldPosition;
+	};
+
 
 	void Initialize(DirectXCommon* directXCommon , SpriteCommon* SpriteCommon_ );
 
@@ -76,5 +81,8 @@ private:
 	float pi = std::numbers::pi_v<float>;
 	Vector3 light = { 0.0f, -1.0f,0.0f };
 	DirectionalLigha* directionalLighlData = nullptr;
+
+	ID3D12Resource* cameraResource=nullptr;
+	CameraForGPU* cameraData = nullptr;
 };
 
