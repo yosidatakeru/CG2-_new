@@ -18,14 +18,25 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 
 #pragma region ViewportとScissor
+	
 	CreateVertex();
 	const uint32_t kSubdivision = 12;
 	const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
 	float pi = std::numbers::pi_v<float>;
 
+	//Vector3 light = { 0.0f, -1.0f,0.0f };
+
+	CreatLight();
 	CreateMAterial();
 
+	
+
 	CreateWVP();
+
+
+	
+
+
 
 }
 
@@ -48,7 +59,11 @@ void Sprite::Draw(Transform transform, Transform cameraTransform)
 	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 
-	*wvpData = worldViewProjectionMatrix;
+	//初期設定
+	
+	wvpData->WVP = worldViewProjectionMatrix;
+	wvpData->World = worldMatrix;
+
 
 
 #pragma region VertexResourceを生成する
@@ -57,10 +72,14 @@ void Sprite::Draw(Transform transform, Transform cameraTransform)
 
 
 
+	ImGui::Begin("texture");
+	ImGui::DragFloat3("light",&light.x, 0.01f, -1.0f, 1.0f);
+	
 
+	ImGui::End();
+	
 
-
-
+	directionalLighlData->direction = light;
 
 
 #pragma endregion
@@ -83,6 +102,9 @@ void Sprite::Draw(Transform transform, Transform cameraTransform)
 	//wvp用のCBufferの場所を設定
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
+	//ライト用
+	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
+
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon_->GetCommandList()->DrawInstanced(kNumSphereVerices, 1, 0, 0);
 
@@ -96,10 +118,19 @@ void Sprite::Draw(Transform transform, Transform cameraTransform)
 
 void Sprite::Releases()
 {
+	directionalLighlResource->Release();
 	vertexResource->Release();
+	
 	materialResource->Release();
+	
 	wvpResource->Release();
+	
+	
 }
+
+
+
+
 
 void Sprite::CreateVertex()
 {
@@ -153,6 +184,10 @@ void Sprite::CreateVertex()
 			vertexData[startlndex].position.w = 1.0f;
 			vertexData[startlndex].texcoord =
 			{ float(lonlndex) / float(kSubdivision), 1.0f - float(latlndex) / float(kSubdivision) };
+			vertexData[startlndex].normal.x = vertexData[startlndex].position.x;
+			vertexData[startlndex].normal.y = vertexData[startlndex].position.y;
+			vertexData[startlndex].normal.z = vertexData[startlndex].position.z;
+
 
 
 			vertexData[startlndex + 1].position.x = std::cos(lat + kLatEvery) * std::cos(lon);
@@ -161,7 +196,9 @@ void Sprite::CreateVertex()
 			vertexData[startlndex + 1].position.w = 1.0f;
             vertexData[startlndex + 1].texcoord =
 			{ float(lonlndex) / float(kSubdivision), 1.0f - float(latlndex + 1) / float(kSubdivision) };
-
+			vertexData[startlndex +1].normal.x = vertexData[startlndex + 1].position.x;
+			vertexData[startlndex +1].normal.y = vertexData[startlndex + 1].position.y;
+			vertexData[startlndex +1].normal.z = vertexData[startlndex + 1].position.z;
 
 			vertexData[startlndex + 2].position.x = std::cos(lat) * std::cos(lon + kLonEvery);
 			vertexData[startlndex + 2].position.y = std::sin(lat);
@@ -169,7 +206,10 @@ void Sprite::CreateVertex()
 			vertexData[startlndex + 2].position.w = 1.0f;
 			vertexData[startlndex + 2].texcoord =
 			{ float(lonlndex + 1) / float(kSubdivision), 1.0f - float(latlndex) / float(kSubdivision) };
-		
+			vertexData[startlndex + 2].normal.x = vertexData[startlndex + 2].position.x;
+			vertexData[startlndex + 2].normal.y = vertexData[startlndex + 2].position.y;
+			vertexData[startlndex + 2].normal.z = vertexData[startlndex + 2].position.z;
+
 
 
 			vertexData[startlndex + 3] = vertexData[startlndex + 2];
@@ -181,6 +221,11 @@ void Sprite::CreateVertex()
 			vertexData[startlndex + 5].position.w = 1.0f;
 			vertexData[startlndex + 5].texcoord =
 			{ float(lonlndex + 1) / float(kSubdivision),1.0f - float(latlndex + 1) / float(kSubdivision) };
+			vertexData[startlndex + 5].normal.x = vertexData[startlndex + 5].position.x;
+			vertexData[startlndex + 5].normal.y = vertexData[startlndex + 5].position.y;
+			vertexData[startlndex + 5].normal.z = vertexData[startlndex + 5].position.z;
+
+
 
 		}
 
@@ -197,17 +242,18 @@ void Sprite::CreateMAterial()
 
 #pragma region マテリアル用Resourceにデータを書き込む
 	//Resourceにデータを書き込む
-	materialResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Vector4) * 3); ;
+	materialResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material) ); ;
 
 
 	//マテリアルにデータを書き込む
-	Vector4* materialData = nullptr;
+	Material* materialData = nullptr;
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 
 	//今回は赤を書き込む(ここで色を変えられる)
-	*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	materialData->color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	materialData->enableLighting = true;
 
 
 #pragma endregion
@@ -217,29 +263,46 @@ void Sprite::CreateMAterial()
 }
 
 
-
-
-
-
-
 void Sprite::CreateWVP()
 {
 
 	////Resourceにデータを書き込む
-	wvpResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Matrix4x4)); ;
+	wvpResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix)); ;
 
-
-
-
+	
 	//書き込むためのアドレスを取得
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 
 
-	*wvpData = MakeIdentity4x4();
+	wvpData->WVP = MakeIdentity4x4();
 
 	//新しく引数作った方が良いかも
 
 }
+
+
+void Sprite::CreatLight()
+{
+
+	////Resourceにデータを書き込む
+    directionalLighlResource  = CreateBufferResource(directXCommon_->GetDevice(), sizeof(DirectionalLigha)); ;
+    
+	 directionalLighlData = nullptr;
+
+	//書き込むためのアドレスを取得
+	directionalLighlResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLighlData));
+
+	directionalLighlData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	directionalLighlData->direction = { 0.0f, -1.0f,0.0f };
+	directionalLighlData->intensity = 1.0f;
+
+}
+
+
+
+
+
+
 
 ID3D12Resource* Sprite::CreateBufferResource(ID3D12Device* device, size_t sizeInbyte)
 {

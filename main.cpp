@@ -92,11 +92,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			
 
 		}
-		//transform.rotate.y += 0.08f;
+		transform.rotate.y += 0.08f;
 		directXCommon->PreDraw();
-
-		sprite->Draw(transform, cameraTransform);
 		imGuiManager->BeginFlame(directXCommon);
+		sprite->Draw(transform, cameraTransform);
+		
 		
 		
 		
@@ -115,7 +115,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	sprite->Releases();
 	spriteCommon->Releases();
-
+	
 	directXCommon->Releases();
 
 	imGuiManager->Release();

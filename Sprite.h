@@ -10,7 +10,29 @@ public:
 	{
 		Vector4 position;
 		Vector2 texcoord;
+		Vector3 normal;
 	};
+
+	struct Material
+	{
+		Vector4 color;
+		int32_t enableLighting;
+	};
+
+	struct TransformationMatrix
+	{
+		Matrix4x4 WVP;
+		Matrix4x4 World;
+	};
+	
+	struct DirectionalLigha
+	{
+		Vector4 color;//ライトの色
+		Vector3 direction;//!<ライトの向き
+		float intensity; //!<輝度
+	};
+
+	
 
 	void Initialize(DirectXCommon* directXCommon , SpriteCommon* SpriteCommon_ );
 
@@ -32,10 +54,12 @@ private:
 	//マテリアルの作成関数
 	void CreateWVP();
 
+	void CreatLight();
+
 	ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInbyte);
 
 	
-	Matrix4x4* wvpData = nullptr;
+	TransformationMatrix* wvpData = nullptr;
 
 	SpriteCommon* spriteCommon_ = nullptr;
 	DirectXCommon* directXCommon_ = nullptr;
@@ -44,10 +68,13 @@ private:
 	ID3D12Resource* materialResource = nullptr;
 
 	ID3D12Resource* wvpResource = nullptr;
+	ID3D12Resource* directionalLighlResource = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
 	const uint32_t kSubdivision = 12;
 	const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
 	float pi = std::numbers::pi_v<float>;
+	Vector3 light = { 0.0f, -1.0f,0.0f };
+	DirectionalLigha* directionalLighlData = nullptr;
 };
 
