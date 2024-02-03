@@ -7,13 +7,11 @@
 
 void SpriteCommon::Initialize(DirectXCommon* directXCommon)
 {
-	this->directXCommon = directXCommon;
-	IDxcBlob* CompileShader(
-		const std::wstring & filePath,
-		const wchar_t* profile,
-		IDxcUtils * dxcUtils,
-		IDxcCompiler3 * dxcCompiler,
-		IDxcIncludeHandler * includeHandler);
+	directXCommon_ = directXCommon;
+	HRESULT hr{};
+	ComPtr<IDxcUtils>dxcUtils;
+	ComPtr<IDxcCompiler3>dxcCompiler;
+	ComPtr<IDxcIncludeHandler>includeHandler;
 	DXCInitialize();
 	PsoGenerate();
 }
@@ -38,8 +36,8 @@ void SpriteCommon::DXCInitialize()
 	assert(SUCCEEDED(hr));
 
 
-	/*hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
-	assert(SUCCEEDED(hr));*/
+	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
+	assert(SUCCEEDED(hr));
 
 #pragma endregion
 
@@ -81,7 +79,7 @@ void SpriteCommon::PsoGenerate()
 			assert(false);
 		}
 		
-		hr = directXCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
+		hr = directXCommon_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
 			signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
 		assert(SUCCEEDED(hr));
 	
@@ -89,15 +87,19 @@ void SpriteCommon::PsoGenerate()
 
 	#pragma region InputLayoutの設定を行う
 		//InputLayout
-		D3D12_INPUT_ELEMENT_DESC inputElementDescs[1] = {};
+		D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 		inputElementDescs[0].SemanticName = "POSITION";
 		inputElementDescs[0].SemanticIndex = 0;
 		inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+		
+		inputElementDescs[1].SemanticName = "TEXCOORD";
+		inputElementDescs[1].SemanticIndex = 0;
+		inputElementDescs[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 		inputLayoutDesc.pInputElementDescs = inputElementDescs;
 		inputLayoutDesc.NumElements = _countof(inputElementDescs);
-	
 	
 	#pragma endregion
 
@@ -155,7 +157,7 @@ void SpriteCommon::PsoGenerate()
 			graphicsPipelineStateDesc.SampleDesc.Count = 1;
 			graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 			
-			hr = directXCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+			hr = directXCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 				IID_PPV_ARGS(&graphicsPipelineState));
 			assert(SUCCEEDED(hr));
 		

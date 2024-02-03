@@ -2,7 +2,8 @@
 #include <dxgidebug.h>
 #include <dxcapi.h>
 #include"DirectXCommon.h"
-
+#include<wrl.h>
+using namespace Microsoft::WRL;
 class SpriteCommon
 {
 public:
@@ -34,7 +35,7 @@ private:
 		IDxcCompiler3* dxcCompiler,
 		IDxcIncludeHandler* includeHandler);
 private:
-  DirectXCommon* directXCommon = nullptr;
+  DirectXCommon* directXCommon_ = nullptr;
 
   IDxcCompiler3* dxcCompiler = nullptr;
   IDxcIncludeHandler* includeHandler = nullptr;
