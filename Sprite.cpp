@@ -19,16 +19,23 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 #pragma region ViewportとScissor
 	
-	CreateVertex();
 	const uint32_t kSubdivision = 12;
 	const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
 	float pi = std::numbers::pi_v<float>;
 
 	//Vector3 light = { 0.0f, -1.0f,0.0f };
 
-	CreatLight();
+
 	CreateMAterial();
 
+	
+	//新しく引数作った方が良いかも
+
+	CreateWVP();
+
+
+	CreateVertex();
+	
 	////Resourceにデータを書き込む
 	cameraResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(CameraForGPU)); ;
 
@@ -39,13 +46,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	cameraData->WorldPosition = { 0.0f,0.0f,-5.0f };
 
-	//新しく引数作った方が良いかも
-
-	CreateWVP();
-
-
-	
-
+	CreatLight();
 
 
 }
@@ -176,15 +177,16 @@ void Sprite::CreateVertex()
 	//vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
 	//vertexData[2].texcoord = { 1.0f,1.0f };
 
-	const float kLonEvery = pi * 2.0f / float(kSubdivision);
-	const float kLatEvery = pi / float(kSubdivision);
+
 
 	for (uint32_t latlndex = 0;latlndex  < kSubdivision; ++latlndex)
 	{
+		
 		float lat = -pi / 2.0f + kLatEvery * latlndex;
 	
 	
-		for (uint32_t lonlndex = 0; lonlndex < kSubdivision; ++lonlndex) {
+		for (uint32_t lonlndex = 0; lonlndex < kSubdivision; ++lonlndex)
+		{
 
 			uint32_t startlndex = (latlndex * kSubdivision + lonlndex) * 6;
 
@@ -288,7 +290,7 @@ void Sprite::CreateWVP()
 
 
 	wvpData->WVP = MakeIdentity4x4();
-
+	wvpData->World = MakeIdentity4x4();
 	//新しく引数作った方が良いかも
 
 }
@@ -300,13 +302,13 @@ void Sprite::CreatLight()
 	////Resourceにデータを書き込む
     directionalLighlResource  = CreateBufferResource(directXCommon_->GetDevice(), sizeof(DirectionalLigha)); ;
     
-	 directionalLighlData = nullptr;
+	// directionalLighlData = nullptr;
 
 	//書き込むためのアドレスを取得
 	directionalLighlResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLighlData));
 
 	directionalLighlData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	directionalLighlData->direction = { 0.0f, -1.0f,0.0f };
+	directionalLighlData->direction = { 0.0f, -1.0f, 0.0f };
 	directionalLighlData->intensity = 1.0f;
 
 }

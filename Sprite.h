@@ -84,5 +84,7 @@ private:
 
 	ID3D12Resource* cameraResource=nullptr;
 	CameraForGPU* cameraData = nullptr;
+	const float kLonEvery = pi * 2.0f / float(kSubdivision);
+	const float kLatEvery = pi / float(kSubdivision);
 };
 
