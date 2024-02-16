@@ -68,10 +68,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	Matrix4x4* camera = nullptr;
 
+	//うまくいかないから保留
+	/*Vector3 cameraPos = sprite->GetCameraPosition();
+	cameraPos.z += -0.5f;
+	sprite->SetCameraPosintion(cameraPos);*/
 
-	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-	Transform cameraTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
-	
 
 	sprite->GetwvpResource()->Map(0, nullptr, reinterpret_cast<void**>(&camera));
 
@@ -92,16 +93,39 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			
 
 		}
+		imGuiManager->BeginFlame(directXCommon);
+	  
 		
+	//いろいろな処理(色、回転、移動など)	
+	//移動処理
+	 /*Vector2 pos = sprite->GetPosition();
+	 pos.x += 0.005f;
+	 sprite->SetPosintion(pos);*/
+		
+     //回転の処理
+	 /*float rot = sprite->GetRotation();
+	 rot += 0.005f;
+	 sprite->SetRotaion(rot);
+	  */
+		
+	//色の処理
+	 /*Vector4 color = sprite->GetColor();
+	 color.x = 1.0f;
+	 sprite->SetColor(color);*/
+
+	
+	
+
+	  sprite->Update(sprite->GetTransform(),sprite->GetCameraTransform());
+
+
 		directXCommon->PreDraw();
 
-		imGuiManager->BeginFlame(directXCommon);
-		
+
+
 		sprite->Draw(directXCommon);
 		
-		transform.rotate.y += 0.08f;
 		
-		sprite->Update(transform,cameraTransform);
 		
 		
 		imGuiManager->EndFlame(directXCommon);

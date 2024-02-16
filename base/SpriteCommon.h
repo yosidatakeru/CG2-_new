@@ -2,6 +2,9 @@
 #include <dxgidebug.h>
 #include <dxcapi.h>
 #include"DirectXCommon.h"
+#include"externals/DirectXTex/DirectXTex.h"
+#include <wrl.h>
+using namespace Microsoft::WRL;
 
 class SpriteCommon
 {
@@ -9,18 +12,19 @@ public:
 	//初期化
 	void Initialize(DirectXCommon* directXCommon);
 
-	//更新
-	//void Update(Transform transform, Transform cameraTransform);
 
-	void Draw();
+	
 
 	void Releases();;
 
 
 
-	ID3D12RootSignature* GetRootSignature() const { return rootSignature; }
+	ID3D12RootSignature* GetRootSignature() const { return rootSignature.Get(); }
 
 	ID3D12PipelineState* GetGraphicsPipelineState() const {return graphicsPipelineState;}
+	DirectX::ScratchImage LoadTexture(const std::wstring& filePath);
+	//シェーダーに送る
+	void UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
 
 private:
 	void PsoGenerate();
@@ -33,6 +37,8 @@ private:
 		IDxcUtils* dxcUtils,
 		IDxcCompiler3* dxcCompiler,
 		IDxcIncludeHandler* includeHandler);
+
+	
 private:
   DirectXCommon* directXCommon = nullptr;
 
@@ -53,7 +59,7 @@ private:
   ID3DBlob* errorBlob = nullptr;
 
   //バイナリを元に生成
-  ID3D12RootSignature* rootSignature = nullptr;
+  Microsoft::WRL::ComPtr<ID3D12RootSignature>rootSignature;
 
   IDxcBlob* pixelShaderBlob = nullptr;
 
