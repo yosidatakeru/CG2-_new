@@ -57,8 +57,7 @@ public:
 	
 private:
 	VertexData* vertexData = nullptr;
-	ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInbyte);
-
+	
 	ID3D12Resource* textureResource = nullptr;
 	
 	Matrix4x4* wvpData = nullptr;
