@@ -115,6 +115,10 @@ private:
 	//RTVを２つ作るのでディスクリプタを２つ用意
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
 
+	ID3D12Resource* depthStencilResource = nullptr;
+
+	
+
 #pragma region DescriptorHandleとDescriptorHeap
 	////DescriptorHandleとDescriptorHeap
 	typedef struct D3D12_CPU_DESCRIPTOR_HANDLE
