@@ -98,6 +98,8 @@ private:
 
 	ID3D12DescriptorHeap* srvDescriptorHeap = nullptr;
 
+	ID3D12DescriptorHeap* dsvDescriptorHeap = nullptr;
+
 	IDXGIAdapter4* useAdapter = nullptr;
 
 	ID3D12Debug1* debugController = nullptr;

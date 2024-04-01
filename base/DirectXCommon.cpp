@@ -260,6 +260,8 @@ void DirectXCommon::InitializeRenderTargetView()
  rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 
  srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+
+ dsvDescriptorHeap = CreateDescriptorHeap(device,D3D12_DESCRIPTOR_HEAP_TYPE_DSV,1,false);
 #pragma endregion
 
 
@@ -310,7 +312,10 @@ void DirectXCommon::InitializeRenderTargetView()
 #pragma endregion
 
 
-
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //Format. 基礎的にはResourceに合わせる
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
+	device->CreateDepthStencilView(depthStencilResource, &dsvDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 
 
@@ -556,6 +561,9 @@ void DirectXCommon::Releases()
 	depthStencilResource->Release();
 	CloseHandle(fenceEvent);
 	fence->Release();
+
+	dsvDescriptorHeap->Release();
+	
 	srvDescriptorHeap->Release();
 	rtvDescriptorHeap->Release();
 	swapChainResources[0]->Release();
