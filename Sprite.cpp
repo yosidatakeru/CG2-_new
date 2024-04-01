@@ -79,7 +79,8 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 
 	transform_.translate = { position.x,position.y, 0 };
-	transform_.rotate = { rotation,0,0 };
+	//回転パラメータ
+	transform_.rotate = { 0,rotation,0 };
 
 	
 	
@@ -105,7 +106,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 
 	//描画(DrawCall)３兆点で１つのインスタンス。
-	directXCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 
 
 
@@ -130,12 +131,12 @@ void Sprite::CreateVertex()
 {
 	////VertexBufferViewを作成
 	//頂点バッファビューを作成する
-	vertexResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 3);
+	vertexResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点３つ分のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * 3;
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
 	//１頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -153,6 +154,17 @@ void Sprite::CreateVertex()
 	//右下
 	vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
 	vertexData[2].texcoord = { 1.0f,1.0f };
+
+
+	//左下
+	vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };
+	vertexData[3].texcoord = { 0.0f,1.0f };
+	//上
+	vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexData[4].texcoord = { 0.5f,0.0f };
+	//右下
+	vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
+	vertexData[5].texcoord = { 1.0f,1.0f };
 }
 
 
