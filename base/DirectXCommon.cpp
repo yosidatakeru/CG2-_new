@@ -14,9 +14,12 @@ void DirectXCommon::Initialize(WinApp* winApp)
 
     InitializeSwapchain();
 
+	//呼び出す順番に注意
+	InitializeDepthBuffer();
+
     InitializeRenderTargetView();
 
-    InitializeDepthBuffer();
+   
 
 
     InitializeFence();
@@ -319,6 +322,7 @@ void DirectXCommon::InitializeRenderTargetView()
 
 
 
+
 }
 
 
@@ -442,13 +446,22 @@ void DirectXCommon::PreDraw()
 #pragma endregion
 
 
+	//描画先のRTVとDSVを設定する
+	
 	//描画先のRTVを設定する
 	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
+
+	
 	//指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };	//青っぽい色,RGBA
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
 	
+	
 
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
+
+	
 	
 
 #pragma region Fenceの値を確認してGPUを持つ
@@ -458,8 +471,8 @@ void DirectXCommon::PreDraw()
 		//ViewportとScissor
 	
 	//クライアント領域のサイズと一緒にして画面全体に表示
-	viewport.Width = WinApp::kClientWidth;
-	viewport.Height = WinApp::kClientHeight;
+	viewport.Width = winApp->kClientWidth;
+	viewport.Height = winApp->kClientHeight;
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.MinDepth = 0.0f;
@@ -476,10 +489,16 @@ void DirectXCommon::PreDraw()
 	scissorRect.top = 0;
 	scissorRect.bottom = winApp->kClientHeight;
 
-		
-	commandList->RSSetScissorRects(1, &scissorRect);
-
 	
+
+	commandList->RSSetScissorRects(1, &scissorRect);
+	
+	
+	//指定した深度で画面をクリアする
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+
+
 }
 
 

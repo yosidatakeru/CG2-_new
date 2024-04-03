@@ -151,6 +151,8 @@ void SpriteCommon::PsoGenerate()
 
 	#pragma endregion
 		
+		
+		
 
 	#pragma region ShaderをCompileする
 		//ShaderをCompileする
@@ -180,14 +182,34 @@ void SpriteCommon::PsoGenerate()
 			graphicsPipelineStateDesc.PrimitiveTopologyType =
 				D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		
+			
+			
 			//どのように画面に色を打ち込むのか設定
 			graphicsPipelineStateDesc.SampleDesc.Count = 1;
 			graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 			
+			//DepthstencStatの設定
+			D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+			//Depthの機能の有効かする
+			depthStencilDesc.DepthEnable = true;
+
+			//書き込みします
+			depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+
+			//比較関数はLessEqual.つまり近ければ描画
+			depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+			//DepthStencilの設定
+		//これ打つだらいったんエラー
+			//ここで会っているのかわからない
+			graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
+			graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
 			hr = directXCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 				IID_PPV_ARGS(&graphicsPipelineState));
 			assert(SUCCEEDED(hr));
 		
+
 		#pragma endregion
 			
 			

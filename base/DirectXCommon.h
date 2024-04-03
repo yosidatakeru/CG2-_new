@@ -115,18 +115,14 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle;
 
 	//RTVを２つ作るのでディスクリプタを２つ用意
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2] = {};
 
 	ID3D12Resource* depthStencilResource = nullptr;
 
 	
 
 #pragma region DescriptorHandleとDescriptorHeap
-	////DescriptorHandleとDescriptorHeap
-	typedef struct D3D12_CPU_DESCRIPTOR_HANDLE
-	{
-		SIZE_T ptr;
-	}D3D12_CPU_DESCRIPTOR_HANDLE;
+
 #pragma endregion
 
 	D3D12_RESOURCE_BARRIER barrier{};
