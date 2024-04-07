@@ -31,6 +31,11 @@ private:
 	//マテリアルの作成関数
 	void CreateWVP();
 
+
+	//2D用のTransform
+	void CreateTransform();
+
+
 public:
 
 	ID3D12Resource* GetwvpResource() const { return  wvpResource; }
@@ -71,7 +76,15 @@ private:
 	ID3D12Resource* materialResource = nullptr;
 
 	ID3D12Resource* wvpResource = nullptr;
+	
+	ID3D12Resource* vertexResourceSprite = nullptr;
+
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+
+	////データの書き込み
+	Matrix4x4* transformationMatrixDataSprite = nullptr;
+
+	ID3D12Resource* transformationMatrixResourceSprite = nullptr;
 
 	float rotation = 0;
 
@@ -85,6 +98,8 @@ private:
 	 Vector2 position = { 0, 0 };
 
 	 Vector3 camerPosition = { 0, 0, 0 };
+
+	 Transform transformSprite{ {1.0f, 1.0f, 1.0f},{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 
 	 //画像の保蔵先のアドレス
 	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;

@@ -44,7 +44,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	CreateWVP();
 
 
-
+	CreateTransform();
 	
 	
 
@@ -118,6 +118,8 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 void Sprite::Releases()
 {
+	transformationMatrixResourceSprite->Release();
+	vertexResourceSprite->Release();
 	vertexResource->Release();
 	materialResource->Release();
 	wvpResource->Release();
@@ -165,6 +167,50 @@ void Sprite::CreateVertex()
 	//右下
 	vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
 	vertexData[5].texcoord = { 1.0f,1.0f };
+
+
+
+
+	//Sprite用のの頂点リソースを作る
+	 vertexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
+	//頂点バッファリソーソを作る
+	D3D12_VERTEX_BUFFER_VIEW vertexbufferViewSprite{};
+
+	//リソースの先頭のアドレス
+	vertexbufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
+
+	//使用するリソースのサイズは頂点6つぶんのサイズ
+	vertexbufferViewSprite.SizeInBytes = sizeof(VertexData) * 6;
+
+	//１頂点当たりのサイズ
+	vertexbufferViewSprite.StrideInBytes = sizeof(VertexData);
+
+	//頂点データの設定
+	//解放処理していない
+	VertexData* vertexDataSprite = nullptr;
+
+	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
+
+	vertexDataSprite[0].position = {0.0f,360.0f,0.0f,1.0f };
+	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
+	//上
+	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
+	//右下
+	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
+	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
+
+
+	//左下
+	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
+	//上
+	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
+	//右下
+	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
+	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
+
 }
 
 
@@ -195,6 +241,21 @@ void Sprite::CreateWVP()
 
 	*wvpData = MakeIdentity4x4();
 
+	
+}
+
+void Sprite::CreateTransform()
+{
+	//Sprite用のTransformationMatrix用のリソースを作るMatrix4x4 1とつぶんのサイズを用意する
+	transformationMatrixResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Matrix4x4));
+	
+	
+
+	//書き込みのためのアドレスを取得
+	transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
+
+	//単位行列を書き込む
+	*transformationMatrixDataSprite = MakeIdentity4x4();
 	
 }
 

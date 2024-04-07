@@ -577,6 +577,7 @@ void DirectXCommon::Releases()
 
 
 	////解放処理
+
 	depthStencilResource->Release();
 	CloseHandle(fenceEvent);
 	fence->Release();
