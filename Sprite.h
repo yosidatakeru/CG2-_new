@@ -16,7 +16,7 @@ public:
 	void Initialize(DirectXCommon* directXCommon , SpriteCommon* SpriteCommon_ );
 
 	void Draw(DirectXCommon* directXCommon);
-	void Update(Transform transform, Transform cameraTransform);
+	void Update(Transform transform, Transform cameraTransform, Transform transformSprite);
 	
 	void Releases();
 private:
@@ -59,7 +59,8 @@ public:
 	Transform GetTransform() { return  transform_; }
 
 	Transform GetCameraTransform() { return  cameraTransform_; }
-	
+	   
+	Transform GetTransformSprite() { return  transformSprite; }
 private:
 	VertexData* vertexData = nullptr;
 	
@@ -85,6 +86,11 @@ private:
 	Matrix4x4* transformationMatrixDataSprite = nullptr;
 
 	ID3D12Resource* transformationMatrixResourceSprite = nullptr;
+
+	VertexData* vertexDataSprite = nullptr;
+
+	//頂点バッファリソーソを作る
+	D3D12_VERTEX_BUFFER_VIEW vertexbufferViewSprite{};
 
 	float rotation = 0;
 

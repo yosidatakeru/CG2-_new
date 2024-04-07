@@ -116,7 +116,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	
 
-	  sprite->Update(sprite->GetTransform(),sprite->GetCameraTransform());
+	  sprite->Update(sprite->GetTransform(),sprite->GetCameraTransform(),sprite->GetTransformSprite());
 
 
 		directXCommon->PreDraw();

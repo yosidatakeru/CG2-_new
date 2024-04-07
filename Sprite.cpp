@@ -54,7 +54,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 
 
-void Sprite::Update(Transform transform, Transform cameraTransform)
+void Sprite::Update(Transform transform, Transform cameraTransform, Transform transformSprite)
 {
 
 
@@ -67,6 +67,13 @@ void Sprite::Update(Transform transform, Transform cameraTransform)
 
 	*wvpData = worldViewProjectionMatrix;
 
+	//Sprite用のWorlsViewProjectionMatrixを作る
+	Matrix4x4 worudMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
+	Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
+	Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
+	Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worudMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
+
+	*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
 
 }
 
@@ -94,6 +101,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon->GetCommandList()->SetPipelineState(spriteCommon_->GetGraphicsPipelineState());
 	directXCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
+
 	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
 	directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -103,7 +111,21 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	//wvp用のCBufferの場所を設定
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
+	
+
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+
+	//描画(DrawCall)３兆点で１つのインスタンス。
+	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+
+
+
+	//Spriteの描画変更が必要なものだけ変更
+	//追加
+	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
+
+	//TransformationMatrionMatrixCBufferの場所を設定
+	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
@@ -173,8 +195,7 @@ void Sprite::CreateVertex()
 
 	//Sprite用のの頂点リソースを作る
 	 vertexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
-	//頂点バッファリソーソを作る
-	D3D12_VERTEX_BUFFER_VIEW vertexbufferViewSprite{};
+	
 
 	//リソースの先頭のアドレス
 	vertexbufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
@@ -187,8 +208,7 @@ void Sprite::CreateVertex()
 
 	//頂点データの設定
 	//解放処理していない
-	VertexData* vertexDataSprite = nullptr;
-
+	
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
 
 	vertexDataSprite[0].position = {0.0f,360.0f,0.0f,1.0f };
@@ -210,6 +230,8 @@ void Sprite::CreateVertex()
 	//右下
 	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
 	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
+
+
 
 }
 
