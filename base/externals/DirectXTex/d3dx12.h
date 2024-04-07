@@ -4055,7 +4055,7 @@ public:
     //    CD3DX12_STATE_OBJECT_DESC RaytracingState2(D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE);
     //    CD3DX12_DXIL_LIBRARY_SUBOBJECT LibA(RaytracingState2);
     //    LibA.SetDXILLibrary(&pMyAppDxilLibs[4]); // not manually specifying exports
-    //                                             // - meaning all exports in the libraries
+    //                                             // - meaning all exp6orts in the libraries
     //                                             // are exported
     //    etc.
 
