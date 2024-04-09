@@ -2,6 +2,7 @@
 #include"base/SpriteCommon.h"
 #include"base/DirectXCommon.h"
 #include"Vector2.h"
+#include<numbers>
 class Sprite
 {
 public:
@@ -109,6 +110,11 @@ private:
 
 	 //画像の保蔵先のアドレス
 	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
+
+	 //円形描画用
+	 const uint32_t kSubdivision = 12;
+	 const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
+	 float pi = std::numbers::pi_v<float>;
 
 };
 

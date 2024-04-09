@@ -38,6 +38,11 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
 
 	CreateVertex();
+	const uint32_t kSubdivision = 12;
+	const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
+	float pi = std::numbers::pi_v<float>;
+
+
 
 	CreateMAterial();
 
@@ -116,7 +121,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 
 	//描画(DrawCall)３兆点で１つのインスタンス。
-	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+	directXCommon->GetCommandList()->DrawInstanced(kNumSphereVerices, 1, 0, 0);
 
 
 
@@ -155,41 +160,98 @@ void Sprite::CreateVertex()
 {
 	////VertexBufferViewを作成
 	//頂点バッファビューを作成する
-	vertexResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
+	vertexResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * kNumSphereVerices);
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点３つ分のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * kNumSphereVerices;
 	//１頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
 
-	//Resourceにデータを書き込む
-	
-	//書き込むためのアドレスを取得
+	////Resourceにデータを書き込む
+	//
+	////書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	//左下
-	vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
-	vertexData[0].texcoord = { 0.0f,1.0f };
-	//上
-	vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };
-	vertexData[1].texcoord = { 0.5f,0.0f };
-	//右下
-	vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
-	vertexData[2].texcoord = { 1.0f,1.0f };
+	////左下
+	//vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
+	//vertexData[0].texcoord = { 0.0f,1.0f };
+	////上
+	//vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };
+	//vertexData[1].texcoord = { 0.5f,0.0f };
+	////右下
+	//vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
+	//vertexData[2].texcoord = { 1.0f,1.0f };
 
 
-	//左下
-	vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };
-	vertexData[3].texcoord = { 0.0f,1.0f };
-	//上
-	vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexData[4].texcoord = { 0.5f,0.0f };
-	//右下
-	vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
-	vertexData[5].texcoord = { 1.0f,1.0f };
+	////左下
+	//vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };
+	//vertexData[3].texcoord = { 0.0f,1.0f };
+	////上
+	//vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };
+	//vertexData[4].texcoord = { 0.5f,0.0f };
+	////右下
+	//vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
+	//vertexData[5].texcoord = { 1.0f,1.0f };
 
+
+
+	const float kLonEvery = pi * 2.0f / float(kSubdivision);
+	const float kLatEvery = pi / float(kSubdivision);
+
+	for (uint32_t latlndex = 0; latlndex < kSubdivision; ++latlndex)
+	{
+		float lat = -pi / 2.0f + kLatEvery * latlndex;
+
+
+		for (uint32_t lonlndex = 0; lonlndex < kSubdivision; ++lonlndex)
+		{
+
+			uint32_t startlndex = (latlndex * kSubdivision + lonlndex) * 6;
+
+			float lon = lonlndex * kLonEvery;
+
+
+			vertexData[startlndex].position.x = std::cos(lat) * std::cos(lon);
+			vertexData[startlndex].position.y = std::sin(lat);
+			vertexData[startlndex].position.z = std::cos(lat) * std::sin(lon);
+			vertexData[startlndex].position.w = 1.0f;
+			vertexData[startlndex].texcoord =
+			{ float(lonlndex) / float(kSubdivision), 1.0f - float(latlndex) / float(kSubdivision) };
+
+
+			vertexData[startlndex + 1].position.x = std::cos(lat + kLatEvery) * std::cos(lon);
+			vertexData[startlndex + 1].position.y = std::sin(lat + kLatEvery);
+			vertexData[startlndex + 1].position.z = std::cos(lat + kLatEvery) * std::sin(lon);
+			vertexData[startlndex + 1].position.w = 1.0f;
+			vertexData[startlndex + 1].texcoord =
+			{ float(lonlndex) / float(kSubdivision), 1.0f - float(latlndex + 1) / float(kSubdivision) };
+
+
+			vertexData[startlndex + 2].position.x = std::cos(lat) * std::cos(lon + kLonEvery);
+			vertexData[startlndex + 2].position.y = std::sin(lat);
+			vertexData[startlndex + 2].position.z = std::cos(lat) * std::sin(lon + kLonEvery);
+			vertexData[startlndex + 2].position.w = 1.0f;
+			vertexData[startlndex + 2].texcoord =
+			{ float(lonlndex + 1) / float(kSubdivision), 1.0f - float(latlndex) / float(kSubdivision) };
+
+
+
+			vertexData[startlndex + 3] = vertexData[startlndex + 2];
+			vertexData[startlndex + 4] = vertexData[startlndex + 1];
+
+			vertexData[startlndex + 5].position.x = std::cos(lat + kLatEvery) * std::cos(lon + kLonEvery);
+			vertexData[startlndex + 5].position.y = std::sin(lat + kLatEvery);
+			vertexData[startlndex + 5].position.z = std::cos(lat + kLatEvery) * std::sin(lon + kLonEvery);
+			vertexData[startlndex + 5].position.w = 1.0f;
+			vertexData[startlndex + 5].texcoord =
+			{ float(lonlndex + 1) / float(kSubdivision),1.0f - float(latlndex + 1) / float(kSubdivision) };
+
+		}
+
+	}
+#pragma endregion
 
 
 
