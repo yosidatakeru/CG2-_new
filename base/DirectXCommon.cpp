@@ -193,9 +193,11 @@ void DirectXCommon::InitializeCommand()
 
 
 #pragma region CommadListを生成
-
+	//まとまった命令軍のこと
+	// GPUを最大限利用するために
+	// 命令をまとめて送る
 	//コマンドリストを生成する
-	
+	//GPUに投げて実行させる
 	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr, IID_PPV_ARGS(&commandList));
 
 	//コマンドリストの生成が上手くいかなかったので起動できない
@@ -250,13 +252,31 @@ void DirectXCommon::InitializeSwapchain()
 
 
 
+D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptoHeap, uint32_t descriptorSize, uint32_t index)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptoHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
+}
 
+D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
+{
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	return handleGPU;
+}
 
 
 void DirectXCommon::InitializeRenderTargetView()
 {
 #pragma region DescriptorHeapを生成
 
+	const uint32_t desriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	const uint32_t desriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	const uint32_t desriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+
+
+	GetCPUDescriptorHandle(rtvDescriptorHeap, desriptorSizeRTV, 0);
 	
 	////ディスクリプタヒープの生成
 	//RTV用のヒープディスクリプタの数は２。RTVはhader内で触る物でないのでShaderVisibleはfales
@@ -304,15 +324,14 @@ void DirectXCommon::InitializeRenderTargetView()
 #pragma endregion
 
 
+	
 
-
-
-#pragma region RTVを作る
 	////Descriptorの位置を決める
+	
 	rtvHandles[0] = rtvStartHandle;
 
 	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-#pragma endregion
+
 
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
@@ -627,3 +646,8 @@ ID3D12DescriptorHeap* DirectXCommon::CreateDescriptorHeap(ID3D12Device* device, 
 }
 
 #pragma endregion
+
+
+
+
+

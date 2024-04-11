@@ -43,7 +43,6 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	float pi = std::numbers::pi_v<float>;
 
 
-
 	CreateMAterial();
 
 	CreateWVP();
@@ -342,10 +341,5 @@ void Sprite::CreateTransform()
 	*transformationMatrixDataSprite = MakeIdentity4x4();
 	
 }
-
-
-
-
-
 
 

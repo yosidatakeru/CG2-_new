@@ -371,3 +371,4 @@ void SpriteCommon::UploadTewtureData(ID3D12Resource* texture, const DirectX::Scr
 	}
 
 }
+

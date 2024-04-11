@@ -132,5 +132,8 @@ private:
 	D3D12_VIEWPORT viewport{};
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+
+
+	
 };
 
