@@ -11,7 +11,10 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	textureResource = CreateTextureResource(directXCommon_->GetDevice(), metaData);
 	spriteCommon_->UploadTewtureData(textureResource, mipImages);
 	
-
+	DirectX::ScratchImage mipImages2 = spriteCommon->LoadTexture(L"Resources/monsterBall.png");
+	const DirectX::TexMetadata& metaData2 = mipImages2.GetMetadata();
+	textureResource2 = CreateTextureResource(directXCommon_->GetDevice(), metaData2);
+	spriteCommon_->UploadTewtureData(textureResource2, mipImages2);
 	
 	
 
@@ -22,11 +25,34 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = UINT(metaData.mipLevels);
 
+
+	////SRV2
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
+	srvDesc2.Format = metaData2.format;
+	srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
+	srvDesc2.Texture2D.MipLevels = UINT(metaData2.mipLevels);
+
+
+	const uint32_t desriptorSizeSRV = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	const uint32_t desriptorSizeRTV = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	const uint32_t desriptorSizeDSV = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+
+
+
+
 	//SRVを作成するDescriptorHeapの場所を決める
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU =
 		directXCommon_->GetSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
 	textureSrvHandleGPU =
 		directXCommon_->GetSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
+
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 =
+		directXCommon_->GetSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+	textureSrvHandleGPU =
+		directXCommon_->GetSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
+
 
 
 	textureSrvHandleCPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -36,6 +62,16 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	//SRVの生成
 	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
+
+
+	textureSrvHandleCPU2 = GetCPUDescriptorHandle(directXCommon->GetSrvDescriptorHeap(), desriptorSizeSRV, 2);
+	textureSrvHandleGPU2 = GetGPUDescriptorHandle(directXCommon->GetSrvDescriptorHeap(), desriptorSizeSRV, 2);
+
+
+
+	//SRVの生成
+	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource2,&srvDesc2, textureSrvHandleCPU2);
+
 
 	CreateVertex();
 	const uint32_t kSubdivision = 12;
@@ -79,6 +115,8 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 
 	*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
 
+	ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+
 }
 
 
@@ -115,25 +153,33 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	//wvp用のCBufferの場所を設定
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
-	
+	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
+	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 
-	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+
+	
 
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon->GetCommandList()->DrawInstanced(kNumSphereVerices, 1, 0, 0);
+	
+	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 
 
 
+	
+
+
+	
+	
 	//Spriteの描画変更が必要なものだけ変更
 	//追加
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
 
 	//TransformationMatrionMatrixCBufferの場所を設定
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-
+	
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
-
 
 
 #pragma endregion
@@ -150,6 +196,7 @@ void Sprite::Releases()
 	materialResource->Release();
 	wvpResource->Release();
 	textureResource->Release();
+	textureResource2->Release();
 }
 
 

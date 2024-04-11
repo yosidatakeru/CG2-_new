@@ -66,6 +66,7 @@ private:
 	VertexData* vertexData = nullptr;
 	
 	ID3D12Resource* textureResource = nullptr;
+	ID3D12Resource* textureResource2 = nullptr;
 	
 	Matrix4x4* wvpData = nullptr;
 
@@ -110,11 +111,27 @@ private:
 
 	 //画像の保蔵先のアドレス
 	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
+	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2;
 
 	 //円形描画用
 	 const uint32_t kSubdivision = 12;
 	 const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
 	 float pi = std::numbers::pi_v<float>;
+
+	 bool useMonsterBall = true;
+	 D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap * descriptoHeap, uint32_t descriptorSize, uint32_t index)
+	 {
+		 D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptoHeap->GetCPUDescriptorHandleForHeapStart();
+		 handleCPU.ptr += (descriptorSize * index);
+		 return handleCPU;
+	 }
+
+	 D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
+	 {
+		 D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+		 handleGPU.ptr += (descriptorSize * index);
+		 return handleGPU;
+	 }
 
 };
 
