@@ -78,7 +78,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
 	float pi = std::numbers::pi_v<float>;
 
-
+	
 	CreateMAterial();
 
 	CreateWVP();
@@ -86,6 +86,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	CreateTransform();
 	
+	CreatLight();
 	
 
 
@@ -105,7 +106,9 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 
-	*wvpData = worldViewProjectionMatrix;
+	wvpData->WVP = worldViewProjectionMatrix;
+	wvpData->World = worldMatrix;
+
 
 	//Sprite用のWorlsViewProjectionMatrixを作る
 	Matrix4x4 worudMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
@@ -116,6 +119,16 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
 
 	ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+
+
+	ImGui::Begin("texture");
+	ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
+
+
+	ImGui::End();
+
+
+	directionalLighlData->direction = light;
 
 }
 
@@ -133,7 +146,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 	
 	
-	*materialData = color_;
+	materialData->color = color_;
 
 #pragma region コマンドを積む
 	directXCommon->GetCommandList()->RSSetViewports(1, directXCommon->GetViewport()); //&viewport);
@@ -153,11 +166,16 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	//wvp用のCBufferの場所を設定
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
-	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
-	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
-
-
 	
+
+	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
+	
+//	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
+
+
+	//ライト用
+	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
+
 
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon->GetCommandList()->DrawInstanced(kNumSphereVerices, 1, 0, 0);
@@ -170,16 +188,16 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 
 	
-	
-	//Spriteの描画変更が必要なものだけ変更
-	//追加
-	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
+	////
+	//////Spriteの描画変更が必要なものだけ変更
+	//////追加
+	//directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
 
-	//TransformationMatrionMatrixCBufferの場所を設定
-	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-	
-	//描画(DrawCall)３兆点で１つのインスタンス。
-	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+	//////TransformationMatrionMatrixCBufferの場所を設定
+	//directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+	////
+	//////描画(DrawCall)３兆点で１つのインスタンス。
+	////directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 
 
 #pragma endregion
@@ -190,6 +208,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 void Sprite::Releases()
 {
+	directionalLighlResource->Release();
 	transformationMatrixResourceSprite->Release();
 	vertexResourceSprite->Release();
 	vertexResource->Release();
@@ -265,6 +284,12 @@ void Sprite::CreateVertex()
 			vertexData[startlndex].position.w = 1.0f;
 			vertexData[startlndex].texcoord =
 			{ float(lonlndex) / float(kSubdivision), 1.0f - float(latlndex) / float(kSubdivision) };
+			vertexData[startlndex].normal.x = vertexData[startlndex].position.x;
+			vertexData[startlndex].normal.y = vertexData[startlndex].position.y;
+			vertexData[startlndex].normal.z = vertexData[startlndex].position.z;
+
+
+
 
 
 			vertexData[startlndex + 1].position.x = std::cos(lat + kLatEvery) * std::cos(lon);
@@ -273,7 +298,9 @@ void Sprite::CreateVertex()
 			vertexData[startlndex + 1].position.w = 1.0f;
 			vertexData[startlndex + 1].texcoord =
 			{ float(lonlndex) / float(kSubdivision), 1.0f - float(latlndex + 1) / float(kSubdivision) };
-
+			vertexData[startlndex + 1].normal.x = vertexData[startlndex + 1].position.x;
+			vertexData[startlndex + 1].normal.y = vertexData[startlndex + 1].position.y;
+			vertexData[startlndex + 1].normal.z = vertexData[startlndex + 1].position.z;
 
 			vertexData[startlndex + 2].position.x = std::cos(lat) * std::cos(lon + kLonEvery);
 			vertexData[startlndex + 2].position.y = std::sin(lat);
@@ -281,6 +308,9 @@ void Sprite::CreateVertex()
 			vertexData[startlndex + 2].position.w = 1.0f;
 			vertexData[startlndex + 2].texcoord =
 			{ float(lonlndex + 1) / float(kSubdivision), 1.0f - float(latlndex) / float(kSubdivision) };
+			vertexData[startlndex + 2].normal.x = vertexData[startlndex + 2].position.x;
+			vertexData[startlndex + 2].normal.y = vertexData[startlndex + 2].position.y;
+			vertexData[startlndex + 2].normal.z = vertexData[startlndex + 2].position.z;
 
 
 
@@ -293,7 +323,9 @@ void Sprite::CreateVertex()
 			vertexData[startlndex + 5].position.w = 1.0f;
 			vertexData[startlndex + 5].texcoord =
 			{ float(lonlndex + 1) / float(kSubdivision),1.0f - float(latlndex + 1) / float(kSubdivision) };
-
+			vertexData[startlndex + 5].normal.x = vertexData[startlndex + 5].position.x;
+			vertexData[startlndex + 5].normal.y = vertexData[startlndex + 5].position.y;
+			vertexData[startlndex + 5].normal.z = vertexData[startlndex + 5].position.z;
 		}
 
 	}
@@ -349,14 +381,16 @@ void Sprite::CreateMAterial()
 {
 	
 	//Resourceにデータを書き込む
-	materialResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Vector4) * 3); ;
+	materialResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material) ); ;
 
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 
 	
-	*materialData = color_;
+	materialData->color = color_;
+	materialData->enableLighting = true;
+	
 }
 
 
@@ -364,12 +398,13 @@ void Sprite::CreateMAterial()
 void Sprite::CreateWVP()
 {
 	////Resourceにデータを書き込む
-	wvpResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Matrix4x4)); ;
+	wvpResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix)); ;
 	//書き込むためのアドレスを取得
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 
 
-	*wvpData = MakeIdentity4x4();
+	wvpData->WVP = MakeIdentity4x4();
+	wvpData->World = MakeIdentity4x4();
 
 	
 }
@@ -387,6 +422,22 @@ void Sprite::CreateTransform()
 	//単位行列を書き込む
 	*transformationMatrixDataSprite = MakeIdentity4x4();
 	
+}
+
+void Sprite::CreatLight()
+{
+	////Resourceにデータを書き込む
+	directionalLighlResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(DirectionalLigha)); ;
+
+	// directionalLighlData = nullptr;
+
+	//書き込むためのアドレスを取得
+	directionalLighlResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLighlData));
+
+	directionalLighlData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	directionalLighlData->direction = { 0.0f, -1.0f, 0.0f };
+	directionalLighlData->intensity = 1.0f;
+
 }
 
 

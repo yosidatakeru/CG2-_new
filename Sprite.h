@@ -11,8 +11,28 @@ public:
 	{
 		Vector4 position;
 		Vector2 texcoord;
+		Vector3 normal;
 	};
 
+	struct Material
+	{
+		Vector4 color;
+		int32_t enableLighting;
+		float shininess;
+	};
+
+	struct TransformationMatrix
+	{
+		Matrix4x4 WVP;
+		Matrix4x4 World;
+	};
+
+	struct DirectionalLigha
+	{
+		Vector4 color;//ライトの色
+		Vector3 direction;//!<ライトの向き
+		float intensity; //!<輝度
+	};
 
 	void Initialize(DirectXCommon* directXCommon , SpriteCommon* SpriteCommon_ );
 
@@ -35,6 +55,8 @@ private:
 
 	//2D用のTransform
 	void CreateTransform();
+
+	void CreatLight();
 
 
 public:
@@ -68,9 +90,10 @@ private:
 	ID3D12Resource* textureResource = nullptr;
 	ID3D12Resource* textureResource2 = nullptr;
 	
-	Matrix4x4* wvpData = nullptr;
 
-	Vector4* materialData = nullptr;
+	TransformationMatrix* wvpData = nullptr;
+
+	Material* materialData = nullptr;
 
 	SpriteCommon* spriteCommon_ = nullptr;
 	DirectXCommon* directXCommon_ = nullptr;
@@ -132,6 +155,8 @@ private:
 		 handleGPU.ptr += (descriptorSize * index);
 		 return handleGPU;
 	 }
-
+	 ID3D12Resource* directionalLighlResource = nullptr;
+	 DirectionalLigha* directionalLighlData = nullptr;
+	 Vector3 light = { 0.0f, -1.0f,0.0f };
 };
 
