@@ -98,6 +98,8 @@ private:
 	SpriteCommon* spriteCommon_ = nullptr;
 	DirectXCommon* directXCommon_ = nullptr;
 	ID3D12Resource* vertexResource = nullptr;
+	ID3D12Resource* indexResourceSprite = nullptr;
+
 
 	ID3D12Resource* materialResource = nullptr;
 
@@ -116,6 +118,9 @@ private:
 
 	//頂点バッファリソーソを作る
 	D3D12_VERTEX_BUFFER_VIEW vertexbufferViewSprite{};
+
+	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+
 
 	float rotation = 0;
 

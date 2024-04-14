@@ -155,7 +155,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon->GetCommandList()->SetGraphicsRootSignature(spriteCommon_->GetRootSignature());
 	directXCommon->GetCommandList()->SetPipelineState(spriteCommon_->GetGraphicsPipelineState());
 	directXCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-
+	directXCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
 
 	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
 	directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -176,7 +176,8 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	//ライト用
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
-
+	//描画(DrawCall/ドローコール)6このインデックスを使用して1つのインスタンスを描画
+	directXCommon->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon->GetCommandList()->DrawInstanced(kNumSphereVerices, 1, 0, 0);
 	
@@ -208,6 +209,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 void Sprite::Releases()
 {
+	indexResourceSprite->Release();
 	directionalLighlResource->Release();
 	transformationMatrixResourceSprite->Release();
 	vertexResourceSprite->Release();
@@ -351,27 +353,51 @@ void Sprite::CreateVertex()
 	
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
 
-	vertexDataSprite[0].position = {0.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
-	//上
-	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
-	//右下
-	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
+	//vertexDataSprite[0].position = {0.0f,360.0f,0.0f,1.0f };
+	//vertexDataSprite[0].texcoord = { 0.0f,1.0f };
+	////上
+	//vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
+	//vertexDataSprite[1].texcoord = { 0.0f,0.0f };
+	////右下
+	//vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
+	//vertexDataSprite[2].texcoord = { 1.0f,1.0f };
 
 
-	//左下
-	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
-	//上
-	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
-	//右下
-	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
+	////左下
+	//vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
+	//vertexDataSprite[3].texcoord = { 0.0f,0.0f };
+	////上
+	//vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
+	//vertexDataSprite[4].texcoord = { 1.0f,0.0f };
+	////右下
+	//vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
+	//vertexDataSprite[5].texcoord = { 1.0f,1.0f };
 
 
+
+	////VertexBufferViewを作成
+	//頂点バッファビューを作成する
+	indexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(uint32_t) * 6);
+
+	//リソースの先頭のアドレスから使う
+	indexBufferViewSprite.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	//使用するリソースのサイズは頂点３つ分のサイズ
+	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
+	//１頂点あたりのサイズ
+	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
+
+	uint32_t* indexDataSprite = nullptr;
+
+	////Resourceにデータを書き込む
+	//
+	////書き込むためのアドレスを取得
+	indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
+	indexDataSprite[0] = 0;
+	indexDataSprite[1] = 1;
+	indexDataSprite[2] = 2;
+	indexDataSprite[3] = 1;
+	indexDataSprite[4] = 3;
+	indexDataSprite[5] = 2;
 
 }
 
@@ -389,7 +415,7 @@ void Sprite::CreateMAterial()
 
 	
 	materialData->color = color_;
-	materialData->enableLighting = true;
+	materialData->enableLighting = false;
 	
 }
 
