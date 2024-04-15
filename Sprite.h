@@ -40,6 +40,9 @@ public:
 	void Update(Transform transform, Transform cameraTransform, Transform transformSprite);
 	
 	void Releases();
+
+
+	
 private:
 
 	//頂点データの作成関数
@@ -163,5 +166,7 @@ private:
 	 ID3D12Resource* directionalLighlResource = nullptr;
 	 DirectionalLigha* directionalLighlData = nullptr;
 	 Vector3 light = { 0.0f, -1.0f,0.0f };
+
+
 };
 

@@ -307,12 +307,7 @@ void DirectXCommon::InitializeRenderTargetView()
 	
 
 
-	////Descriptorの位置を決める
 	
-	rtvHandles[0] = rtvStartHandle;
-
-	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
 
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};

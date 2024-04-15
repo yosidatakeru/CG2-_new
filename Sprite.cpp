@@ -84,7 +84,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	CreateWVP();
 
 
-	CreateTransform();
+	//CreateTransform();
 	
 	CreatLight();
 	
@@ -110,13 +110,7 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	wvpData->World = worldMatrix;
 
 
-	//Sprite用のWorlsViewProjectionMatrixを作る
-	Matrix4x4 worudMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
-	Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
-	Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
-	Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worudMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
-
-	*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
+	
 
 	ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 
@@ -170,35 +164,24 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
 	
-//	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
+	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
 
+	
 
 	//ライト用
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
-	//描画(DrawCall/ドローコール)6このインデックスを使用して1つのインスタンスを描画
-	directXCommon->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon->GetCommandList()->DrawInstanced(kNumSphereVerices, 1, 0, 0);
 	
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 
 
-
 	
 
 
 	
-	////
-	//////Spriteの描画変更が必要なものだけ変更
-	//////追加
-	//directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
-
-	//////TransformationMatrionMatrixCBufferの場所を設定
-	//directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-	////
-	//////描画(DrawCall)３兆点で１つのインスタンス。
-	////directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+	
 
 
 #pragma endregion
@@ -211,14 +194,15 @@ void Sprite::Releases()
 {
 	indexResourceSprite->Release();
 	directionalLighlResource->Release();
-	transformationMatrixResourceSprite->Release();
-	vertexResourceSprite->Release();
+	
 	vertexResource->Release();
 	materialResource->Release();
 	wvpResource->Release();
 	textureResource->Release();
 	textureResource2->Release();
 }
+
+
 
 
 
@@ -241,26 +225,7 @@ void Sprite::CreateVertex()
 	//
 	////書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	////左下
-	//vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
-	//vertexData[0].texcoord = { 0.0f,1.0f };
-	////上
-	//vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };
-	//vertexData[1].texcoord = { 0.5f,0.0f };
-	////右下
-	//vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
-	//vertexData[2].texcoord = { 1.0f,1.0f };
-
-
-	////左下
-	//vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };
-	//vertexData[3].texcoord = { 0.0f,1.0f };
-	////上
-	//vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };
-	//vertexData[4].texcoord = { 0.5f,0.0f };
-	////右下
-	//vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
-	//vertexData[5].texcoord = { 1.0f,1.0f };
+	
 
 
 
@@ -335,43 +300,6 @@ void Sprite::CreateVertex()
 
 
 
-	//Sprite用のの頂点リソースを作る
-	 vertexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
-	
-
-	//リソースの先頭のアドレス
-	vertexbufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
-
-	//使用するリソースのサイズは頂点6つぶんのサイズ
-	vertexbufferViewSprite.SizeInBytes = sizeof(VertexData) * 6;
-
-	//１頂点当たりのサイズ
-	vertexbufferViewSprite.StrideInBytes = sizeof(VertexData);
-
-	//頂点データの設定
-	//解放処理していない
-	
-	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
-
-	//vertexDataSprite[0].position = {0.0f,360.0f,0.0f,1.0f };
-	//vertexDataSprite[0].texcoord = { 0.0f,1.0f };
-	////上
-	//vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
-	//vertexDataSprite[1].texcoord = { 0.0f,0.0f };
-	////右下
-	//vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
-	//vertexDataSprite[2].texcoord = { 1.0f,1.0f };
-
-
-	////左下
-	//vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
-	//vertexDataSprite[3].texcoord = { 0.0f,0.0f };
-	////上
-	//vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
-	//vertexDataSprite[4].texcoord = { 1.0f,0.0f };
-	////右下
-	//vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
-	//vertexDataSprite[5].texcoord = { 1.0f,1.0f };
 
 
 
@@ -415,7 +343,7 @@ void Sprite::CreateMAterial()
 
 	
 	materialData->color = color_;
-	materialData->enableLighting = false;
+	materialData->enableLighting = true;
 	
 }
 

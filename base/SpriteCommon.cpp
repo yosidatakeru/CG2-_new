@@ -237,12 +237,12 @@ void SpriteCommon::Releases()
 {
 	
 	graphicsPipelineState->Release();
-	signatureBlob->Release();
+	
 	if (errorBlob) {
 		errorBlob->Release();
 	}
 	rootSignature->Release();
-	pixelShaderBlob->Release();
+	
 
 	vertexShaderBlob->Release();
 	
