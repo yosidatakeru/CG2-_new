@@ -171,7 +171,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
 	
 //	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
-
+	//directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 
 	//ライト用
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
@@ -181,24 +181,38 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon->GetCommandList()->DrawInstanced(kNumSphereVerices, 1, 0, 0);
 	
+	
+
+
+
+
+	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
+
+	
+
+	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
+	directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+	directXCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
+	//マテリアルCBufferの場所を設定
+	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprit->GetGPUVirtualAddress());
+
+	//wvp用のCBufferの場所を設定
+		////TransformationMatrionMatrixCBufferの場所を設定
+	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
-
-
-	
-
-
-	
 	////
 	//////Spriteの描画変更が必要なものだけ変更
 	//////追加
-	//directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
+	
 
-	//////TransformationMatrionMatrixCBufferの場所を設定
-	//directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-	////
-	//////描画(DrawCall)３兆点で１つのインスタンス。
-	////directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+	//
+	////描画(DrawCall)３兆点で１つのインスタンス。
+	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 
 
 #pragma endregion
@@ -214,6 +228,7 @@ void Sprite::Releases()
 	transformationMatrixResourceSprite->Release();
 	vertexResourceSprite->Release();
 	vertexResource->Release();
+	materialResourceSprit->Release();
 	materialResource->Release();
 	wvpResource->Release();
 	textureResource->Release();
@@ -241,29 +256,6 @@ void Sprite::CreateVertex()
 	//
 	////書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	////左下
-	//vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
-	//vertexData[0].texcoord = { 0.0f,1.0f };
-	////上
-	//vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };
-	//vertexData[1].texcoord = { 0.5f,0.0f };
-	////右下
-	//vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
-	//vertexData[2].texcoord = { 1.0f,1.0f };
-
-
-	////左下
-	//vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };
-	//vertexData[3].texcoord = { 0.0f,1.0f };
-	////上
-	//vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };
-	//vertexData[4].texcoord = { 0.5f,0.0f };
-	////右下
-	//vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
-	//vertexData[5].texcoord = { 1.0f,1.0f };
-
-
-
 	const float kLonEvery = pi * 2.0f / float(kSubdivision);
 	const float kLatEvery = pi / float(kSubdivision);
 
@@ -335,6 +327,9 @@ void Sprite::CreateVertex()
 
 
 
+
+
+
 	//Sprite用のの頂点リソースを作る
 	 vertexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
 	
@@ -353,25 +348,31 @@ void Sprite::CreateVertex()
 	
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
 
-	//vertexDataSprite[0].position = {0.0f,360.0f,0.0f,1.0f };
-	//vertexDataSprite[0].texcoord = { 0.0f,1.0f };
-	////上
-	//vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
-	//vertexDataSprite[1].texcoord = { 0.0f,0.0f };
-	////右下
-	//vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
-	//vertexDataSprite[2].texcoord = { 1.0f,1.0f };
+	vertexDataSprite[0].position = {0.0f,360.0f,0.0f,1.0f };
+	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
+	//上
+	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
+	//右下
+	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
+	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
 
 
-	////左下
-	//vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
-	//vertexDataSprite[3].texcoord = { 0.0f,0.0f };
-	////上
-	//vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
-	//vertexDataSprite[4].texcoord = { 1.0f,0.0f };
-	////右下
-	//vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
-	//vertexDataSprite[5].texcoord = { 1.0f,1.0f };
+	//左下
+	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
+	//上
+	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
+	//右下
+	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
+	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
+
+
+
+
+
+
 
 
 
@@ -412,10 +413,21 @@ void Sprite::CreateMAterial()
 
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	materialData->color = color_;
+	materialData->enableLighting = true;
+
+
+
+
+	//Resourceにデータを書き込む
+	materialResourceSprit = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material)); ;
+	//書き込むためのアドレスを取得
+	materialResourceSprit->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprit));
+	materialDataSprit->color = color_;
+	materialDataSprit->enableLighting = false;
 
 	
-	materialData->color = color_;
-	materialData->enableLighting = false;
+	
 	
 }
 
@@ -438,7 +450,7 @@ void Sprite::CreateWVP()
 void Sprite::CreateTransform()
 {
 	//Sprite用のTransformationMatrix用のリソースを作るMatrix4x4 1とつぶんのサイズを用意する
-	transformationMatrixResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Matrix4x4));
+	transformationMatrixResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix));
 	
 	
 

@@ -94,6 +94,7 @@ private:
 	TransformationMatrix* wvpData = nullptr;
 
 	Material* materialData = nullptr;
+	Material* materialDataSprit = nullptr;
 
 	SpriteCommon* spriteCommon_ = nullptr;
 	DirectXCommon* directXCommon_ = nullptr;
@@ -102,6 +103,7 @@ private:
 
 
 	ID3D12Resource* materialResource = nullptr;
+	ID3D12Resource* materialResourceSprit = nullptr;
 
 	ID3D12Resource* wvpResource = nullptr;
 	

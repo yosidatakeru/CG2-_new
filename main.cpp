@@ -170,7 +170,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region delete
 	delete winApp;
 	delete directXCommon;
-	delete spriteCommon;
+	//delete spriteCommon;
 #pragma endregion
 
 
