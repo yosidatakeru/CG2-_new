@@ -53,6 +53,7 @@
     <ClInclude Include="base\externals\imgui\imstb_textedit.h" />
     <ClInclude Include="base\externals\imgui\imstb_truetype.h" />
     <ClInclude Include="base\ImGuiManager.h" />
+    <ClInclude Include="base\Matrix3x3.h" />
     <ClInclude Include="base\Matrix4x4.h" />
     <ClInclude Include="base\MyFunction.h" />
     <ClInclude Include="base\SpriteCommon.h" />

@@ -136,6 +136,9 @@
     <ClInclude Include="Bufftr.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="base\Matrix3x3.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="base\externals\imgui\LICENSE.txt">

@@ -3,6 +3,7 @@
 #include"base/DirectXCommon.h"
 #include"Vector2.h"
 #include<numbers>
+#include"base/Matrix3x3.h"
 class Sprite
 {
 public:
@@ -18,6 +19,9 @@ public:
 	{
 		Vector4 color;
 		int32_t enableLighting;
+		float padding[3];
+		Matrix4x4 uvTrasform;
+	    
 		float shininess;
 	};
 
@@ -139,6 +143,13 @@ private:
 
 	 Transform transformSprite{ {1.0f, 1.0f, 1.0f},{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 
+	 Transform uvTransformSprite
+	 {
+		 {1.0f, 1.0f, 1.0f},
+		 {0.0f, 0.0f, 0.0f},
+		 {0.0f, 0.0f, 0.0f},
+	 };
+
 	 //画像の保蔵先のアドレス
 	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2;
@@ -149,6 +160,8 @@ private:
 	 float pi = std::numbers::pi_v<float>;
 
 	 bool useMonsterBall = true;
+
+	 bool uvSprite = true;
 	 D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap * descriptoHeap, uint32_t descriptorSize, uint32_t index)
 	 {
 		 D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptoHeap->GetCPUDescriptorHandleForHeapStart();

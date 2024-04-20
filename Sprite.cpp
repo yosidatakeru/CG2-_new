@@ -118,11 +118,33 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 
 	*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
 
+
+
+	//Sprite用のWorlsViewProjectionMatrixを作る
+	Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
+	uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateXMatrix(uvTransformSprite.rotate.z));
+	uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
+	materialDataSprit->uvTrasform = uvTransformMatrix;
+	
+
+	
+
 	ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 
 
 	ImGui::Begin("texture");
 	ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
+
+
+	ImGui::End();
+
+	ImGui::Checkbox("uvTrasform", &uvSprite);
+
+
+	ImGui::Begin("texture");
+	ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+	ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+	ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 
 
 	ImGui::End();
@@ -415,7 +437,7 @@ void Sprite::CreateMAterial()
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color = color_;
 	materialData->enableLighting = true;
-
+	materialData->uvTrasform =MakeIdentity4x4();
 
 
 
@@ -425,6 +447,7 @@ void Sprite::CreateMAterial()
 	materialResourceSprit->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprit));
 	materialDataSprit->color = color_;
 	materialDataSprit->enableLighting = false;
+	materialDataSprit->uvTrasform = MakeIdentity4x4();
 
 	
 	
