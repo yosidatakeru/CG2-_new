@@ -3,8 +3,7 @@
 #include"base/DirectXCommon.h"
 #include"base/SpriteCommon.h"
 #include"base/ImGuiManager.h"
-#include"Sprite.h"
-
+#include"base/Sprite.h"
 
 
 #pragma endregion

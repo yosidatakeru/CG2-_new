@@ -1,29 +1,21 @@
 #pragma once
-#include"base/SpriteCommon.h"
-#include"base/DirectXCommon.h"
+#include"SpriteCommon.h"
+#include"DirectXCommon.h"
 #include"Vector2.h"
 #include<numbers>
-#include"base/Matrix3x3.h"
+#include"Matrix3x3.h"
+#include"Material.h"
+#include"VertexData.h"
+#include<fstream>
+#include<sstream>
+#include"ModelData.h"
+
 class Sprite
 {
 public:
 
-	struct  VertexData
-	{
-		Vector4 position;
-		Vector2 texcoord;
-		Vector3 normal;
-	};
+	
 
-	struct Material
-	{
-		Vector4 color;
-		int32_t enableLighting;
-		float padding[3];
-		Matrix4x4 uvTrasform;
-	    
-		float shininess;
-	};
 
 	struct TransformationMatrix
 	{
@@ -88,6 +80,8 @@ public:
 	Transform GetCameraTransform() { return  cameraTransform_; }
 	   
 	Transform GetTransformSprite() { return  transformSprite; }
+
+	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 private:
 	VertexData* vertexData = nullptr;
 	
@@ -126,6 +120,8 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexbufferViewSprite{};
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+
+	ModelData modelData; // 構築するMaterualData
 
 
 	float rotation = 0;

@@ -207,32 +207,18 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 
 
-
+	//スプライト
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
-
-	
-
 	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
 	directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-
 	directXCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
 	//マテリアルCBufferの場所を設定
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprit->GetGPUVirtualAddress());
-
 	//wvp用のCBufferの場所を設定
-		////TransformationMatrionMatrixCBufferの場所を設定
+    ////TransformationMatrionMatrixCBufferの場所を設定
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
-
-	////
-	//////Spriteの描画変更が必要なものだけ変更
-	//////追加
-	
-
-	//
 	////描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 
@@ -262,6 +248,9 @@ void Sprite::Releases()
 
 void Sprite::CreateVertex()
 {
+	//モデル読み込み
+	//modelData = LoadObjFile()
+
 	////VertexBufferViewを作成
 	//頂点バッファビューを作成する
 	vertexResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * kNumSphereVerices);
@@ -499,6 +488,88 @@ void Sprite::CreatLight()
 	directionalLighlData->direction = { 0.0f, -1.0f, 0.0f };
 	directionalLighlData->intensity = 1.0f;
 
+}
+
+
+//モデル読み込み関数
+ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::string& filename)
+{
+	//１.中で必要となる変数の宣言
+	std::vector<Vector4> positions; // 位置
+	std::vector<Vector3> normals; //法線
+	std::vector<Vector2> texcoords; //テクスチャ座標
+	std::string line; //ファイルから読んだ1行を格納するもの
+
+	//2.ファイルを開く
+	std::ifstream file(directoryPath + "/" + filename); //ファイルを開く
+	assert(file.is_open()); //とりあえず開けなかったら止める
+
+	//3.実際にファイルを読み,Materiaを構築する
+	while (std::getline(file, line))
+	{
+		std::string identifier;
+		std::istringstream s(line);
+		s >> identifier; //先頭の識別子を読む
+
+		//identifierに応じた処理
+		if (identifier == "v")
+		{
+			Vector4 position;
+			s >> position.x >> position.y >> position.z;
+			position.w = 1.0f;
+			positions.push_back(position);
+		}
+		else if (identifier == "vt")
+		{
+			Vector2 texcoord;
+			s >> texcoord.x >> texcoord.y;
+			texcoords.push_back(texcoord);
+
+		}
+		else if (identifier == "vn")
+		{
+			Vector3 normal;
+			s >> normal.x >> normal.y >> normal.z;
+			normals.push_back(normal);
+		}
+		else if (identifier == "f")
+		{
+			//面は三角形限定。その他は未対応
+			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex)
+			{
+				std::string vertexDefinition;
+				s >> vertexDefinition;
+
+				//頂点の要素へのIndexは「位置/UV/法線」で格納されているので分解してIndexを取得する
+				std::istringstream v(vertexDefinition);
+				uint32_t elementIndices[3];
+				for (int32_t element = 0; element< 3; ++element)
+				{
+					std::string index;
+					std::getline(v, index, '/');//区切りでインデックスを読んでいく
+					elementIndices[element] = std::stoi(index);
+				}
+
+				//要素へのIndexから,実際の要素の値を取得して,頂点を構築する
+				Vector4 position = positions[elementIndices[0] - 1];
+				Vector2 texcoord = texcoords[elementIndices[1] - 1];
+				Vector3 normal = normals[elementIndices[2] - 1];
+				VertexData vertex = { position, texcoord, normal };
+				modelData.vertices.push_back(vertex);
+
+			}
+		}
+	
+	
+	
+	}
+
+
+
+
+	//4.ModelDataを返す
+
+	return ModelData();
 }
 
 
