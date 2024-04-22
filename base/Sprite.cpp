@@ -524,13 +524,21 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
-				/*VertexData vertex = { position, texcoord, normal };
-				modelData.vertices.push_back(vertex);*/
-				position.x *= -1.0f;
-			  //texcoord.y *= -1.0f;
-				normal.x *= -1.0f;
+				
+				
+
+				//VertexData vertex = { position, texcoord, normal };
+				//modelData.vertices.push_back(vertex);
+				
+				
+				texcoord.y *= -1.0f;
 				triangle[faceVertex] = { position, texcoord, normal };
+				position.x *= -1.0f;
+				
+				normal.x *= -1.0f;
+
 			}
+			
 			modelData.vertices.push_back(triangle[2]);
 			modelData.vertices.push_back(triangle[1]);
 			modelData.vertices.push_back(triangle[0]);
@@ -546,6 +554,38 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 	//4.ModelDataを返す
 
 	return modelData;
+}
+
+MatrialData Sprite::LoadMatrialTemplateFile(const std::string& directoryPath, const std::string& filename)
+{
+	//1.中で必要となる変数の宣言
+	MatrialData matrialData;//構築するマテリアルデータ
+	std::string line;//ファイルから読んだ1行目を格納するもの
+	
+	//2.ファイルを開く
+	std::ifstream file(directoryPath + "/" + filename);//ファイルを開く
+	assert(file.is_open());//とりあえず開かなかったら止める
+
+	//3.実際にファイルを読み込み,NaterialDataを構築する
+	while (std::getline(file,line))
+	{
+		std::string identifier;
+		std::istringstream s(line);
+		s >> identifier;
+
+		//identifierに応じて処理
+		if (identifier == "map_kd")
+		{
+			std::string textureFilename;
+			s >> textureFilename;
+			//連結してファイルパスにする
+			matrialData.textureFilePath = directoryPath + "/" + textureFilename;
+		}
+	}
+	
+	//4.MaterialDataを返す
+	return matrialData;
+
 }
 
 

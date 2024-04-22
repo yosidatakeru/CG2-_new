@@ -9,7 +9,7 @@
 #include<fstream>
 #include<sstream>
 #include"ModelData.h"
-
+#include"MaterialData.h"
 class Sprite
 {
 public:
@@ -82,6 +82,8 @@ public:
 	Transform GetTransformSprite() { return  transformSprite; }
 
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+
+	MatrialData LoadMatrialTemplateFile(const std::string& directoryPath, const std::string& filename);
 private:
 	VertexData* vertexData = nullptr;
 	uint32_t* indexDataSprite = nullptr;

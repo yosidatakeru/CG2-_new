@@ -157,6 +157,9 @@
     <ClInclude Include="base\VertexData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="base\MaterialData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="base\externals\imgui\LICENSE.txt">

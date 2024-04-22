@@ -55,6 +55,7 @@
     <ClInclude Include="base\externals\imgui\imstb_truetype.h" />
     <ClInclude Include="base\ImGuiManager.h" />
     <ClInclude Include="base\Material.h" />
+    <ClInclude Include="base\MaterialData.h" />
     <ClInclude Include="base\Matrix3x3.h" />
     <ClInclude Include="base\Matrix4x4.h" />
     <ClInclude Include="base\Model.h" />
