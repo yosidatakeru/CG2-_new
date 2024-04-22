@@ -74,9 +74,9 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 
 	CreateVertex();
-	const uint32_t kSubdivision = 12;
+	/*const uint32_t kSubdivision = 12;
 	const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
-	float pi = std::numbers::pi_v<float>;
+	float pi = std::numbers::pi_v<float>;*/
 
 	
 	CreateMAterial();
@@ -120,7 +120,7 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 
 
 
-	//Sprite用のWorlsViewProjectionMatrixを作る
+	////Sprite用のWorlsViewProjectionMatrixを作る
 	Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
 	uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateXMatrix(uvTransformSprite.rotate.z));
 	uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
@@ -134,6 +134,11 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 
 	ImGui::Begin("texture");
 	ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
+
+
+	//ImGui::Begin("model");
+	
+	ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
 
 
 	ImGui::End();
@@ -171,7 +176,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	materialData->color = color_;
 
 #pragma region コマンドを積む
-	directXCommon->GetCommandList()->RSSetViewports(1, directXCommon->GetViewport()); //&viewport);
+	directXCommon->GetCommandList()->RSSetViewports(1, directXCommon->GetViewport());
 
 	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
 	directXCommon->GetCommandList()->SetGraphicsRootSignature(spriteCommon_->GetRootSignature());
@@ -189,38 +194,40 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
 	
-
-	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
+	
+	//directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
 	
 //	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
-	//directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
-
+	
+	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 	//ライト用
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
-	//描画(DrawCall/ドローコール)6このインデックスを使用して1つのインスタンスを描画
-	directXCommon->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	
 	//描画(DrawCall)３兆点で１つのインスタンス。
-	directXCommon->GetCommandList()->DrawInstanced(kNumSphereVerices, 1, 0, 0);
+	directXCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+
+	//描画(DrawCall/ドローコール)6このインデックスを使用して1つのインスタンスを描画
+	//directXCommon->GetCommandList()->DrawIndexedInstanced(UINT(modelData.vertices.size()), 1, 0, 0, 0);
 	
 	
 
 
 
 	//スプライト
-	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
-	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
-	directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	directXCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
-	//マテリアルCBufferの場所を設定
-	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprit->GetGPUVirtualAddress());
-	//wvp用のCBufferの場所を設定
-    ////TransformationMatrionMatrixCBufferの場所を設定
-	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
-	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
-	////描画(DrawCall)３兆点で１つのインスタンス。
-	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+	//directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
+	////形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
+	//directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//directXCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
+	////マテリアルCBufferの場所を設定
+	//directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprit->GetGPUVirtualAddress());
+	////wvp用のCBufferの場所を設定
+ //   ////TransformationMatrionMatrixCBufferの場所を設定
+	//directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+	//directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
+	//////描画(DrawCall)３兆点で１つのインスタンス。
+	//directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 
 
 #pragma endregion
@@ -231,7 +238,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 void Sprite::Releases()
 {
-	indexResourceSprite->Release();
+	//indexResourceSprite->Release();
 	directionalLighlResource->Release();
 	transformationMatrixResourceSprite->Release();
 	vertexResourceSprite->Release();
@@ -249,16 +256,16 @@ void Sprite::Releases()
 void Sprite::CreateVertex()
 {
 	//モデル読み込み
-	//modelData = LoadObjFile()
+	modelData = LoadObjFile("Resources", "plane.obj");
 
 	////VertexBufferViewを作成
 	//頂点バッファビューを作成する
-	vertexResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * kNumSphereVerices);
+	vertexResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点３つ分のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * kNumSphereVerices;
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size() );
 	//１頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -267,76 +274,10 @@ void Sprite::CreateVertex()
 	//
 	////書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	const float kLonEvery = pi * 2.0f / float(kSubdivision);
-	const float kLatEvery = pi / float(kSubdivision);
 
-	for (uint32_t latlndex = 0; latlndex < kSubdivision; ++latlndex)
-	{
-		float lat = -pi / 2.0f + kLatEvery * latlndex;
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
-
-		for (uint32_t lonlndex = 0; lonlndex < kSubdivision; ++lonlndex)
-		{
-
-			uint32_t startlndex = (latlndex * kSubdivision + lonlndex) * 6;
-
-			float lon = lonlndex * kLonEvery;
-
-
-			vertexData[startlndex].position.x = std::cos(lat) * std::cos(lon);
-			vertexData[startlndex].position.y = std::sin(lat);
-			vertexData[startlndex].position.z = std::cos(lat) * std::sin(lon);
-			vertexData[startlndex].position.w = 1.0f;
-			vertexData[startlndex].texcoord =
-			{ float(lonlndex) / float(kSubdivision), 1.0f - float(latlndex) / float(kSubdivision) };
-			vertexData[startlndex].normal.x = vertexData[startlndex].position.x;
-			vertexData[startlndex].normal.y = vertexData[startlndex].position.y;
-			vertexData[startlndex].normal.z = vertexData[startlndex].position.z;
-
-
-
-
-
-			vertexData[startlndex + 1].position.x = std::cos(lat + kLatEvery) * std::cos(lon);
-			vertexData[startlndex + 1].position.y = std::sin(lat + kLatEvery);
-			vertexData[startlndex + 1].position.z = std::cos(lat + kLatEvery) * std::sin(lon);
-			vertexData[startlndex + 1].position.w = 1.0f;
-			vertexData[startlndex + 1].texcoord =
-			{ float(lonlndex) / float(kSubdivision), 1.0f - float(latlndex + 1) / float(kSubdivision) };
-			vertexData[startlndex + 1].normal.x = vertexData[startlndex + 1].position.x;
-			vertexData[startlndex + 1].normal.y = vertexData[startlndex + 1].position.y;
-			vertexData[startlndex + 1].normal.z = vertexData[startlndex + 1].position.z;
-
-			vertexData[startlndex + 2].position.x = std::cos(lat) * std::cos(lon + kLonEvery);
-			vertexData[startlndex + 2].position.y = std::sin(lat);
-			vertexData[startlndex + 2].position.z = std::cos(lat) * std::sin(lon + kLonEvery);
-			vertexData[startlndex + 2].position.w = 1.0f;
-			vertexData[startlndex + 2].texcoord =
-			{ float(lonlndex + 1) / float(kSubdivision), 1.0f - float(latlndex) / float(kSubdivision) };
-			vertexData[startlndex + 2].normal.x = vertexData[startlndex + 2].position.x;
-			vertexData[startlndex + 2].normal.y = vertexData[startlndex + 2].position.y;
-			vertexData[startlndex + 2].normal.z = vertexData[startlndex + 2].position.z;
-
-
-
-			vertexData[startlndex + 3] = vertexData[startlndex + 2];
-			vertexData[startlndex + 4] = vertexData[startlndex + 1];
-
-			vertexData[startlndex + 5].position.x = std::cos(lat + kLatEvery) * std::cos(lon + kLonEvery);
-			vertexData[startlndex + 5].position.y = std::sin(lat + kLatEvery);
-			vertexData[startlndex + 5].position.z = std::cos(lat + kLatEvery) * std::sin(lon + kLonEvery);
-			vertexData[startlndex + 5].position.w = 1.0f;
-			vertexData[startlndex + 5].texcoord =
-			{ float(lonlndex + 1) / float(kSubdivision),1.0f - float(latlndex + 1) / float(kSubdivision) };
-			vertexData[startlndex + 5].normal.x = vertexData[startlndex + 5].position.x;
-			vertexData[startlndex + 5].normal.y = vertexData[startlndex + 5].position.y;
-			vertexData[startlndex + 5].normal.z = vertexData[startlndex + 5].position.z;
-		}
-
-	}
-#pragma endregion
-
-
+	
 
 
 
@@ -387,29 +328,55 @@ void Sprite::CreateVertex()
 
 
 
-	////VertexBufferViewを作成
-	//頂点バッファビューを作成する
-	indexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(uint32_t) * 6);
+	//////VertexBufferViewを作成
+	////頂点バッファビューを作成する
+	//indexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(uint32_t) * 6);
 
-	//リソースの先頭のアドレスから使う
-	indexBufferViewSprite.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点３つ分のサイズ
-	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
-	//１頂点あたりのサイズ
-	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
+	////リソースの先頭のアドレスから使う
+	//indexBufferViewSprite.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	////使用するリソースのサイズは頂点３つ分のサイズ
+	//indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
+	////１頂点あたりのサイズ
+	//indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
 
-	uint32_t* indexDataSprite = nullptr;
-
-	////Resourceにデータを書き込む
 	//
-	////書き込むためのアドレスを取得
-	indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
-	indexDataSprite[0] = 0;
-	indexDataSprite[1] = 1;
-	indexDataSprite[2] = 2;
-	indexDataSprite[3] = 1;
-	indexDataSprite[4] = 3;
-	indexDataSprite[5] = 2;
+
+	//////Resourceにデータを書き込む
+	////
+	//////書き込むためのアドレスを取得
+	//indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
+	//indexDataSprite[0] = 0;
+	//indexDataSprite[1] = 1;
+	//indexDataSprite[2] = 2;
+	//indexDataSprite[3] = 1;
+	//indexDataSprite[4] = 3;
+	//indexDataSprite[5] = 2;
+
+
+	//モデルデータ用
+	/////VertexBufferViewを作成
+	////頂点バッファビューを作成する
+	//indexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(uint32_t) * 6);
+
+	////リソースの先頭のアドレスから使う
+	//indexBufferViewSprite.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	////使用するリソースのサイズは頂点３つ分のサイズ
+	//indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
+	////１頂点あたりのサイズ
+	//indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
+
+	//
+
+	//////Resourceにデータを書き込む
+	////
+	//////書き込むためのアドレスを取得
+	//indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
+	//indexDataSprite[0] = 0;
+	//indexDataSprite[1] = 1;
+	//indexDataSprite[2] = 2;
+	//indexDataSprite[3] = 1;
+	//indexDataSprite[4] = 3;
+	//indexDataSprite[5] = 2;
 
 }
 
@@ -425,8 +392,8 @@ void Sprite::CreateMAterial()
 	//書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color = color_;
-	materialData->enableLighting = true;
-	materialData->uvTrasform =MakeIdentity4x4();
+	materialData->enableLighting = false;
+	materialData->uvTrasform = MakeIdentity4x4();
 
 
 
@@ -515,6 +482,7 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 		if (identifier == "v")
 		{
 			Vector4 position;
+			
 			s >> position.x >> position.y >> position.z;
 			position.w = 1.0f;
 			positions.push_back(position);
@@ -522,18 +490,20 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 		else if (identifier == "vt")
 		{
 			Vector2 texcoord;
-			s >> texcoord.x >> texcoord.y;
+			s >> texcoord.x >> texcoord.y ;
 			texcoords.push_back(texcoord);
 
 		}
 		else if (identifier == "vn")
 		{
 			Vector3 normal;
+			
 			s >> normal.x >> normal.y >> normal.z;
 			normals.push_back(normal);
 		}
 		else if (identifier == "f")
 		{
+			VertexData triangle[3];
 			//面は三角形限定。その他は未対応
 			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex)
 			{
@@ -554,10 +524,16 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
-				VertexData vertex = { position, texcoord, normal };
-				modelData.vertices.push_back(vertex);
-
+				/*VertexData vertex = { position, texcoord, normal };
+				modelData.vertices.push_back(vertex);*/
+				position.x *= -1.0f;
+			  //texcoord.y *= -1.0f;
+				normal.x *= -1.0f;
+				triangle[faceVertex] = { position, texcoord, normal };
 			}
+			modelData.vertices.push_back(triangle[2]);
+			modelData.vertices.push_back(triangle[1]);
+			modelData.vertices.push_back(triangle[0]);
 		}
 	
 	
@@ -569,7 +545,7 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 
 	//4.ModelDataを返す
 
-	return ModelData();
+	return modelData;
 }
 
 

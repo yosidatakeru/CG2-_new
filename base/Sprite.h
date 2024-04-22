@@ -84,7 +84,8 @@ public:
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 private:
 	VertexData* vertexData = nullptr;
-	
+	uint32_t* indexDataSprite = nullptr;
+
 	ID3D12Resource* textureResource = nullptr;
 	ID3D12Resource* textureResource2 = nullptr;
 	

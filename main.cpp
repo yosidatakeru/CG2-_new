@@ -102,10 +102,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	 sprite->SetPosintion(pos);*/
 		
      //回転の処理
-	 float rot = sprite->GetRotation();
+	/* float rot = sprite->GetRotation();
 	 rot += 0.005f;
 	 sprite->SetRotaion(rot);
-	  
+	  */
 		
 	//色の処理
 	 /*Vector4 color = sprite->GetColor();
