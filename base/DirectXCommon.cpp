@@ -1,7 +1,9 @@
 #include "DIrectXCommon.h"
 #include"Base.h"
 #include <cassert>
-
+#include<d3d12.h>
+#include <cassert>
+#include"externals/DirectXTex/DirectXTex.h"
 
 void DirectXCommon::Initialize(WinApp* winApp)
 {
