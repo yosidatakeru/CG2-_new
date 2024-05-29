@@ -1,9 +1,10 @@
 #include "SpriteCommon.h"
 #include <cassert>
 #include"Base.h"
-
-
-
+#include"externals/DirectXTex/d3dx12.h"
+#include<vector>
+#include <stdexcept>
+#include <d3d12.h>  
 
 void SpriteCommon::Initialize(DirectXCommon* directXCommon)
 {
@@ -16,6 +17,7 @@ void SpriteCommon::Initialize(DirectXCommon* directXCommon)
 		IDxcIncludeHandler * includeHandler);
 	DXCInitialize();
 	PsoGenerate();
+	
 }
 
 
@@ -245,7 +247,7 @@ void SpriteCommon::PsoGenerate()
 
 void SpriteCommon::Releases()
 {
-	
+	//intermediateResource->Release();
 	graphicsPipelineState->Release();
 	signatureBlob->Release();
 	if (errorBlob) {
@@ -255,7 +257,7 @@ void SpriteCommon::Releases()
 	pixelShaderBlob->Release();
 
 	vertexShaderBlob->Release();
-	
+	intermediateResource_->Release();
 }
 
 
@@ -423,7 +425,7 @@ ID3D12Resource* SpriteCommon::CreateTextureResource(ID3D12Device* device, const 
 		//利用するHeapの設定。非常に特殊な運用。02_04exで一般的なケース版がある
 		D3D12_HEAP_PROPERTIES heapProperties{};
 		//細かい設定を行う
-		heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;
+		heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
 		//WriteBackポリシーでCPUアクセス可能
 		heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 		//プロセッサの近くに配置
@@ -437,7 +439,7 @@ ID3D12Resource* SpriteCommon::CreateTextureResource(ID3D12Device* device, const 
 			&heapProperties,					//Heapの設定
 			D3D12_HEAP_FLAG_NONE,				//Heapの特殊な設定
 			&resourceDesc,						//Resourceの設定
-			D3D12_RESOURCE_STATE_GENERIC_READ,	//初回のResourceState。Textureは基本読むだけ
+			D3D12_RESOURCE_STATE_COPY_DEST,	//初回のResourceState。Textureは基本読むだけ
 			nullptr,							//Clear最適値。使わないのでnullptr
 			IID_PPV_ARGS(&resource));			//作成するResourceポインタへのポインタ
 		assert(SUCCEEDED(hr));
@@ -479,42 +481,79 @@ DirectX::ScratchImage SpriteCommon::LoadTexture(const std::wstring& filePath)
 
 	//ミップマップ月のデータを返す
 	return image;
+	
+	
 
 }
 
 
-
-
-
-
-
-
-
-
-
-void SpriteCommon::UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages)
+[[nodiscard]]
+ID3D12Resource* SpriteCommon::UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages)
 {
+	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+	DirectX::PrepareUpload(directXCommon->GetDevice(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
+	
 
-	////Meta情報を取得
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+	uint64_t intermediateSize = GetRequiredIntermediateSize(texture, 0, UINT(subresources.size()));
+	intermediateResource_ = CreateBufferResource(directXCommon->GetDevice(), intermediateSize);
+	
+	D3D12_RESOURCE_BARRIER barrierToCopyDest = {};
+	barrierToCopyDest.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrierToCopyDest.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrierToCopyDest.Transition.pResource = texture;
+	barrierToCopyDest.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrierToCopyDest.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
+	barrierToCopyDest.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+	directXCommon->GetCommandList()->ResourceBarrier(1, &barrierToCopyDest);
 
-	//全MipMapについて
-	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel)
-	{
-	//	MipMapLevelを指定して各Imageを取得
-		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
-	//	Textureに転送
-		HRESULT hr = texture->WriteToSubresource(
-			UINT(mipLevel),
-			nullptr,				//全領域
-			img->pixels,			//元データアドレス
-			UINT(img->rowPitch),	//1ラインサイズ
-			UINT(img->slicePitch));	//1枚サイズ
 
-		assert(SUCCEEDED(hr));
-	}
+	UpdateSubresources(directXCommon->GetCommandList(), texture, intermediateResource_, 0, 0, UINT(subresources.size()), subresources.data());
+
+	//Tetureへの転送後には利用するできるよう、D3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = texture;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
+	directXCommon->GetCommandList()->ResourceBarrier(1, &barrier);
+	OutputDebugStringA("Hello,DirectX!\n");
+	return intermediateResource_;
 
 }
 
 
 
+
+
+
+
+
+
+//void SpriteCommon::UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages)
+//{
+//
+//	////Meta情報を取得
+//	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+//
+//	//全MipMapについて
+//	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel)
+//	{
+//	//	MipMapLevelを指定して各Imageを取得
+//		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
+//	//	Textureに転送
+//		HRESULT hr = texture->WriteToSubresource(
+//			UINT(mipLevel),
+//			nullptr,				//全領域
+//			img->pixels,			//元データアドレス
+//			UINT(img->rowPitch),	//1ラインサイズ
+//			UINT(img->slicePitch));	//1枚サイズ
+//
+//		assert(SUCCEEDED(hr));
+//	}
+//
+//}
+//
+//
+//

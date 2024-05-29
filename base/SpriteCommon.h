@@ -4,6 +4,8 @@
 #include"DirectXCommon.h"
 #include"externals/DirectXTex/DirectXTex.h"
 #include <wrl.h>
+#include"externals/DirectXTex/d3dx12.h"
+#include<vector>
 using namespace Microsoft::WRL;
 
 class SpriteCommon
@@ -24,7 +26,12 @@ public:
 	ID3D12PipelineState* GetGraphicsPipelineState() const {return graphicsPipelineState;}
 	DirectX::ScratchImage LoadTexture(const std::wstring& filePath);
 	//シェーダーに送る
-	void UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
+	//void UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
+
+	ID3D12Resource* UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
+	
+	ID3D12Resource* GetIntermediateResource() { return  intermediateResource_; }
+	void SetIntermediateResource(ID3D12Resource* intermediateResource) { intermediateResource_ = intermediateResource; }
 
 private:
 	void PsoGenerate();
@@ -82,7 +89,9 @@ private:
  Matrix4x4* wvpData = nullptr;
  Transform* transform=nullptr;
  
+ ID3D12Resource* intermediateResource_ = nullptr;
 
+ 
  
 
 

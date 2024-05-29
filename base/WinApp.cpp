@@ -42,6 +42,7 @@ void WinApp::Initialize()
 	//ウィンドウクラスを登録する
 	RegisterClass(&wc);
 
+	OutputDebugStringA("wc.lpfnWndProc\n");
 #pragma endregion
 
 

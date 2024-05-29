@@ -21,7 +21,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//COMの初期化
 
 	CoInitializeEx(0, COINIT_MULTITHREADED);
-	
+	//出力ウィンドウへの文字出力
+	OutputDebugStringA("Hello,DirectX!\n");
 
 
 #pragma region ポインタ置き場

@@ -5,19 +5,21 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
 
+	
 	////画像読み込み
 	DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
 	textureResource = CreateTextureResource(directXCommon_->GetDevice(), metaData);
-	spriteCommon_->UploadTewtureData(textureResource, mipImages);
-	
-	DirectX::ScratchImage mipImages2 = spriteCommon->LoadTexture(L"Resources/monsterBall.png");
-	const DirectX::TexMetadata& metaData2 = mipImages2.GetMetadata();
-	textureResource2 = CreateTextureResource(directXCommon_->GetDevice(), metaData2);
-	spriteCommon_->UploadTewtureData(textureResource2, mipImages2);
 	
 	
-
+	ID3D12Resource* texture = spriteCommon_->GetIntermediateResource();
+	
+	texture = spriteCommon_->UploadTewtureData(textureResource, mipImages);
+	spriteCommon_->SetIntermediateResource(texture);
+	OutputDebugStringA("Hello,DirectX!\n");
+	OutputDebugStringA("Hello,DirectX!\n");
+	//spriteCommon_->UploadTewtureData(textureResource, mipImages);
+	
 	////SRV
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metaData.format;
@@ -26,18 +28,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	srvDesc.Texture2D.MipLevels = UINT(metaData.mipLevels);
 
 
-	////SRV2
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
-	srvDesc2.Format = metaData2.format;
-	srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	srvDesc2.Texture2D.MipLevels = UINT(metaData2.mipLevels);
-
-
-	const uint32_t desriptorSizeSRV = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	const uint32_t desriptorSizeRTV = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	const uint32_t desriptorSizeDSV = directXCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-
+	
 
 
 
@@ -48,11 +39,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	textureSrvHandleGPU =
 		directXCommon_->GetSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
 
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 =
-		directXCommon_->GetSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	textureSrvHandleGPU =
-		directXCommon_->GetSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
-
+	
 
 
 	textureSrvHandleCPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -64,19 +51,10 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
 
 
-	textureSrvHandleCPU2 = GetCPUDescriptorHandle(directXCommon->GetSrvDescriptorHeap(), desriptorSizeSRV, 2);
-	textureSrvHandleGPU2 = GetGPUDescriptorHandle(directXCommon->GetSrvDescriptorHeap(), desriptorSizeSRV, 2);
-
-
-
-	//SRVの生成
-	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource2,&srvDesc2, textureSrvHandleCPU2);
-
+	
 
 	CreateVertex();
-	/*const uint32_t kSubdivision = 12;
-	const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
-	float pi = std::numbers::pi_v<float>;*/
+	
 
 	
 	CreateMAterial();
@@ -247,7 +225,7 @@ void Sprite::Releases()
 	materialResource->Release();
 	wvpResource->Release();
 	textureResource->Release();
-	textureResource2->Release();
+	//textureResource2->Release();
 }
 
 
@@ -328,55 +306,6 @@ void Sprite::CreateVertex()
 
 
 
-	//////VertexBufferViewを作成
-	////頂点バッファビューを作成する
-	//indexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(uint32_t) * 6);
-
-	////リソースの先頭のアドレスから使う
-	//indexBufferViewSprite.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	////使用するリソースのサイズは頂点３つ分のサイズ
-	//indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
-	////１頂点あたりのサイズ
-	//indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
-
-	//
-
-	//////Resourceにデータを書き込む
-	////
-	//////書き込むためのアドレスを取得
-	//indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
-	//indexDataSprite[0] = 0;
-	//indexDataSprite[1] = 1;
-	//indexDataSprite[2] = 2;
-	//indexDataSprite[3] = 1;
-	//indexDataSprite[4] = 3;
-	//indexDataSprite[5] = 2;
-
-
-	//モデルデータ用
-	/////VertexBufferViewを作成
-	////頂点バッファビューを作成する
-	//indexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(uint32_t) * 6);
-
-	////リソースの先頭のアドレスから使う
-	//indexBufferViewSprite.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	////使用するリソースのサイズは頂点３つ分のサイズ
-	//indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
-	////１頂点あたりのサイズ
-	//indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
-
-	//
-
-	//////Resourceにデータを書き込む
-	////
-	//////書き込むためのアドレスを取得
-	//indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
-	//indexDataSprite[0] = 0;
-	//indexDataSprite[1] = 1;
-	//indexDataSprite[2] = 2;
-	//indexDataSprite[3] = 1;
-	//indexDataSprite[4] = 3;
-	//indexDataSprite[5] = 2;
 
 }
 
