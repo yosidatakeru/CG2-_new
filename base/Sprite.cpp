@@ -1,5 +1,7 @@
 #include "Sprite.h"
-#include"Bufftr.h"
+#include "Base.h"
+
+
 void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon)
 {
 	directXCommon_ = directXCommon;
@@ -8,17 +10,16 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	
 	////画像読み込み
 	DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
+	//std::wstring filePath = ConvertString(modelData.material.textureFilePath);
+	//DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(filePath);
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
-	textureResource = CreateTextureResource(directXCommon_->GetDevice(), metaData);
+	textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
 	
-	
+	//画像データを送る
 	ID3D12Resource* texture = spriteCommon_->GetIntermediateResource();
-	
 	texture = spriteCommon_->UploadTewtureData(textureResource, mipImages);
 	spriteCommon_->SetIntermediateResource(texture);
-	OutputDebugStringA("Hello,DirectX!\n");
-	OutputDebugStringA("Hello,DirectX!\n");
-	//spriteCommon_->UploadTewtureData(textureResource, mipImages);
+	
 	
 	////SRV
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -238,7 +239,7 @@ void Sprite::CreateVertex()
 
 	////VertexBufferViewを作成
 	//頂点バッファビューを作成する
-	vertexResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
+	vertexResource =spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
@@ -261,7 +262,7 @@ void Sprite::CreateVertex()
 
 
 	//Sprite用のの頂点リソースを作る
-	 vertexResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
+	 vertexResourceSprite = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
 	
 
 	//リソースの先頭のアドレス
@@ -315,7 +316,7 @@ void Sprite::CreateMAterial()
 {
 	
 	//Resourceにデータを書き込む
-	materialResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material) ); ;
+	materialResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material) ); ;
 
 
 	//書き込むためのアドレスを取得
@@ -327,7 +328,7 @@ void Sprite::CreateMAterial()
 
 
 	//Resourceにデータを書き込む
-	materialResourceSprit = CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material)); ;
+	materialResourceSprit = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material)); ;
 	//書き込むためのアドレスを取得
 	materialResourceSprit->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprit));
 	materialDataSprit->color = color_;
@@ -344,7 +345,7 @@ void Sprite::CreateMAterial()
 void Sprite::CreateWVP()
 {
 	////Resourceにデータを書き込む
-	wvpResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix)); ;
+	wvpResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix)); ;
 	//書き込むためのアドレスを取得
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 
@@ -358,7 +359,7 @@ void Sprite::CreateWVP()
 void Sprite::CreateTransform()
 {
 	//Sprite用のTransformationMatrix用のリソースを作るMatrix4x4 1とつぶんのサイズを用意する
-	transformationMatrixResourceSprite = CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix));
+	transformationMatrixResourceSprite = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix));
 	
 	
 
@@ -373,7 +374,7 @@ void Sprite::CreateTransform()
 void Sprite::CreatLight()
 {
 	////Resourceにデータを書き込む
-	directionalLighlResource = CreateBufferResource(directXCommon_->GetDevice(), sizeof(DirectionalLigha)); ;
+	directionalLighlResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(DirectionalLigha)); ;
 
 	// directionalLighlData = nullptr;
 
@@ -429,6 +430,15 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 			
 			s >> normal.x >> normal.y >> normal.z;
 			normals.push_back(normal);
+		}
+		else if (identifier == "mtllib")
+		{
+		    //materialTemplateLidraryファイルの名前を取得
+			std::string materialFilename;
+			s >> materialFilename;
+			//基本的にobjファイルと同一階層にmtlは存在させるの,ディレクトリ名とファイル名を渡す
+			modelData.material = LoadMatrialTemplateFile(directoryPath, materialFilename);
+
 		}
 		else if (identifier == "f")
 		{
@@ -503,7 +513,7 @@ MatrialData Sprite::LoadMatrialTemplateFile(const std::string& directoryPath, co
 		s >> identifier;
 
 		//identifierに応じて処理
-		if (identifier == "map_kd")
+		if (identifier == "map_Kd")
 		{
 			std::string textureFilename;
 			s >> textureFilename;

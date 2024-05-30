@@ -425,7 +425,7 @@ ID3D12Resource* SpriteCommon::CreateTextureResource(ID3D12Device* device, const 
 		//利用するHeapの設定。非常に特殊な運用。02_04exで一般的なケース版がある
 		D3D12_HEAP_PROPERTIES heapProperties{};
 		//細かい設定を行う
-		heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+		heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;
 		//WriteBackポリシーでCPUアクセス可能
 		heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 		//プロセッサの近くに配置
@@ -479,7 +479,7 @@ DirectX::ScratchImage SpriteCommon::LoadTexture(const std::wstring& filePath)
 		DirectX::TEX_FILTER_SRGB, 0, mipImages);
 	assert(SUCCEEDED(hr));
 
-	//ミップマップ月のデータを返す
+	//ミップマップのデータを返す
 	return image;
 	
 	
@@ -496,15 +496,16 @@ ID3D12Resource* SpriteCommon::UploadTewtureData(ID3D12Resource* texture, const D
 
 	uint64_t intermediateSize = GetRequiredIntermediateSize(texture, 0, UINT(subresources.size()));
 	intermediateResource_ = CreateBufferResource(directXCommon->GetDevice(), intermediateSize);
-	
-	D3D12_RESOURCE_BARRIER barrierToCopyDest = {};
-	barrierToCopyDest.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrierToCopyDest.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrierToCopyDest.Transition.pResource = texture;
-	barrierToCopyDest.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrierToCopyDest.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
-	barrierToCopyDest.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
-	directXCommon->GetCommandList()->ResourceBarrier(1, &barrierToCopyDest);
+	//
+	//// コピー前にリソースの状態をD3D12_RESOURCE_STATE_COPY_DESTに遷移
+	//D3D12_RESOURCE_BARRIER barrierToCopyDest = {};
+	//barrierToCopyDest.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//barrierToCopyDest.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//barrierToCopyDest.Transition.pResource = texture;
+	//barrierToCopyDest.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	//barrierToCopyDest.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
+	//barrierToCopyDest.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+	//directXCommon->GetCommandList()->ResourceBarrier(1, &barrierToCopyDest);
 
 
 	UpdateSubresources(directXCommon->GetCommandList(), texture, intermediateResource_, 0, 0, UINT(subresources.size()), subresources.data());
