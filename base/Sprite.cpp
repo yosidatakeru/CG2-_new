@@ -9,6 +9,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	CreateVertex();
 
+
 	////画像読み込み
 	//DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
 	std::wstring filePath = ConvertString(modelData.material.textureFilePath);
