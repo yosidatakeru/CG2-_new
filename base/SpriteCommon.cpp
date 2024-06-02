@@ -6,6 +6,11 @@
 #include <stdexcept>
 #include <d3d12.h>  
 
+#include <comdef.h> // For _com_error
+#include <iostream>
+#include <filesystem>
+
+
 void SpriteCommon::Initialize(DirectXCommon* directXCommon)
 {
 	this->directXCommon = directXCommon;
@@ -467,8 +472,8 @@ DirectX::ScratchImage SpriteCommon::LoadTexture(const std::wstring& filePath)
 	HRESULT hr{};
 	//テクスチャファイルを読んでプログラムで扱えるようにする
 	DirectX::ScratchImage image{};
-
 	hr = DirectX::LoadFromWICFile(filePath.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	
 	assert(SUCCEEDED(hr));
 
 	//ミップマップの作成
@@ -496,16 +501,16 @@ ID3D12Resource* SpriteCommon::UploadTewtureData(ID3D12Resource* texture, const D
 
 	uint64_t intermediateSize = GetRequiredIntermediateSize(texture, 0, UINT(subresources.size()));
 	intermediateResource_ = CreateBufferResource(directXCommon->GetDevice(), intermediateSize);
-	//
-	//// コピー前にリソースの状態をD3D12_RESOURCE_STATE_COPY_DESTに遷移
-	//D3D12_RESOURCE_BARRIER barrierToCopyDest = {};
-	//barrierToCopyDest.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//barrierToCopyDest.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//barrierToCopyDest.Transition.pResource = texture;
-	//barrierToCopyDest.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	//barrierToCopyDest.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
-	//barrierToCopyDest.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
-	//directXCommon->GetCommandList()->ResourceBarrier(1, &barrierToCopyDest);
+	////
+	////// コピー前にリソースの状態をD3D12_RESOURCE_STATE_COPY_DESTに遷移
+	////D3D12_RESOURCE_BARRIER barrierToCopyDest = {};
+	////barrierToCopyDest.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	////barrierToCopyDest.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	////barrierToCopyDest.Transition.pResource = texture;
+	////barrierToCopyDest.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	////barrierToCopyDest.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
+	////barrierToCopyDest.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+	////directXCommon->GetCommandList()->ResourceBarrier(1, &barrierToCopyDest);
 
 
 	UpdateSubresources(directXCommon->GetCommandList(), texture, intermediateResource_, 0, 0, UINT(subresources.size()), subresources.data());

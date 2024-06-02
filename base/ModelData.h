@@ -6,4 +6,5 @@ struct  ModelData
 {
 	std::vector<VertexData> vertices;
 	MatrialData material;
+	int textureIndex;
 };

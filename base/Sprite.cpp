@@ -7,11 +7,12 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
 
-	
+	CreateVertex();
+
 	////画像読み込み
-	DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
-	//std::wstring filePath = ConvertString(modelData.material.textureFilePath);
-	//DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(filePath);
+	//DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
+	std::wstring filePath = ConvertString(modelData.material.textureFilePath);
+	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(filePath);
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
 	textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
 	
@@ -54,7 +55,6 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	
 
-	CreateVertex();
 	
 
 	
@@ -431,15 +431,6 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 			s >> normal.x >> normal.y >> normal.z;
 			normals.push_back(normal);
 		}
-		else if (identifier == "mtllib")
-		{
-		    //materialTemplateLidraryファイルの名前を取得
-			std::string materialFilename;
-			s >> materialFilename;
-			//基本的にobjファイルと同一階層にmtlは存在させるの,ディレクトリ名とファイル名を渡す
-			modelData.material = LoadMatrialTemplateFile(directoryPath, materialFilename);
-
-		}
 		else if (identifier == "f")
 		{
 			VertexData triangle[3];
@@ -482,14 +473,19 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 			modelData.vertices.push_back(triangle[1]);
 			modelData.vertices.push_back(triangle[0]);
 		}
-	
+		else if (identifier == "mtllib")
+		{
+			//materialTemplateLidraryファイルの名前を取得
+			std::string materialFilename;
+			s >> materialFilename;
+			//基本的にobjファイルと同一階層にmtlは存在させるの,ディレクトリ名とファイル名を渡す
+			modelData.material = LoadMatrialTemplateFile(directoryPath, materialFilename);
+
+		}
 	
 	
 	}
-
-
-
-
+	
 	//4.ModelDataを返す
 
 	return modelData;
