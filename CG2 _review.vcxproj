@@ -27,6 +27,7 @@
     <ClCompile Include="base\SpriteCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ResourceObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.PS.hlsl">
@@ -71,6 +72,7 @@
     <ClInclude Include="base\VertexData.h" />
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Bufftr.h" />
+    <ClInclude Include="ResourceObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="base\externals\imgui\LICENSE.txt" />
