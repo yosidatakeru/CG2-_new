@@ -7,15 +7,15 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
 	//モデル読み込み
-	//modelData = LoadObjFile("Resources", "plane.obj");
+	modelData = LoadObjFile("Resources", "plane.obj");
 	//modelData = LoadObjFile("Resources", "axis.obj");*/
 	CreateVertex();
 	
 
 	////画像読み込み
-	DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
-	//std::wstring filePath = ConvertString(modelData.material.textureFilePath);
-	//DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(filePath);
+	//DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
+	std::wstring filePath = ConvertString(modelData.material.textureFilePath);
+	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(filePath);
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
 	textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
 	
@@ -122,7 +122,7 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	
 	ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
 
-	ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 3.0f);
+	//ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 3.0f);
 
 
 	ImGui::End();
@@ -174,9 +174,6 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	//マテリアルCBufferの場所を設定
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-	//wvp用のCBufferの場所を設定
-	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-
 	
 	
 	//directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
@@ -187,11 +184,19 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	//ライト用
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
-	
-	//描画(DrawCall)３兆点で１つのインスタンス。
-	//directXCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	/*for (int  i = 0; i < 10; i++)
+	{*/
+		//wvp用のCBufferの場所を設定
+		directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
-	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+
+		//描画(DrawCall)３兆点で１つのインスタンス。
+		//この処理非常に重いらしい
+		directXCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	//}
+	
+
+	//directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 	
 
 
@@ -238,56 +243,40 @@ void Sprite::Releases()
 void Sprite::CreateVertex()
 {
 
+	////primitive(プリミティブ)
+	//modelData.vertices.push_back({ .position = {1.0f, 1.0f, 0.0f, 1.0f}, .texcoord = {0.0f,0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	//modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texcoord = {1.0f,0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	//modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texcoord = {0.0f,1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	//modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texcoord = {0.0f,1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	//modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texcoord = {1.0f,0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	//modelData.vertices.push_back({ .position = {-1.0f, -1.0f, 0.0f, 1.0f}, .texcoord = {1.0f,1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+
+	//modelData.material.textureFilePath = "./Resources/uvChecker.png";
+
+
 	
-	////VertexBufferViewを作成
-	////頂点バッファビューを作成する
-	//vertexResource =spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
-
-	////リソースの先頭のアドレスから使う
-	//vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	////使用するリソースのサイズは頂点３つ分のサイズ
-	//vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size() );
-	////１頂点あたりのサイズ
-	//vertexBufferView.StrideInBytes = sizeof(VertexData);
-
-
-	//////Resourceにデータを書き込む
-	////
-	//////書き込むためのアドレスを取得
-	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
-	//std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
-
-	//
-
-
-	////VertexBufferViewを作成
+	//VertexBufferViewを作成
 	//頂点バッファビューを作成する
-	vertexResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
+	vertexResource =spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点３つ分のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size() );
 	//１頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
 
-	//Resourceにデータを書き込む
-	
-	//書き込むためのアドレスを取得
+	////Resourceにデータを書き込む
+	//
+	////書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	//左下
-	vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
-	vertexData[0].texcoord = { 0.0f,1.0f };
-	//上
-	vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };
-	vertexData[1].texcoord = { 0.5f,0.0f };
-	//右下
-	vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
-	vertexData[2].texcoord = { 1.0f,1.0f };
+
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
 	
+
+
 
 
 
@@ -452,8 +441,7 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 				texcoord.y *= -1.0f;
 				triangle[faceVertex] = { position, texcoord, normal };
 				position.x *= -1.0f;
-				
-				normal.x *= -1.0f;
+				//normal.x *= -1.0f;
 
 			}
 			
