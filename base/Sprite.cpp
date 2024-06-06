@@ -192,7 +192,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 		//描画(DrawCall)３兆点で１つのインスタンス。
 		//この処理非常に重いらしい
-		directXCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+		directXCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), instanceCount, 0, 0);
 	}
 	
 

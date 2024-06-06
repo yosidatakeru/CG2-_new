@@ -181,5 +181,7 @@ private:
 	 ID3D12Resource* directionalLighlResource = nullptr;
 	 DirectionalLigha* directionalLighlData = nullptr;
 	 Vector3 light = { 0.0f, -1.0f,0.0f };
+
+	 static const int32_t instanceCount = 10;
 };
 

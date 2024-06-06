@@ -183,10 +183,17 @@ void SpriteCommon::PsoGenerate()
 
 	#pragma region ShaderをCompileする
 		//ShaderをCompileする
-		 vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+		/* vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 		assert(vertexShaderBlob != nullptr);
 	
 		 pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+		assert(pixelShaderBlob != nullptr);*/
+
+
+		vertexShaderBlob = CompileShader(L"Particle.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+		assert(vertexShaderBlob != nullptr);
+
+		pixelShaderBlob = CompileShader(L"Particle.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 		assert(pixelShaderBlob != nullptr);
 	#pragma endregion
 
