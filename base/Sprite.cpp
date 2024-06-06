@@ -7,7 +7,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
 	//モデル読み込み
-	modelData = LoadObjFile("Resources", "plane.obj");
+	//modelData = LoadObjFile("Resources", "plane.obj");
 	//modelData = LoadObjFile("Resources", "axis.obj");*/
 	CreateVertex();
 	
@@ -184,8 +184,8 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	//ライト用
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
-	/*for (int  i = 0; i < 10; i++)
-	{*/
+	for (int  i = 0; i < 10; i++)
+	{
 		//wvp用のCBufferの場所を設定
 		directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
@@ -193,7 +193,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 		//描画(DrawCall)３兆点で１つのインスタンス。
 		//この処理非常に重いらしい
 		directXCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
-	//}
+	}
 	
 
 	//directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
@@ -243,15 +243,15 @@ void Sprite::Releases()
 void Sprite::CreateVertex()
 {
 
-	////primitive(プリミティブ)
-	//modelData.vertices.push_back({ .position = {1.0f, 1.0f, 0.0f, 1.0f}, .texcoord = {0.0f,0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	//modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texcoord = {1.0f,0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	//modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texcoord = {0.0f,1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	//modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texcoord = {0.0f,1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	//modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texcoord = {1.0f,0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	//modelData.vertices.push_back({ .position = {-1.0f, -1.0f, 0.0f, 1.0f}, .texcoord = {1.0f,1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	//primitive(プリミティブ)
+	modelData.vertices.push_back({ .position = {1.0f, 1.0f, 0.0f, 1.0f}, .texcoord = {0.0f,0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texcoord = {1.0f,0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texcoord = {0.0f,1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	modelData.vertices.push_back({ .position = {1.0f, -1.0f, 0.0f, 1.0f}, .texcoord = {0.0f,1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f}, .texcoord = {1.0f,0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	modelData.vertices.push_back({ .position = {-1.0f, -1.0f, 0.0f, 1.0f}, .texcoord = {1.0f,1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
 
-	//modelData.material.textureFilePath = "./Resources/uvChecker.png";
+	modelData.material.textureFilePath = "./Resources/uvChecker.png";
 
 
 	
