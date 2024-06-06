@@ -6,14 +6,16 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 {
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
-
+	//モデル読み込み
+	//modelData = LoadObjFile("Resources", "plane.obj");
+	//modelData = LoadObjFile("Resources", "axis.obj");*/
 	CreateVertex();
-
+	
 
 	////画像読み込み
-	//DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
-	std::wstring filePath = ConvertString(modelData.material.textureFilePath);
-	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(filePath);
+	DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
+	//std::wstring filePath = ConvertString(modelData.material.textureFilePath);
+	//DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(filePath);
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
 	textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
 	
@@ -100,12 +102,12 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 
 
 
-	////Sprite用のWorlsViewProjectionMatrixを作る
-	Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
-	uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateXMatrix(uvTransformSprite.rotate.z));
-	uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
-	materialDataSprit->uvTrasform = uvTransformMatrix;
-	
+	//////Sprite用のWorlsViewProjectionMatrixを作る
+	//Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
+	//uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateXMatrix(uvTransformSprite.rotate.z));
+	//uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
+	//materialDataSprit->uvTrasform = uvTransformMatrix;
+	//
 
 	
 
@@ -119,6 +121,8 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	//ImGui::Begin("model");
 	
 	ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
+
+	ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 3.0f);
 
 
 	ImGui::End();
@@ -185,11 +189,9 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 	
 	//描画(DrawCall)３兆点で１つのインスタンス。
-	directXCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	//directXCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
-	//描画(DrawCall/ドローコール)6このインデックスを使用して1つのインスタンスを描画
-	//directXCommon->GetCommandList()->DrawIndexedInstanced(UINT(modelData.vertices.size()), 1, 0, 0, 0);
-	
+	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 	
 
 
@@ -221,7 +223,7 @@ void Sprite::Releases()
 	//indexResourceSprite->Release();
 	directionalLighlResource->Release();
 	transformationMatrixResourceSprite->Release();
-	vertexResourceSprite->Release();
+	//vertexResourceSprite->Release();
 	vertexResource->Release();
 	materialResourceSprit->Release();
 	materialResource->Release();
@@ -235,72 +237,57 @@ void Sprite::Releases()
 
 void Sprite::CreateVertex()
 {
-	//モデル読み込み
-	modelData = LoadObjFile("Resources", "plane.obj");
+
+	
+	////VertexBufferViewを作成
+	////頂点バッファビューを作成する
+	//vertexResource =spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
+
+	////リソースの先頭のアドレスから使う
+	//vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	////使用するリソースのサイズは頂点３つ分のサイズ
+	//vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size() );
+	////１頂点あたりのサイズ
+	//vertexBufferView.StrideInBytes = sizeof(VertexData);
+
+
+	//////Resourceにデータを書き込む
+	////
+	//////書き込むためのアドレスを取得
+	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+	//std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+
+	//
+
 
 	////VertexBufferViewを作成
 	//頂点バッファビューを作成する
-	vertexResource =spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
+	vertexResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点３つ分のサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size() );
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
 	//１頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
 
-	////Resourceにデータを書き込む
-	//
-	////書き込むためのアドレスを取得
+	//Resourceにデータを書き込む
+	
+	//書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
-
-	
-
-
-
-
-	//Sprite用のの頂点リソースを作る
-	 vertexResourceSprite = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
-	
-
-	//リソースの先頭のアドレス
-	vertexbufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
-
-	//使用するリソースのサイズは頂点6つぶんのサイズ
-	vertexbufferViewSprite.SizeInBytes = sizeof(VertexData) * 6;
-
-	//１頂点当たりのサイズ
-	vertexbufferViewSprite.StrideInBytes = sizeof(VertexData);
-
-	//頂点データの設定
-	//解放処理していない
-	
-	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
-
-	vertexDataSprite[0].position = {0.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
-	//上
-	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
-	//右下
-	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
-
-
 	//左下
-	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
+	vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
+	vertexData[0].texcoord = { 0.0f,1.0f };
 	//上
-	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
+	vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };
+	vertexData[1].texcoord = { 0.5f,0.0f };
 	//右下
-	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
+	vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
+	vertexData[2].texcoord = { 1.0f,1.0f };
 
-
+	
 
 
 

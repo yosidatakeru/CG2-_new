@@ -6,7 +6,7 @@
 #include <string>
 #include <format>
 #include <dxcapi.h>
-
+#include<wrl.h>
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -33,7 +33,7 @@ public:
 
 	void Releases();
 
-     ID3D12Device* GetDevice() const { return device; }
+     ID3D12Device* GetDevice() const { return device.Get(); }
 
 
 	 ID3D12GraphicsCommandList* GetCommandList() const { return commandList; }
@@ -72,9 +72,10 @@ private:
 	HRESULT hr;
 	WinApp* winApp = nullptr;
 
-	ID3D12Device* device = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
 	
-	IDXGIFactory7* dxgiFactory = nullptr;
+
+	Microsoft::WRL::ComPtr< IDXGIFactory7> dxgiFactory = nullptr;
 	
 	ID3D12CommandQueue* commandQueue = nullptr;
 

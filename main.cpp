@@ -4,6 +4,7 @@
 #include"base/SpriteCommon.h"
 #include"base/ImGuiManager.h"
 #include"base/Sprite.h"
+#include"base/ResourceObject.h"
 
 
 #pragma endregion
@@ -154,17 +155,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 #pragma region ReportLiveObjects
-	
-	////リソースリークチェック
-	IDXGIDebug1* debug;
-	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) 
-	{
-		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
-		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-		debug->Release();
-	}
 
+	////リソースリークチェック
+	//こいつを最後に呼び出す
+	//struct D3DResourceLeakChecker
+	struct D3DResourceLeakChecker
+	{
+		~D3DResourceLeakChecker()
+		{
+
+			IDXGIDebug1* debug;
+			if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug))))
+			{
+				debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
+				debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
+				debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
+				debug->Release();
+			}
+		}
+	};
+	delete sprite;
 #pragma endregion
 
 #pragma region delete

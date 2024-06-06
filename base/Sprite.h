@@ -123,16 +123,20 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexbufferViewSprite{};
 
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
-
+	//
+	
 	ModelData modelData; // 構築するMaterualData
+
+	
 
 
 	float rotation = 0;
 
 	//色パラメーター
-	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
+	Vector4 color_ = {1.0f, 1.0f, 1.0f, 1.0f};
 
-	Transform transform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	
+	Transform transform_ { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	
 	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
 

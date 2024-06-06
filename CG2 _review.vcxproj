@@ -23,11 +23,12 @@
     <ClCompile Include="base\ImGuiManager.cpp" />
     <ClCompile Include="base\Model.cpp" />
     <ClCompile Include="base\MyFunction.cpp" />
+    <ClCompile Include="base\ResourceObject.cpp" />
     <ClCompile Include="base\Sprite.cpp" />
     <ClCompile Include="base\SpriteCommon.cpp" />
+    <ClCompile Include="base\SpriteTriangle.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ResourceObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.PS.hlsl">
@@ -64,6 +65,7 @@
     <ClInclude Include="base\MyFunction.h" />
     <ClInclude Include="base\Sprite.h" />
     <ClInclude Include="base\SpriteCommon.h" />
+    <ClInclude Include="base\SpriteTriangle.h" />
     <ClInclude Include="base\Transform.h" />
     <ClInclude Include="base\Vector.h" />
     <ClInclude Include="base\Vector2.h" />

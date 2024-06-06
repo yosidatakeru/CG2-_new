@@ -262,11 +262,11 @@ void DirectXCommon::InitializeRenderTargetView()
 
 	////ディスクリプタヒープの生成
 	//RTV用のヒープディスクリプタの数は２。RTVはhader内で触る物でないのでShaderVisibleはfales
- rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+ rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 
- srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+ srvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 
- dsvDescriptorHeap = CreateDescriptorHeap(device,D3D12_DESCRIPTOR_HEAP_TYPE_DSV,1,false);
+ dsvDescriptorHeap = CreateDescriptorHeap(device.Get(),D3D12_DESCRIPTOR_HEAP_TYPE_DSV,1,false);
 #pragma endregion
 
 
@@ -382,7 +382,7 @@ ID3D12Resource* CreDepthstencilTextureResource(ID3D12Device* device, int32_t wid
 
 void DirectXCommon::InitializeDepthBuffer()
 {
- depthStencilResource = CreDepthstencilTextureResource(device, WinApp::kClientWidth, WinApp::kClientHeight);
+ depthStencilResource = CreDepthstencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
 
 }
 
@@ -594,9 +594,8 @@ void DirectXCommon::Releases()
 	commandList->Release();
 	commandAllocator->Release();
 	commandQueue->Release();
-	device->Release();
 	useAdapter->Release();
-	dxgiFactory->Release();
+	//dxgiFactory->Release();
 #ifdef _DEBUG
 	debugController->Release();
 

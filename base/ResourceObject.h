@@ -11,7 +11,8 @@ public:
 	{
 	  if(resource_)
 	  {
-		  resource_->Release();
+		 resource_->Release();
+
 	  }
 	};
 
