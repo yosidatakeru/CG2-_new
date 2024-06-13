@@ -10,6 +10,8 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	
 
+
+
 	//モデル読み込み
 	modelData = LoadObjFile("Resources", "plane.obj");
 	//modelData = LoadObjFile("Resources", "axis.obj");
