@@ -136,7 +136,7 @@ private:
 	Vector4 color_ = {1.0f, 1.0f, 1.0f, 1.0f};
 
 	
-	Transform transform_ { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	Transform transform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	
 	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
 
@@ -181,5 +181,12 @@ private:
 	 ID3D12Resource* directionalLighlResource = nullptr;
 	 DirectionalLigha* directionalLighlData = nullptr;
 	 Vector3 light = { 0.0f, -1.0f,0.0f };
+
+	 TransformationMatrix* instancingData = nullptr;
+	 static const int32_t instanceCount = 10;
+	 static const uint32_t kNumInstance = 10;
+	 Transform transforms[kNumInstance];
+	 ComPtr<ID3D12Resource>instancingResource = nullptr;
+	 D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU;
 };
 

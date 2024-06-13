@@ -47,6 +47,8 @@ public:
 
 	 ID3D12DescriptorHeap* GetSrvDescriptorHeap() const { return srvDescriptorHeap; }
 
+	 ID3D12DescriptorHeap* GetdescriptorHeap() const { return descriptorHeap; };
+
 private:
 	//デバイスの初期化
 	void InitializeDevice();
@@ -134,6 +136,8 @@ private:
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 
+
+	ID3D12DescriptorHeap* descriptorHeap = nullptr;
 
 	
 };

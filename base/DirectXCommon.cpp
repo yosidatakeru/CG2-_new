@@ -614,7 +614,7 @@ void DirectXCommon::Releases()
 #pragma region DEscriptorHeapの作成関数
 ID3D12DescriptorHeap* DirectXCommon::CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible)
 {
-	ID3D12DescriptorHeap* descriptorHeap = nullptr;
+	
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 
 	descriptorHeapDesc.Type = heapType;

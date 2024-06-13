@@ -1,14 +1,31 @@
 #include "Sprite.h"
 #include "Base.h"
 
+static uint32_t descriptorSizeSRV = 0u;
 
 void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon)
 {
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
+
+	
+
 	//モデル読み込み
-	//modelData = LoadObjFile("Resources", "plane.obj");
-	//modelData = LoadObjFile("Resources", "axis.obj");*/
+	modelData = LoadObjFile("Resources", "plane.obj");
+	//modelData = LoadObjFile("Resources", "axis.obj");
+	
+	instancingResource =
+		spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix) * kNumInstance);
+	//書き込むアドレスを取得
+
+	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
+	for (uint32_t index = 0; index < kNumInstance; ++index)
+	{
+		instancingData[index].WVP = MakeIdentity4x4();
+		instancingData[index].World = MakeIdentity4x4();
+	}
+
+	
 	CreateVertex();
 	
 
@@ -25,18 +42,16 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	spriteCommon_->SetIntermediateResource(texture);
 	
 	
-	////SRV
+	
+	
+
+
+	////////SRV作成
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metaData.format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
 	srvDesc.Texture2D.MipLevels = UINT(metaData.mipLevels);
-
-
-	
-
-
-
 
 	//SRVを作成するDescriptorHeapの場所を決める
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU =
@@ -44,19 +59,49 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	textureSrvHandleGPU =
 		directXCommon_->GetSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
 
-	
-
-
 	textureSrvHandleCPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	textureSrvHandleGPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-
 
 	//SRVの生成
 	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
 
 
 	
+
+
+	descriptorSizeSRV = directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//SRV作成
+	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
+	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc.Buffer.FirstElement = 0;
+	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc.Buffer.NumElements = kNumInstance;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+	
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = 
+		GetCPUDescriptorHandle(directXCommon_->GetSrvDescriptorHeap(), descriptorSizeSRV, 3);
+	
+	instancingSrvHandleGPU = 
+		GetGPUDescriptorHandle(directXCommon_->GetSrvDescriptorHeap(), descriptorSizeSRV, 3);
+	   
+	directXCommon_->GetDevice()->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
+
+
+
+
+	
+
+
+	for (uint32_t index = 0; index < kNumInstance; ++index)
+	{
+		transforms[index].scale = { 1.0f, 1.0f, 1.0f };
+		transforms[index].rotate = { 0.0f, 0.0f, 0.0f };
+		transforms[index].translate = { index * 0.1f,  index * 0.1f ,  index * 0.1f };
+	}
+
+
 
 	
 
@@ -65,6 +110,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	CreateWVP();
 
+	
 
 	CreateTransform();
 	
@@ -92,6 +138,8 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	wvpData->World = worldMatrix;
 
 
+
+
 	//Sprite用のWorlsViewProjectionMatrixを作る
 	Matrix4x4 worudMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 	Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
@@ -100,15 +148,18 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 
 	*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
 
+	for (uint32_t index = 0; index < kNumInstance; ++index)
+	{
+		worldMatrix =
+		MakeAffineMatrix(transforms[index].scale, transforms[index].rotate, transforms[index].translate);
+		worldViewProjectionMatrix =  Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+		instancingData[index].WVP = worldViewProjectionMatrix;
+		instancingData[index].World = worldMatrix;
+
+	}
 
 
-	//////Sprite用のWorlsViewProjectionMatrixを作る
-	//Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
-	//uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateXMatrix(uvTransformSprite.rotate.z));
-	//uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
-	//materialDataSprit->uvTrasform = uvTransformMatrix;
-	//
-
+	
 	
 
 	ImGui::Checkbox("useMonsterBall", &useMonsterBall);
@@ -120,10 +171,9 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 
 	//ImGui::Begin("model");
 	
-	ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
+	ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 100.0f);
 
-	//ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 3.0f);
-
+	
 
 	ImGui::End();
 
@@ -151,70 +201,59 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon_ = directXCommon;
 
 
-	transform_.translate = { position.x,position.y, 0 };
+	transform_.translate = {position.x,position.y, 0};
 	//回転パラメータ
-	transform_.rotate = { 0,rotation,0 };
+	transform_.rotate = {0,rotation,0};
 
 	
+	
+
 	
 	materialData->color = color_;
 
 #pragma region コマンドを積む
-	directXCommon->GetCommandList()->RSSetViewports(1, directXCommon->GetViewport());
+	
 
-	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
-	directXCommon->GetCommandList()->SetGraphicsRootSignature(spriteCommon_->GetRootSignature());
-	directXCommon->GetCommandList()->SetPipelineState(spriteCommon_->GetGraphicsPipelineState());
-	directXCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-	directXCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
+	directXCommon_->GetCommandList()->RSSetViewports(1, directXCommon_->GetViewport());
+	
+	////RootSignatureを設定。PSOに設定しているけど別途設定が必要
+	//ルートシグネチャ
+	directXCommon_->GetCommandList()->SetGraphicsRootSignature(spriteCommon_->GetRootSignature());
+	
+	directXCommon_->GetCommandList()->SetPipelineState(spriteCommon_->GetGraphicsPipelineState());
+	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
 
-	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
-	directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	////形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
+	directXCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//マテリアルCBufferの場所を設定
-	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	////マテリアルCBufferの場所を設定
+	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	
 	
-	//directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2);
 	
-//	directXCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU2 : textureSrvHandleGPU);
-	
+	//////画像
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
-	//ライト用
-	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
-	for (int  i = 0; i < 10; i++)
+	
+	
+	//////ライト用
+	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
+
+	for (int i = 0; i < instanceCount; i++)
 	{
-		//wvp用のCBufferの場所を設定
-		directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+		
+		//////wvp用のCBufferの場所を設定
+		//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
+		directXCommon_->GetCommandList()->DrawInstanced(6, kNumInstance, 0, 0);
 
-
-		//描画(DrawCall)３兆点で１つのインスタンス。
-		//この処理非常に重いらしい
-		directXCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+		directXCommon_->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), instanceCount, 0, 0);
 	}
 	
-
-	//directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 	
-
-
-
-	//スプライト
-	//directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
-	////形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
-	//directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//directXCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
-	////マテリアルCBufferの場所を設定
-	//directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprit->GetGPUVirtualAddress());
-	////wvp用のCBufferの場所を設定
- //   ////TransformationMatrionMatrixCBufferの場所を設定
-	//directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-	//directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
-	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
-	//////描画(DrawCall)３兆点で１つのインスタンス。
-	//directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+	
 
 
 #pragma endregion
@@ -227,14 +266,19 @@ void Sprite::Releases()
 {
 	//indexResourceSprite->Release();
 	directionalLighlResource->Release();
-	transformationMatrixResourceSprite->Release();
+	//transformationMatrixResourceSprite->Release();
 	//vertexResourceSprite->Release();
 	vertexResource->Release();
 	materialResourceSprit->Release();
 	materialResource->Release();
-	wvpResource->Release();
-	textureResource->Release();
-	//textureResource2->Release();
+	for (int i = 0; i < instanceCount; i++)
+	{
+		wvpResource->Release();
+	}
+	//textureResource->Release();
+
+
+	
 }
 
 
@@ -254,6 +298,7 @@ void Sprite::CreateVertex()
 	modelData.material.textureFilePath = "./Resources/uvChecker.png";
 
 
+	
 	
 	//VertexBufferViewを作成
 	//頂点バッファビューを作成する
@@ -321,21 +366,23 @@ void Sprite::CreateMAterial()
 
 void Sprite::CreateWVP()
 {
-	////Resourceにデータを書き込む
+	////////Resourceにデータを書き込む
 	wvpResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix)); ;
-	//書き込むためのアドレスを取得
+	////書き込むためのアドレスを取得
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 
 
 	wvpData->WVP = MakeIdentity4x4();
 	wvpData->World = MakeIdentity4x4();
 
+
+
 	
 }
 
 void Sprite::CreateTransform()
 {
-	//Sprite用のTransformationMatrix用のリソースを作るMatrix4x4 1とつぶんのサイズを用意する
+	////Sprite用のTransformationMatrix用のリソースを作るMatrix4x4 1とつぶんのサイズを用意する
 	transformationMatrixResourceSprite = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix));
 	
 	
@@ -345,7 +392,12 @@ void Sprite::CreateTransform()
 
 	//単位行列を書き込む
 	*transformationMatrixDataSprite = MakeIdentity4x4();
+
 	
+	//Instancing用のTarnsformationMatrixリソースを作る
+	
+
+
 }
 
 void Sprite::CreatLight()
@@ -441,7 +493,7 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 				texcoord.y *= -1.0f;
 				triangle[faceVertex] = { position, texcoord, normal };
 				position.x *= -1.0f;
-				//normal.x *= -1.0f;
+			    normal.x *= -1.0f;
 
 			}
 			

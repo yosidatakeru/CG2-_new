@@ -67,17 +67,29 @@ void SpriteCommon::PsoGenerate()
 {
 	HRESULT hr{};
 	#pragma region RootSignatureを作成
+
+	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+	ZeroMemory(&rootSignatureDesc, sizeof(rootSignatureDesc));
+
 		//RootSignature・・ShaderとResourceをどのように間レンズけるかを示したオブジェクトである
 		;
 		descriptionRootSignature.Flags =
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 		
-
-		D3D12_DESCRIPTOR_RANGE descriptorRange[1]{};
+		//SRV
+		D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 		descriptorRange[0].BaseShaderRegister = 0;
 		descriptorRange[0].NumDescriptors = 1;
 		descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 		descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+
+		D3D12_DESCRIPTOR_RANGE descriptorRangeForInstancing[1] = {};
+		descriptorRangeForInstancing[0].BaseShaderRegister = 0;
+		descriptorRangeForInstancing[0].NumDescriptors = 1;
+		descriptorRangeForInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		descriptorRangeForInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
 
 
 		//Material設定
@@ -85,20 +97,33 @@ void SpriteCommon::PsoGenerate()
 		rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 		rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		rootParameters[0].Descriptor.ShaderRegister = 0;
-		
-		rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		/*
+	    rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 		rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-		rootParameters[1].Descriptor.ShaderRegister = 0;
+		rootParameters[1].Descriptor.ShaderRegister = 0;*/
+	
+		rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+		rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeForInstancing;
+		rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForInstancing);
 
+	
 		rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;
 		rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+		
+
+
 
 		rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 		rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		rootParameters[3].Descriptor.ShaderRegister = 1;
 
+
+
+		
+	
 
 		descriptionRootSignature.pParameters = rootParameters;
 		descriptionRootSignature.NumParameters = _countof(rootParameters);
@@ -183,10 +208,16 @@ void SpriteCommon::PsoGenerate()
 
 	#pragma region ShaderをCompileする
 		//ShaderをCompileする
-		 vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+		/* vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 		assert(vertexShaderBlob != nullptr);
 	
 		 pixelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+		assert(pixelShaderBlob != nullptr);*/
+
+		vertexShaderBlob = CompileShader(L"Particle.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+		assert(vertexShaderBlob != nullptr);
+
+		pixelShaderBlob = CompileShader(L"Particle.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 		assert(pixelShaderBlob != nullptr);
 	#pragma endregion
 
@@ -227,8 +258,6 @@ void SpriteCommon::PsoGenerate()
 			depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 			//DepthStencilの設定
-		//これ打つだらいったんエラー
-			//ここで会っているのかわからない
 			graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 			graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
@@ -534,32 +563,3 @@ ID3D12Resource* SpriteCommon::UploadTewtureData(ID3D12Resource* texture, const D
 
 
 
-
-
-
-//void SpriteCommon::UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages)
-//{
-//
-//	////Meta情報を取得
-//	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-//
-//	//全MipMapについて
-//	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel)
-//	{
-//	//	MipMapLevelを指定して各Imageを取得
-//		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
-//	//	Textureに転送
-//		HRESULT hr = texture->WriteToSubresource(
-//			UINT(mipLevel),
-//			nullptr,				//全領域
-//			img->pixels,			//元データアドレス
-//			UINT(img->rowPitch),	//1ラインサイズ
-//			UINT(img->slicePitch));	//1枚サイズ
-//
-//		assert(SUCCEEDED(hr));
-//	}
-//
-//}
-//
-//
-//
