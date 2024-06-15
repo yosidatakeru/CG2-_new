@@ -15,8 +15,6 @@ class Sprite
 public:
 
 	
-
-
 	struct TransformationMatrix
 	{
 		Matrix4x4 WVP;
@@ -138,7 +136,7 @@ private:
 	
 	Transform transform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	
-	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-5.0f} };
+	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
 	 Vector2 position = { 0, 0 };
 

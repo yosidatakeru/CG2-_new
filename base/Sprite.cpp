@@ -10,12 +10,13 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	
 
+	for (uint32_t index = 0; index < kNumInstance; ++index)
+	{
 
-
-	//モデル読み込み
-	modelData = LoadObjFile("Resources", "plane.obj");
-	//modelData = LoadObjFile("Resources", "axis.obj");
-	
+		//モデル読み込み
+		modelData = LoadObjFile("Resources", "plane.obj");
+		modelData = LoadObjFile("Resources", "axis.obj");
+	}
 	instancingResource =
 		spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix) * kNumInstance);
 	//書き込むアドレスを取得
@@ -32,7 +33,6 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	
 
 	////画像読み込み
-	//DirectX::ScratchImage mipImages = spriteCommon->LoadTexture(L"Resources/uvChecker.png");
 	std::wstring filePath = ConvertString(modelData.material.textureFilePath);
 	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(filePath);
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
@@ -96,13 +96,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	
 
 
-	for (uint32_t index = 0; index < kNumInstance; ++index)
-	{
-		transforms[index].scale = { 1.0f, 1.0f, 1.0f };
-		transforms[index].rotate = { 0.0f, 0.0f, 0.0f };
-		transforms[index].translate = { index * 0.1f,  index * 0.1f ,  index * 0.1f };
-	}
-
+	
 
 
 	
@@ -208,7 +202,15 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	transform_.rotate = {0,rotation,0};
 
 	
-	
+	for (uint32_t index = 0; index < kNumInstance; ++index)
+	{
+		transforms[index].scale = { 1.0f, 1.0f, 1.0f };
+		transforms[index].rotate = { 0.0f,0.0f, 0.0f };
+		transforms[index].translate = { index * 0.1f,  index * 0.1f ,  index * 0.1f };
+
+		
+	}
+	transforms[1].rotate = { 0.0f, rotation, 0.0f };
 
 	
 	materialData->color = color_;
