@@ -123,7 +123,7 @@ private:
 	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
 	//
 	
-	ModelData modelData; // 構築するMaterualData
+	
 
 	
 
@@ -186,5 +186,7 @@ private:
 	 Transform transforms[kNumInstance];
 	 ComPtr<ID3D12Resource>instancingResource = nullptr;
 	 D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU;
+
+	 ModelData modelData; // 構築するMaterualData
 };
 

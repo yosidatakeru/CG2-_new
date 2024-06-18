@@ -15,7 +15,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 		//モデル読み込み
 		modelData = LoadObjFile("Resources", "plane.obj");
-		modelData = LoadObjFile("Resources", "axis.obj");
+	//	modelData = LoadObjFile("Resources", "axis.obj");
 	}
 	instancingResource =
 		spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix) * kNumInstance);
@@ -31,17 +31,18 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	
 	CreateVertex();
 	
-
-	////画像読み込み
-	std::wstring filePath = ConvertString(modelData.material.textureFilePath);
-	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(filePath);
-	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
-	textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
 	
-	//画像データを送る
-	ID3D12Resource* texture = spriteCommon_->GetIntermediateResource();
-	texture = spriteCommon_->UploadTewtureData(textureResource, mipImages);
-	spriteCommon_->SetIntermediateResource(texture);
+		////画像読み込み
+		std::wstring filePath = ConvertString(modelData.material.textureFilePath);
+		DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(filePath);
+		const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
+		textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
+
+
+		//画像データを送る
+		ID3D12Resource* texture = spriteCommon_->GetIntermediateResource();
+		texture = spriteCommon_->UploadTewtureData(textureResource, mipImages);
+		spriteCommon_->SetIntermediateResource(texture);
 	
 	
 	
@@ -486,19 +487,19 @@ ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::strin
 				//要素へのIndexから,実際の要素の値を取得して,頂点を構築する
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
-				Vector3 normal = normals[elementIndices[2] - 1];
-				
-				
+				Vector3 normal = normals[elementIndices[2] - 1];	
 
 				//VertexData vertex = { position, texcoord, normal };
 				//modelData.vertices.push_back(vertex);
 				
 				
-				texcoord.y *= -1.0f;
+			
+				texcoord.y = 1.0f - texcoord.y;
 				triangle[faceVertex] = { position, texcoord, normal };
 				position.x *= -1.0f;
-			    normal.x *= -1.0f;
-
+			
+				normal.x *= -1.0f;
+				
 			}
 			
 			modelData.vertices.push_back(triangle[2]);
