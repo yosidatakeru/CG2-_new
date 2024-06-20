@@ -52,6 +52,8 @@ private:
 
 	void CreatLight();
 
+	//画像データ作成
+	void CreatTexture();
 
 public:
 
@@ -86,7 +88,7 @@ private:
 	VertexData* vertexData = nullptr;
 	uint32_t* indexDataSprite = nullptr;
 
-	ID3D12Resource* textureResource = nullptr;
+	
 	ID3D12Resource* textureResource2 = nullptr;
 	
 
@@ -152,7 +154,7 @@ private:
 	 };
 
 	 //画像の保蔵先のアドレス
-	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
+	
 	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2;
 
 	 //円形描画用
@@ -181,12 +183,20 @@ private:
 	 Vector3 light = { 0.0f, -1.0f,0.0f };
 
 	 TransformationMatrix* instancingData = nullptr;
-	 static const int32_t instanceCount = 10;
-	 static const uint32_t kNumInstance = 10;
+	 static const int32_t instanceCount = 20;
+	 static const uint32_t kNumInstance = 20;
 	 Transform transforms[kNumInstance];
 	 ComPtr<ID3D12Resource>instancingResource = nullptr;
 	 D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU;
 
 	 ModelData modelData; // 構築するMaterualData
+	 ModelData modelData2; // 構築するMaterualData
+
+	 //画像データ
+	 static const uint32_t textureIndex = 20;
+	 D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc[textureIndex];
+	 ID3D12Resource* textureResource[textureIndex];
+	 D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[textureIndex];
+     D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[textureIndex];
 };
 

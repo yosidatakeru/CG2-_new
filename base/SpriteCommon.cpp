@@ -304,12 +304,6 @@ void SpriteCommon::Releases()
 
 IDxcBlob* SpriteCommon::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler)
 {
-	
-
-
-
-
-
 
 #pragma region 1.hlslファイルを読む
 		//1.hlslファイルを読む
