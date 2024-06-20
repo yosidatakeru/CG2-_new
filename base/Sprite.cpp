@@ -12,8 +12,8 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	
 		//モデル読み込み
-		modelData = LoadObjFile("Resources", "plane.obj");
-		//modelData2 = LoadObjFile("Resources", "axis.obj");
+		modelData = LoadObjFile("Resources", "plane.obj", modelData);
+		modelData2 = LoadObjFile("Resources", "axis.obj", modelData2);
 	
 	instancingResource =
 		spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix) * kNumInstance);
@@ -45,12 +45,13 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 			D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU =
 				GetCPUDescriptorHandle(directXCommon_->GetSrvDescriptorHeap(), descriptorSizeSRV, 3);
+			for (uint32_t index = 0; index < kNumInstance; ++index)
+			{
+				instancingSrvHandleGPU[index] =
+					GetGPUDescriptorHandle(directXCommon_->GetSrvDescriptorHeap(), descriptorSizeSRV, 3);
 
-			instancingSrvHandleGPU =
-				GetGPUDescriptorHandle(directXCommon_->GetSrvDescriptorHeap(), descriptorSizeSRV, 3);
-
-			directXCommon_->GetDevice()->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
-
+				directXCommon_->GetDevice()->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
+			}
 
 
 
@@ -211,10 +212,11 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 		//////wvp用のCBufferの場所を設定
 		//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
-		directXCommon_->GetCommandList()->DrawInstanced(6, kNumInstance, 0, 0);
+		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU[i]);
+		//directXCommon_->GetCommandList()->DrawInstanced(6, kNumInstance, 0, 0);
 
 		directXCommon_->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), instanceCount, 0, 0);
+		//directXCommon_->GetCommandList()->DrawInstanced(UINT(modelData2.vertices.size()), instanceCount, 0, 0);
 	}
 	
 	
@@ -433,7 +435,7 @@ void Sprite::CreatTexture()
 
 
 //モデル読み込み関数
-ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::string& filename)
+ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::string& filename, ModelData modelData)
 {
 	//１.中で必要となる変数の宣言
 	std::vector<Vector4> positions; // 位置
