@@ -5,7 +5,7 @@
 #include"base/ImGuiManager.h"
 #include"base/Sprite.h"
 #include"base/ResourceObject.h"
-
+#include"base/TextureManager.h"
 
 #pragma endregion
 
@@ -66,6 +66,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	imGuiManager->Initialize(winApp,directXCommon);
 #pragma endregion
 	
+
+#pragma region テクスチャマネージャーの初期化
+	TextureManager::GetInstance()->Initialize();
+#pragma endregion
 	
 	Matrix4x4* camera = nullptr;
 
@@ -142,7 +146,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	sprite->Releases();
 	spriteCommon->Releases();
-
+    //テクスチャマネージャー終了
+	TextureManager::GetInstance()->Finalize();
 	directXCommon->Releases();
 
 	imGuiManager->Release();

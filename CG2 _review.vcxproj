@@ -27,6 +27,7 @@
     <ClCompile Include="base\Sprite.cpp" />
     <ClCompile Include="base\SpriteCommon.cpp" />
     <ClCompile Include="base\SpriteTriangle.cpp" />
+    <ClCompile Include="base\TextureManager.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -78,6 +79,7 @@
     <ClInclude Include="base\Sprite.h" />
     <ClInclude Include="base\SpriteCommon.h" />
     <ClInclude Include="base\SpriteTriangle.h" />
+    <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\Transform.h" />
     <ClInclude Include="base\Vector.h" />
     <ClInclude Include="base\Vector2.h" />

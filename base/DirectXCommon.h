@@ -17,6 +17,7 @@
 
 class DirectXCommon
 {
+	
 public:
 	//初期化
 	void Initialize(WinApp*winApp);
@@ -49,6 +50,9 @@ public:
 
 	 ID3D12DescriptorHeap* GetdescriptorHeap() const { return descriptorHeap; };
 
+	 // 最大SRV数(最大テクスチャ枚数)
+	 static const uint32_t kMaxSRVCount;
+
 private:
 	//デバイスの初期化
 	void InitializeDevice();
@@ -69,6 +73,9 @@ private:
 
 	ID3D12DescriptorHeap* CreateDescriptorHeap
 	(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+
+	
+	
 
 private:
 	HRESULT hr;
@@ -139,6 +146,8 @@ private:
 
 	ID3D12DescriptorHeap* descriptorHeap = nullptr;
 
+
+	
 	
 };
 

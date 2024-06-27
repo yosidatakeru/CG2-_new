@@ -431,7 +431,7 @@ ID3D12Resource* SpriteCommon::CreateBufferResource(ID3D12Device* device, size_t 
 
 ID3D12Resource* SpriteCommon::CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metaData)
 {
-	
+	   
 		//1.metadataを基にResourceの設定
 		D3D12_RESOURCE_DESC resourceDesc{};
 		//Textureの幅

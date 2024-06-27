@@ -81,7 +81,7 @@ public:
 	   
 	Transform GetTransformSprite() { return  transformSprite; }
 
-	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename, ModelData	modelData);
 
 	MatrialData LoadMatrialTemplateFile(const std::string& directoryPath, const std::string& filename);
 private:
@@ -199,5 +199,8 @@ private:
 	 D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[kNumInstance];
      D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[kNumInstance];
 	 DirectX::ScratchImage mipImages[kNumInstance];
+
+	 ID3D12Resource* texture[kNumInstance];
+	
 };
 

@@ -3,17 +3,18 @@
 
 static uint32_t descriptorSizeSRV = 0u;
 
+
+
 void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon)
 {
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
 
-	
 
 	
 		//モデル読み込み
-		modelData = LoadObjFile("Resources", "plane.obj");
-		//modelData2 = LoadObjFile("Resources", "axis.obj");
+		modelData = LoadObjFile("Resources", "plane.obj",modelData);
+		modelData2 = LoadObjFile("Resources", "axis.obj",modelData2);
 	
 	instancingResource =
 		spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix) * kNumInstance);
@@ -30,6 +31,8 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	CreateVertex();
 
 	CreatTexture(ConvertString(modelData.material.textureFilePath));
+	CreatTexture(ConvertString(modelData2.material.textureFilePath));
+	
 	//CreatTexture(modelData2);
 	
 			descriptorSizeSRV = directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -50,18 +53,6 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 				GetGPUDescriptorHandle(directXCommon_->GetSrvDescriptorHeap(), descriptorSizeSRV, 3);
 
 			directXCommon_->GetDevice()->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
-
-
-
-
-
-
-
-
-
-
-
-
 
 			CreateMAterial();
 
@@ -147,6 +138,23 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 
 
 	directionalLighlData->direction = light;
+	transform_.translate = { position.x,position.y, 0 };
+	//回転パラメータ
+	transform_.rotate = { 0,rotation,0 };
+
+
+	for (uint32_t index = 0; index < kNumInstance; ++index)
+	{
+		transforms[index].scale = { 1.0f, 1.0f, 1.0f };
+		transforms[index].rotate = { 0.0f,0.0f, 0.0f };
+		transforms[index].translate = { index * 0.1f,  index * 0.1f ,  index * 0.1f };
+
+
+	}
+	transforms[1].rotate = { 0.0f, rotation, 0.0f };
+
+
+	materialData->color = color_;
 
 }
 
@@ -158,24 +166,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon_ = directXCommon;
 
 
-	transform_.translate = {position.x,position.y, 0};
-	//回転パラメータ
-	transform_.rotate = {0,rotation,0};
-
 	
-	for (uint32_t index = 0; index < kNumInstance; ++index)
-	{
-		transforms[index].scale = { 1.0f, 1.0f, 1.0f };
-		transforms[index].rotate = { 0.0f,0.0f, 0.0f };
-		transforms[index].translate = { index * 0.1f,  index * 0.1f ,  index * 0.1f };
-
-		
-	}
-	transforms[1].rotate = { 0.0f, rotation, 0.0f };
-
-	
-	materialData->color = color_;
-
 #pragma region コマンドを積む
 	
 
@@ -189,16 +180,11 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
 
-	////形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
+	////形状を設定。PSOに設定しているものとはまた別。同じものを設定する
 	directXCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	////マテリアルCBufferの場所を設定
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-
-	
-	
-	
-	
 	
 	//////ライト用
 	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
@@ -399,9 +385,9 @@ void Sprite::CreatTexture(std::wstring filePath)
 
 
 	//画像データを送る
-	ID3D12Resource* texture = spriteCommon_->GetIntermediateResource();
-	texture = spriteCommon_->UploadTewtureData(textureResource[textureIndex], mipImages[textureIndex]);
-	spriteCommon_->SetIntermediateResource(texture);
+	texture[textureIndex] = spriteCommon_->GetIntermediateResource();
+	texture[textureIndex] = spriteCommon_->UploadTewtureData(textureResource[textureIndex], mipImages[textureIndex]);
+	spriteCommon_->SetIntermediateResource(texture[textureIndex]);
 
 
 
@@ -442,7 +428,7 @@ void Sprite::CreatTexture(std::wstring filePath)
 
 
 //モデル読み込み関数
-ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::string& filename)
+ModelData Sprite::LoadObjFile(const std::string& directoryPath, const std::string& filename , ModelData	modelData)
 {
 	//１.中で必要となる変数の宣言
 	std::vector<Vector4> positions; // 位置
