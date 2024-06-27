@@ -193,10 +193,11 @@ private:
 	 ModelData modelData2; // 構築するMaterualData
 
 	 //画像データ
-	 uint32_t textureIndex = 10;
+	 uint32_t textureIndex = 0;
 	 D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc[kNumInstance];
 	 ID3D12Resource* textureResource[kNumInstance];
 	 D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[kNumInstance];
      D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[kNumInstance];
+	 DirectX::ScratchImage mipImages[kNumInstance];
 };
 

@@ -202,12 +202,12 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	
 	//////ライト用
 	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
+	//////画像
+	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[1]);
 
 	for (int i = 0; i < instanceCount; i++)
 	{
-		//////画像
-		directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[i]);
-
+		
 
 		//////wvp用のCBufferの場所を設定
 		//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
@@ -393,14 +393,14 @@ void Sprite::CreatTexture(std::wstring filePath)
 		textureIndex++;
 	}
 
-	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(filePath);
-	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
+	mipImages[textureIndex] = spriteCommon_->LoadTexture(filePath);
+	const DirectX::TexMetadata& metaData = mipImages[textureIndex].GetMetadata();
 	textureResource[textureIndex] = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
 
 
 	//画像データを送る
 	ID3D12Resource* texture = spriteCommon_->GetIntermediateResource();
-	texture = spriteCommon_->UploadTewtureData(textureResource[textureIndex], mipImages);
+	texture = spriteCommon_->UploadTewtureData(textureResource[textureIndex], mipImages[textureIndex]);
 	spriteCommon_->SetIntermediateResource(texture);
 
 
