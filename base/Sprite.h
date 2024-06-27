@@ -53,7 +53,7 @@ private:
 	void CreatLight();
 
 	//画像データ作成
-	void CreatTexture();
+	void CreatTexture(std::wstring filePath);
 
 public:
 
@@ -183,8 +183,8 @@ private:
 	 Vector3 light = { 0.0f, -1.0f,0.0f };
 
 	 TransformationMatrix* instancingData = nullptr;
-	 static const int32_t instanceCount = 20;
-	 static const uint32_t kNumInstance = 20;
+	 static const int32_t instanceCount = 10;
+	 static const uint32_t kNumInstance = 10;
 	 Transform transforms[kNumInstance];
 	 ComPtr<ID3D12Resource>instancingResource = nullptr;
 	 D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU;
@@ -193,10 +193,10 @@ private:
 	 ModelData modelData2; // 構築するMaterualData
 
 	 //画像データ
-	 static const uint32_t textureIndex = 20;
-	 D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc[textureIndex];
-	 ID3D12Resource* textureResource[textureIndex];
-	 D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[textureIndex];
-     D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[textureIndex];
+	 uint32_t textureIndex = 10;
+	 D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc[kNumInstance];
+	 ID3D12Resource* textureResource[kNumInstance];
+	 D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[kNumInstance];
+     D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[kNumInstance];
 };
 
