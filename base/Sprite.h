@@ -30,7 +30,7 @@ public:
 		float intensity; //!<輝度
 	};
 
-	void Initialize(DirectXCommon* directXCommon , SpriteCommon* SpriteCommon_ );
+	void Initialize(DirectXCommon* directXCommon , SpriteCommon* SpriteCommon_, std::wstring textureFilePath);
 
 	void Draw(DirectXCommon* directXCommon);
 	void Update(Transform transform, Transform cameraTransform, Transform transformSprite);
@@ -54,7 +54,7 @@ private:
 
 	void CreatLight();
 
-	void CreateTexture();
+	void CreateTexture(std::wstring textureFilePath);
 public:
 
 	ID3D12Resource* GetwvpResource() const { return  wvpResource; }
@@ -190,5 +190,7 @@ private:
 	 ID3D12Resource* directionalLighlResource = nullptr;
 	 DirectionalLigha* directionalLighlData = nullptr;
 	 Vector3 light = { 0.0f, -1.0f,0.0f };
+
+	 uint32_t textureIndex = 0;
 };
 

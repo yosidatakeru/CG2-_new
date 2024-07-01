@@ -23,10 +23,9 @@
     <ClCompile Include="base\ImGuiManager.cpp" />
     <ClCompile Include="base\Model.cpp" />
     <ClCompile Include="base\MyFunction.cpp" />
-    <ClCompile Include="base\ResourceObject.cpp" />
     <ClCompile Include="base\Sprite.cpp" />
     <ClCompile Include="base\SpriteCommon.cpp" />
-    <ClCompile Include="base\SpriteTriangle.cpp" />
+    <ClCompile Include="base\TextureManager.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -65,7 +64,7 @@
     <ClInclude Include="base\MyFunction.h" />
     <ClInclude Include="base\Sprite.h" />
     <ClInclude Include="base\SpriteCommon.h" />
-    <ClInclude Include="base\SpriteTriangle.h" />
+    <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\Transform.h" />
     <ClInclude Include="base\Vector.h" />
     <ClInclude Include="base\Vector2.h" />
@@ -74,7 +73,6 @@
     <ClInclude Include="base\VertexData.h" />
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Bufftr.h" />
-    <ClInclude Include="ResourceObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="base\externals\imgui\LICENSE.txt" />

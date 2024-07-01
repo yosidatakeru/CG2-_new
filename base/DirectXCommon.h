@@ -47,6 +47,7 @@ public:
 
 	 ID3D12DescriptorHeap* GetSrvDescriptorHeap() const { return srvDescriptorHeap; }
 
+	 static const uint32_t kmixSRVcount;
 private:
 	//デバイスの初期化
 	void InitializeDevice();

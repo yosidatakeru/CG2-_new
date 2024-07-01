@@ -1,16 +1,21 @@
 #include "Sprite.h"
 #include "Base.h"
+#include "TextureManager.h"
 
-
-void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon)
+void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon, std::wstring textureFilePath)
 {
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
 	//モデル読み込み
 	
+	 
+	textureIndex = TextureManager::GetInstance()->GetTextureIndexFilePath(textureFilePath);
+
+
+
 	CreateVertex();
 	
-	CreateTexture();
+	//CreateTexture(textureFilePath);
 
 	CreateMAterial();
 
@@ -135,7 +140,7 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	//wvp用のCBufferの場所を設定
     ////TransformationMatrionMatrixCBufferの場所を設定
 	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetStvHandleGPU(textureIndex));
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 	////描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
@@ -157,7 +162,7 @@ void Sprite::Releases()
 	materialResourceSprit->Release();
 	materialResource->Release();
 	wvpResource->Release();
-	textureResource->Release();
+	//textureResource->Release();
 	//textureResource2->Release();
 }
 
@@ -302,11 +307,11 @@ void Sprite::CreatLight()
 
 }
 
-void Sprite::CreateTexture()
+void Sprite::CreateTexture(std::wstring textureFilePath)
 {
 	
 	////画像読み込み
-	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(L"Resources/uvChecker.png");
+	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(textureFilePath);
 	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
 	textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
 

@@ -262,7 +262,7 @@ void SpriteCommon::Releases()
 	pixelShaderBlob->Release();
 
 	vertexShaderBlob->Release();
-	intermediateResource_->Release();
+	//intermediateResource_->Release();
 }
 
 

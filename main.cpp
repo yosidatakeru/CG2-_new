@@ -5,6 +5,7 @@
 #include"base/ImGuiManager.h"
 #include"base/Sprite.h"
 #include"base/ResourceObject.h"
+#include"base/TextureManager.h"
 
 
 #pragma endregion
@@ -56,11 +57,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	spriteCommon = new SpriteCommon();
 	spriteCommon->Initialize(directXCommon);
 
+	//テクスチャマネージャー
+	TextureManager::GetInstance()->Initialize(directXCommon);
+	
+	TextureManager::GetInstance()->LoadTexture(L"Resources/monsterBall.png");
+	TextureManager::GetInstance()->LoadTexture(L"Resources/uvChecker.png");
 	std::vector<Sprite*> sprites;
 	for (int i = 0; i < 5; i++)
 	{
 		Sprite* sprite = new Sprite();
-		sprite->Initialize(directXCommon, spriteCommon);
+		if (i == 4)
+		{
+			sprite->Initialize(directXCommon, spriteCommon, L"Resources/monsterBall.png");
+		}
+		else 
+		{
+			sprite->Initialize(directXCommon, spriteCommon, L"Resources/uvChecker.png");
+		}
 		sprite->SetPosintion({(float)i * 120,0});
 		sprites.push_back(sprite);
 	}
@@ -191,6 +204,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	{
 		delete sprites[i];
 	}
+	 TextureManager::GetInstance()->Finalize();
 #pragma endregion
 
 #pragma region delete
