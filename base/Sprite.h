@@ -54,36 +54,41 @@ private:
 
 	void CreatLight();
 
-
+	void CreateTexture();
 public:
 
 	ID3D12Resource* GetwvpResource() const { return  wvpResource; }
 
 	//色
 	Vector4 GetColor()           { return color_; }
-	void SetColor(Vector4 color) { color_ = color; }
+	void SetColor(Vector4& color) { color_ = color; }
 
 	//回転
 	float GetRotation() { return rotation; }
-	void SetRotaion(float rot) { rotation = rot; }
+	void SetRotaion(float rot) { this->rotation = rot; }
 
 	//移動
 	Vector2 GetPosition() { return position; }
-	void SetPosintion(Vector2 pos) { position = pos; }
+	void SetPosintion(Vector2 pos) { this->position = pos; }
+
+	//移動
+	Vector2 GetSize() { return size; }
+	void SetSize(Vector2& size) { this->size = size; }
+
 
 	Vector3 GetCameraPosition() { return camerPosition; }
 	void SetCameraPosintion(Vector3 cameraPos) { camerPosition = cameraPos; }
+
+	
 
 
 	Transform GetTransform() { return  transform_; }
 
 	Transform GetCameraTransform() { return  cameraTransform_; }
 	   
-	Transform GetTransformSprite() { return  transformSprite; }
+	Transform GetTransformSprite() { return  transformSprite_; }
 
-	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
-	MatrialData LoadMatrialTemplateFile(const std::string& directoryPath, const std::string& filename);
 private:
 	VertexData* vertexData = nullptr;
 	uint32_t* indexDataSprite = nullptr;
@@ -144,7 +149,9 @@ private:
 
 	 Vector3 camerPosition = { 0, 0, 0 };
 
-	 Transform transformSprite{ {1.0f, 1.0f, 1.0f},{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	 Transform transformSprite_{ {1.0f, 1.0f, 1.0f},{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+
+	 Vector2 size = { 1.0f, 1.0f };
 
 	 Transform uvTransformSprite
 	 {
@@ -165,6 +172,8 @@ private:
 	 bool useMonsterBall = true;
 
 	 bool uvSprite = true;
+	
+	 
 	 D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap * descriptoHeap, uint32_t descriptorSize, uint32_t index)
 	 {
 		 D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptoHeap->GetCPUDescriptorHandleForHeapStart();

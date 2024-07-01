@@ -31,7 +31,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	DirectXCommon* directXCommon = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
 	ImGuiManager* imGuiManager = nullptr;
-	Sprite* sprite = nullptr;
+	//Sprite* sprite = nullptr;
 #pragma endregion
 
 
@@ -55,8 +55,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region	三角形の描画
 	spriteCommon = new SpriteCommon();
 	spriteCommon->Initialize(directXCommon);
-	sprite = new Sprite();
-	sprite->Initialize(directXCommon, spriteCommon);
+
+	std::vector<Sprite*> sprites;
+	for (int i = 0; i < 5; i++)
+	{
+		Sprite* sprite = new Sprite();
+		sprite->Initialize(directXCommon, spriteCommon);
+		sprite->SetPosintion({(float)i * 120,0});
+		sprites.push_back(sprite);
+	}
 #pragma endregion
 
 
@@ -75,7 +82,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	sprite->SetCameraPosintion(cameraPos);*/
 
 
-	sprite->GetwvpResource()->Map(0, nullptr, reinterpret_cast<void**>(&camera));
+	 sprites[1]->GetwvpResource()->Map(0, nullptr, reinterpret_cast<void**>(&camera));
 
 
 	////メインループ
@@ -99,34 +106,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		
 	//いろいろな処理(色、回転、移動など)	
 	//移動処理
-	 /*Vector2 pos = sprite->GetPosition();
-	 pos.x += 0.005f;
-	 sprite->SetPosintion(pos);*/
-		
-     //回転の処理
-	/* float rot = sprite->GetRotation();
-	 rot += 0.005f;
-	 sprite->SetRotaion(rot);
-	  */
+	 //Vector2 pos = sprite->GetPosition();
+	 //pos.x += 0.05f;
+	 //sprite->SetPosintion(pos);
+		//
+  //   //回転の処理
+	 //float rot = sprite->GetRotation();
+	 //rot += 0.05f;
+	 //sprite->SetRotaion(rot);
+	 //
 		
 	//色の処理
 	 /*Vector4 color = sprite->GetColor();
 	 color.x = 1.0f;
 	 sprite->SetColor(color);*/
 
-	
-	
+	  //Vector2 size = sprite->GetSize();
+   //	  size.x += 0.1f;
+	  //size.y += 0.1f;
+	  //sprite->SetSize(size);
 
-	  sprite->Update(sprite->GetTransform(),sprite->GetCameraTransform(),sprite->GetTransformSprite());
-
+		for (int i = 0; i < 5; i++)
+		{
+			sprites[i]->Update(sprites[i]->GetTransform(), sprites[i]->GetCameraTransform(), sprites[i]->GetTransformSprite());
+		}
 
 		directXCommon->PreDraw();
 
 
-
-		sprite->Draw(directXCommon);
-		
-		
+		for (int i = 0; i < 5; i++)
+		{
+			sprites[i]->Draw(directXCommon);
+		}
 		
 		
 		imGuiManager->EndFlame(directXCommon);
@@ -139,8 +150,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 #pragma region 解放処理
-	
-	sprite->Releases();
+	for (int i = 0; i < 5; i++)
+	{
+		sprites[i]->Releases();
+	}
 	spriteCommon->Releases();
 
 	directXCommon->Releases();
@@ -174,7 +187,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			}
 		}
 	};
-	delete sprite;
+	for (int i = 0; i < 5; i++)
+	{
+		delete sprites[i];
+	}
 #pragma endregion
 
 #pragma region delete
