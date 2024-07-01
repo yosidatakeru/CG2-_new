@@ -41,6 +41,8 @@ private:
 	//頂点データの作成関数
 	void CreateVertex();
 
+	void CreateIndex();
+
 	//マテリアルの作成関数
 	void CreateMAterial();
 
@@ -55,6 +57,9 @@ private:
 	void CreatLight();
 
 	void CreateTexture(std::wstring textureFilePath);
+
+	//本来テクスチャサイズを合わせる
+	void AdujustTextueSize();
 public:
 
 	ID3D12Resource* GetwvpResource() const { return  wvpResource; }
@@ -73,13 +78,26 @@ public:
 
 	//移動
 	Vector2 GetSize() { return size; }
-	void SetSize(Vector2& size) { this->size = size; }
+	void SetSize(Vector2 size) { this->size = size; }
 
 
 	Vector3 GetCameraPosition() { return camerPosition; }
 	void SetCameraPosintion(Vector3 cameraPos) { camerPosition = cameraPos; }
 
+	Vector2 GetAnchorPoint()  { return anchorPoint; }
+	void SetAnchorPoint(Vector2 anchorPoint) { this->anchorPoint = anchorPoint; }
+
+	//左右反転
+	bool GetIsFlipX() { return  isFlipx_; }
+	//上下反転
+	bool GetIsFlipY() { return  isFlipy_; }
+
 	
+	//左右反転
+	void SetIsFlipX(bool isFlag) { isFlag = isFlag; }
+
+	//上下反転
+	void SetIsFlipY(bool isFlag) { isFlag = isFlag; }
 
 
 	Transform GetTransform() { return  transform_; }
@@ -89,12 +107,19 @@ public:
 	Transform GetTransformSprite() { return  transformSprite_; }
 
 
+	//切り抜き関連
+	Vector2 GetTextureLeftTop() { return textureLeftTop; }
+	Vector2 GetTextureSize() { return textureSize; }
+
+	//切り抜き関連
+	void SetTextureLeftTop(Vector2 value) { textureLeftTop = value; }
+	void SetTextureSize(Vector2 size) { textureSize = size; }
+
 private:
 	VertexData* vertexData = nullptr;
-	uint32_t* indexDataSprite = nullptr;
+	
 
 	ID3D12Resource* textureResource = nullptr;
-	ID3D12Resource* textureResource2 = nullptr;
 	
 
 	TransformationMatrix* wvpData = nullptr;
@@ -105,7 +130,7 @@ private:
 	SpriteCommon* spriteCommon_ = nullptr;
 	DirectXCommon* directXCommon_ = nullptr;
 	ID3D12Resource* vertexResource = nullptr;
-	ID3D12Resource* indexResourceSprite = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = nullptr;
 
 
 	ID3D12Resource* materialResource = nullptr;
@@ -151,7 +176,9 @@ private:
 
 	 Transform transformSprite_{ {1.0f, 1.0f, 1.0f},{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 
-	 Vector2 size = { 1.0f, 1.0f };
+	 Vector2 size = { 0.0f, 0.0f };
+
+	 Vector2 anchorPoint = { 0.0f, 0.0f };
 
 	 Transform uvTransformSprite
 	 {
@@ -159,6 +186,8 @@ private:
 		 {0.0f, 0.0f, 0.0f},
 		 {0.0f, 0.0f, 0.0f},
 	 };
+
+
 
 	 //画像の保蔵先のアドレス
 	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
@@ -190,7 +219,18 @@ private:
 	 ID3D12Resource* directionalLighlResource = nullptr;
 	 DirectionalLigha* directionalLighlData = nullptr;
 	 Vector3 light = { 0.0f, -1.0f,0.0f };
+	 //切り抜きたい画像内の座標
+	 Vector2 textureLeftTop = { 0,0 };
+	 //切り抜きたい画像内のサイズ
+	  Vector2 textureSize = { 0, 0 };
 
 	 uint32_t textureIndex = 0;
+
+	 //フリップ
+	 bool isFlipx_ = false;
+	 bool isFlipy_ = false;
+
+	 Microsoft::WRL::ComPtr<ID3D12Resource> indexResource;
+	 D3D12_INDEX_BUFFER_VIEW indexBufferView{};
 };
 

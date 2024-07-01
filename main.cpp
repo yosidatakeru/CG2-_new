@@ -60,7 +60,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//テクスチャマネージャー
 	TextureManager::GetInstance()->Initialize(directXCommon);
 	
-	TextureManager::GetInstance()->LoadTexture(L"Resources/monsterBall.png");
+	TextureManager::GetInstance()->LoadTexture(L"Resources/Player5.png");
 	TextureManager::GetInstance()->LoadTexture(L"Resources/uvChecker.png");
 	std::vector<Sprite*> sprites;
 	for (int i = 0; i < 5; i++)
@@ -68,7 +68,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Sprite* sprite = new Sprite();
 		if (i == 4)
 		{
-			sprite->Initialize(directXCommon, spriteCommon, L"Resources/monsterBall.png");
+			sprite->Initialize(directXCommon, spriteCommon, L"Resources/Player5.png");
 		}
 		else 
 		{

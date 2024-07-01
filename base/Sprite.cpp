@@ -16,6 +16,8 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	CreateVertex();
 	
 	//CreateTexture(textureFilePath);
+	//インデクス
+	CreateIndex();
 
 	CreateMAterial();
 
@@ -25,8 +27,8 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 	
 	CreatLight();
 	
-
-
+	//画像のサイズ調整
+	AdujustTextueSize();
 
 }
 
@@ -65,7 +67,66 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	materialDataSprit->uvTrasform = uvTransformMatrix;
 
 
-	//ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+
+	directionalLighlData->direction = light;
+
+
+
+
+	transformSprite_.translate = { position.x,position.y, 0 };
+	//回転パラメータ
+	transformSprite_.rotate = { 0,rotation,0 };
+
+
+
+	materialDataSprit->color = color_;
+
+	//サイズ
+	transformSprite_.scale = { size.x, size.y, 1.0f };
+
+
+
+	//アンカーポイント反映処理
+	float left = 0.0f - anchorPoint.x;
+	float right = 1.0f - anchorPoint.x;
+	float top = 0.0f - anchorPoint.y;
+	float bottom = 1.0f - anchorPoint.y;
+
+	//左右反転
+	if(isFlipx_== true)
+	{
+		left = -left;
+		right = -right;
+	}
+
+	//上下反転
+	if(isFlipy_== true)
+	{
+		top = -top;
+		bottom = -bottom;
+	}
+	const DirectX::TexMetadata& metaData = TextureManager::GetInstance()->GetMetaData(textureIndex);
+
+	float tex_left = textureLeftTop.x / metaData.width;
+	float tex_right = (textureLeftTop.x + textureSize.x) / metaData.width;
+	float tex_top = textureLeftTop.y / metaData.height;
+	float tex_bottom = (textureLeftTop.y + textureSize.y) / metaData.height;
+
+
+	vertexDataSprite[0].position = { left, bottom, 0.0f, 1.0f }; //左下
+	vertexDataSprite[0].texcoord = { tex_left, tex_bottom };
+
+	vertexDataSprite[1].position = { left, top, 0.0f, 1.0f };    //左上
+	vertexDataSprite[1].texcoord = { tex_left, tex_top };
+
+	vertexDataSprite[2].position = { right, bottom, 0.0f, 1.0f}; //右下
+	vertexDataSprite[2].texcoord = { tex_right, tex_bottom };
+
+	vertexDataSprite[3].position = { right, top, 0.0f, 1.0f };   //右上
+	vertexDataSprite[3].texcoord = { tex_right, tex_top };
+		
+	//
+	////ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 
 
 	ImGui::Begin("texture");
@@ -95,22 +156,6 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	ImGui::End();
 
 
-	directionalLighlData->direction = light;
-
-
-
-
-	transformSprite_.translate = { position.x,position.y, 0 };
-	//回転パラメータ
-	transformSprite_.rotate = { 0,rotation,0 };
-
-
-
-	materialDataSprit->color = color_;
-
-	//サイズ
-	transformSprite_.scale = { size.x, size.y, 1.0f };
-
 }
 
 
@@ -125,25 +170,25 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 
 
-	directXCommon->GetCommandList()->RSSetViewports(1, directXCommon->GetViewport());
+	directXCommon_->GetCommandList()->RSSetViewports(1, directXCommon_->GetViewport());
 
 	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
-	directXCommon->GetCommandList()->SetGraphicsRootSignature(spriteCommon_->GetRootSignature());
-	directXCommon->GetCommandList()->SetPipelineState(spriteCommon_->GetGraphicsPipelineState());
+	directXCommon_->GetCommandList()->SetGraphicsRootSignature(spriteCommon_->GetRootSignature());
+	directXCommon_->GetCommandList()->SetPipelineState(spriteCommon_->GetGraphicsPipelineState());
 	//スプライト
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
 	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
-	directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	directXCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
+	directXCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
 	//マテリアルCBufferの場所を設定
-	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprit->GetGPUVirtualAddress());
+	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprit->GetGPUVirtualAddress());
 	//wvp用のCBufferの場所を設定
     ////TransformationMatrionMatrixCBufferの場所を設定
-	directXCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetStvHandleGPU(textureIndex));
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 	////描画(DrawCall)３兆点で１つのインスタンス。
-	directXCommon->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+	directXCommon_->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 
 #pragma endregion
@@ -177,13 +222,13 @@ void Sprite::CreateVertex()
 	
 	
 	//Sprite用のの頂点リソースを作る
-	vertexResourceSprite = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 6);
+	vertexResourceSprite = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 4);
 
 	//リソースの先頭のアドレス
 	vertexbufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズは頂点6つぶんのサイズ
-	vertexbufferViewSprite.SizeInBytes = sizeof(VertexData) * 6;
+	vertexbufferViewSprite.SizeInBytes = sizeof(VertexData) * 4;
 
 	//１頂点当たりのサイズ
 	vertexbufferViewSprite.StrideInBytes = sizeof(VertexData);
@@ -193,31 +238,23 @@ void Sprite::CreateVertex()
 
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
 
-	vertexDataSprite[0].position = { 0.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
+	vertexDataSprite[0].position = { 0.0f, 1.0f, 0.0f, 1.0f };
+	vertexDataSprite[0].texcoord = { 0.0f, 1.0f };
 	
 
 	//上
-	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
+	vertexDataSprite[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };
+	vertexDataSprite[1].texcoord = { 0.0f, 0.0f };
 	
 	
 	//右下
-	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
+	vertexDataSprite[2].position = { 1.0f, 1.0f, 0.0f, 1.0f };
+	vertexDataSprite[2].texcoord = { 1.0f, 1.0f };
 	
 
 	//左下
-	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
-	
-	//上
-	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
-	
-	//右下
-	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
+	vertexDataSprite[3].position = { 1.0f, 0.0f, 0.0f, 1.0f };
+	vertexDataSprite[3].texcoord = { 1.0f, 0.0f };
 	
 
 
@@ -227,7 +264,33 @@ void Sprite::CreateVertex()
 
 
 
+}
 
+void Sprite::CreateIndex()
+{
+	indexResourceSprite =  spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(uint32_t) * 6);
+
+	//リソースの先頭のアドレスから使う
+	indexBufferViewSprite.BufferLocation = indexResourceSprite->GetGPUVirtualAddress();
+	//使用するリソースのサイズは頂点３つ分のサイズ
+	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
+	//１頂点あたりのサイズ
+	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
+
+	//Resourceにデータを書き込む
+	uint32_t* indexDataSprite = nullptr;
+	//書き込むためのアドレスを取得
+	indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
+
+	//三角形一枚作成
+	indexDataSprite[0] = 0;
+	indexDataSprite[1] = 1;
+	indexDataSprite[2] = 2;
+
+	//三角形１枚作製
+	indexDataSprite[3] = 1;
+	indexDataSprite[4] = 3;
+	indexDataSprite[5] = 2;
 }
 
 
@@ -352,6 +415,17 @@ void Sprite::CreateTexture(std::wstring textureFilePath)
 	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
 
 
+}
+
+void Sprite::AdujustTextueSize()
+{
+	const DirectX::TexMetadata& metaDeata = TextureManager::GetInstance()->GetMetaData(textureIndex);
+	
+	textureSize.x = static_cast<float>(metaDeata.width);
+	
+	textureSize.y = static_cast<float>(metaDeata.height);
+	
+	size = textureSize;
 }
 
 
