@@ -15,7 +15,7 @@ public:
 	void Initialize(DirectXCommon* directXCommon);
 
 
-	
+	void SpritePreDraw();
 
 	void Releases();;
 

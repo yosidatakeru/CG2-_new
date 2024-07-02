@@ -23,6 +23,7 @@
     <ClCompile Include="base\ImGuiManager.cpp" />
     <ClCompile Include="base\Model.cpp" />
     <ClCompile Include="base\MyFunction.cpp" />
+    <ClCompile Include="base\Object3dCommon.cpp" />
     <ClCompile Include="base\Sprite.cpp" />
     <ClCompile Include="base\SpriteCommon.cpp" />
     <ClCompile Include="base\TextureManager.cpp" />
@@ -62,6 +63,7 @@
     <ClInclude Include="base\Model.h" />
     <ClInclude Include="base\ModelData.h" />
     <ClInclude Include="base\MyFunction.h" />
+    <ClInclude Include="base\Object3dCommon.h" />
     <ClInclude Include="base\Sprite.h" />
     <ClInclude Include="base\SpriteCommon.h" />
     <ClInclude Include="base\TextureManager.h" />

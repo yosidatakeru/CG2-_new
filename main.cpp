@@ -6,7 +6,7 @@
 #include"base/Sprite.h"
 #include"base/ResourceObject.h"
 #include"base/TextureManager.h"
-
+#include"base/Object3dCommon.h"
 
 #pragma endregion
 
@@ -31,6 +31,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	WinApp* winApp = nullptr;
 	DirectXCommon* directXCommon = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
+	Object3dCommon* object3dCommon = nullptr;
+
 	ImGuiManager* imGuiManager = nullptr;
 	//Sprite* sprite = nullptr;
 #pragma endregion
@@ -77,7 +79,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		sprite->SetPosintion({(float)i * 120,0});
 		sprites.push_back(sprite);
 	}
+
+
 #pragma endregion
+
+#pragma region	3Dオブジェクト(3Dモデル)
+
+	object3dCommon = new Object3dCommon();
+	object3dCommon->Initialize(directXCommon);
+
+#pragma endregion
+
 
 
 
@@ -116,7 +128,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		imGuiManager->BeginFlame(directXCommon);
 	  
-		
+	//スプライトの描画
+	
 	//いろいろな処理(色、回転、移動など)	
 	//移動処理
 	 //Vector2 pos = sprite->GetPosition();
@@ -138,7 +151,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
    //	  size.x += 0.1f;
 	  //size.y += 0.1f;
 	  //sprite->SetSize(size);
-
+		
 		for (int i = 0; i < 5; i++)
 		{
 			sprites[i]->Update(sprites[i]->GetTransform(), sprites[i]->GetCameraTransform(), sprites[i]->GetTransformSprite());
@@ -146,13 +159,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		directXCommon->PreDraw();
 
-
+		spriteCommon->SpritePreDraw();
 		for (int i = 0; i < 5; i++)
 		{
-			sprites[i]->Draw(directXCommon);
+			sprites[1]->Draw(directXCommon);
 		}
 		
-		
+		//オブジェクトの描画
+		object3dCommon->Object3dPreDraw();
+
+
+
+
+
+
+
 		imGuiManager->EndFlame(directXCommon);
 		
 		directXCommon->PosDeaw();
@@ -167,6 +188,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	{
 		sprites[i]->Releases();
 	}
+	object3dCommon->Releases();
+
 	spriteCommon->Releases();
 
 	directXCommon->Releases();

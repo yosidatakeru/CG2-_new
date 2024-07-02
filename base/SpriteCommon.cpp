@@ -68,7 +68,7 @@ void SpriteCommon::PsoGenerate()
 	HRESULT hr{};
 	#pragma region RootSignatureを作成
 		//RootSignature・・ShaderとResourceをどのように間レンズけるかを示したオブジェクトである
-		;
+		
 		descriptionRootSignature.Flags =
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 		
@@ -249,6 +249,13 @@ void SpriteCommon::PsoGenerate()
 
 
 
+
+void SpriteCommon::SpritePreDraw()
+{
+	directXCommon->GetCommandList()->SetGraphicsRootSignature(GetRootSignature());
+	directXCommon->GetCommandList()->SetPipelineState(GetGraphicsPipelineState());
+	directXCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
 
 void SpriteCommon::Releases()
 {
