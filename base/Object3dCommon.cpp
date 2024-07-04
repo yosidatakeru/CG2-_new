@@ -2,6 +2,9 @@
 #include"Base.h"
 #include <cassert>
 
+#include"externals/DirectXTex/d3dx12.h"
+#include<vector>
+
 void Object3dCommon::Initialize(DirectXCommon* directxCommon)
 {
 	this->directXCommon_ = directxCommon;
@@ -232,6 +235,138 @@ void Object3dCommon::GraphicsPipeline()
 
 }
 
+ID3D12Resource* Object3dCommon::CreateBufferResource(ID3D12Device* device, size_t sizeInByte)
+{
+
+	ID3D12Resource* resource = nullptr;
+	////VertexResourceを生成
+	//頂点リソース用のヒープを設定
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	//頂点リソースの設定
+	D3D12_RESOURCE_DESC vertexResourceDesc{};
+	//バッファリソース。テクスチャの場合はまた別の設定をする
+	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	vertexResourceDesc.Width = sizeInByte;
+	//バッファの場合はこれらは1にする決まり
+	vertexResourceDesc.Height = 1;
+	vertexResourceDesc.DepthOrArraySize = 1;
+	vertexResourceDesc.MipLevels = 1;
+	vertexResourceDesc.SampleDesc.Count = 1;
+	//バッファの場合はこれにする決まり
+	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	//実際に頂点リソースを作る
+
+	HRESULT	hr = device->CreateCommittedResource(
+		&uploadHeapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&vertexResourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr, IID_PPV_ARGS(&resource));
+	assert(SUCCEEDED(hr));
+
+
+	return  resource;
+
+}
+
+ID3D12Resource* Object3dCommon::CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metaData)
+{
+	//1.metadataを基にResourceの設定
+	D3D12_RESOURCE_DESC resourceDesc{};
+	//Textureの幅
+	resourceDesc.Width = UINT(metaData.width);
+	//Textureの高さ
+	resourceDesc.Height = UINT(metaData.height);
+	//mipmapの数
+	resourceDesc.MipLevels = UINT16(metaData.mipLevels);
+	//奥行き or 配列Textureの配列数
+	resourceDesc.DepthOrArraySize = UINT16(metaData.arraySize);
+	//TextureのFormat
+	resourceDesc.Format = metaData.format;
+	//サンプリングカウント
+	resourceDesc.SampleDesc.Count = 1;
+	//Textureの次元数。普段使っているのは2次元
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metaData.dimension);
+
+	//2.利用するHeapの設定
+	//利用するHeapの設定。非常に特殊な運用。02_04exで一般的なケース版がある
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	//細かい設定を行う
+	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;
+	//WriteBackポリシーでCPUアクセス可能
+	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
+	//プロセッサの近くに配置
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+
+
+
+	//3.Resourceを生成する
+	ID3D12Resource* resource = nullptr;
+	HRESULT	hr = device->CreateCommittedResource(
+		&heapProperties,					//Heapの設定
+		D3D12_HEAP_FLAG_NONE,				//Heapの特殊な設定
+		&resourceDesc,						//Resourceの設定
+		D3D12_RESOURCE_STATE_COPY_DEST,	//初回のResourceState。Textureは基本読むだけ
+		nullptr,							//Clear最適値。使わないのでnullptr
+		IID_PPV_ARGS(&resource));			//作成するResourceポインタへのポインタ
+	assert(SUCCEEDED(hr));
+
+	return resource;
+
+}
+
+DirectX::ScratchImage Object3dCommon::LoadTexture(const std::wstring& filePath)
+{
+	HRESULT hr{};
+	//テクスチャファイルを読んでプログラムで扱えるようにする
+	DirectX::ScratchImage image{};
+	hr = DirectX::LoadFromWICFile(filePath.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+
+	assert(SUCCEEDED(hr));
+
+	//ミップマップの作成
+	//ミップマップ...元画像より小さなテクスチャ群
+	DirectX::ScratchImage mipImages{};
+	hr = DirectX::GenerateMipMaps(
+		image.GetImages(), image.GetImageCount(), image.GetMetadata(),
+		DirectX::TEX_FILTER_SRGB, 0, mipImages);
+	assert(SUCCEEDED(hr));
+
+	//ミップマップのデータを返す
+	return image;
+
+}
+
+
+[[nodiscard]]
+ID3D12Resource* Object3dCommon::UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages)
+{
+	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+	DirectX::PrepareUpload(directXCommon_->GetDevice(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
+
+
+	uint64_t intermediateSize = GetRequiredIntermediateSize(texture, 0, UINT(subresources.size()));
+	intermediateResource_ = CreateBufferResource(directXCommon_->GetDevice(), intermediateSize);
+	
+
+	UpdateSubresources(directXCommon_->GetCommandList(), texture, intermediateResource_, 0, 0, UINT(subresources.size()), subresources.data());
+
+	//Tetureへの転送後には利用するできるよう、D3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = texture;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
+	directXCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
+	OutputDebugStringA("Hello,DirectX!\n");
+	return intermediateResource_;
+
+}
+
+
 
 void Object3dCommon::Object3dPreDraw()
 {
@@ -322,4 +457,15 @@ IDxcBlob* Object3dCommon::CompileShader(const std::wstring& filePath, const wcha
 
 void Object3dCommon::Releases()
 {
+	graphicsPipelineState->Release();
+	signatureBlob->Release();
+	if (errorBlob) {
+		errorBlob->Release();
+	}
+	rootSignature->Release();
+	pixelShaderBlob->Release();
+
+	vertexShaderBlob->Release();
+	intermediateResource_->Release();
 }
+

@@ -56,8 +56,7 @@ private:
 
 	void CreatLight();
 
-	void CreateTexture(std::wstring textureFilePath);
-
+	
 	//本来テクスチャサイズを合わせる
 	void AdujustTextueSize();
 public:

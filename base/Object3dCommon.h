@@ -1,5 +1,8 @@
 #pragma once
 #include"DirectXCommon.h"
+#include "externals/DirectXTex/DirectXTex.h"
+
+
 class Object3dCommon
 {
 public: //メンバ関数
@@ -19,9 +22,21 @@ public: //メンバ関数
 	//リリース
 	void Releases();
 
-public:
-	DirectXCommon* GetdirectxCommon() const { return directXCommon_; }
+	ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInByte);
 
+
+	ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metaData);
+
+	DirectX::ScratchImage LoadTexture(const std::wstring& filePath);
+	
+	ID3D12Resource* UploadTewtureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
+
+
+public:
+	//DirectXCommon* GetdirectxCommon() const { return directXCommon_; }
+	
+	ID3D12Resource* GetIntermediateResource() { return  intermediateResource_; }
+	void SetIntermediateResource(ID3D12Resource* intermediateResource) { intermediateResource_ = intermediateResource; }
 
 
 private:
@@ -32,12 +47,14 @@ private:
     
 	void GraphicsPipeline();
 
+	
+
 	ID3D12RootSignature* GetRootSignature() const { return rootSignature.Get(); }
 
 	ID3D12PipelineState* GetGraphicsPipelineState() const { return graphicsPipelineState; }
 
 private:
-	DirectXCommon* directXCommon_;
+	DirectXCommon* directXCommon_ = nullptr;
 
 	//ルートシグネチャ
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};

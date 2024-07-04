@@ -15,7 +15,7 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 	CreateVertex();
 	
-	//CreateTexture(textureFilePath);
+	
 	//インデクス
 	CreateIndex();
 
@@ -125,35 +125,35 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	vertexDataSprite[3].position = { right, top, 0.0f, 1.0f };   //右上
 	vertexDataSprite[3].texcoord = { tex_right, tex_top };
 		
-	//
-	////ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+	////
+	//////ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 
 
-	ImGui::Begin("texture");
-	ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
+	//ImGui::Begin("texture");
+	//ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
 
 
-	//ImGui::Begin("model");
+	////ImGui::Begin("model");
 
-	//ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
+	////ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
 
-	ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
+	//ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
 
-	//ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
-
-
-	ImGui::End();
-
-	ImGui::Checkbox("uvTrasform", &uvSprite);
+	////ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
 
 
-	ImGui::Begin("texture");
-	ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-	ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-	ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+	//ImGui::End();
+
+	//ImGui::Checkbox("uvTrasform", &uvSprite);
 
 
-	ImGui::End();
+	//ImGui::Begin("texture");
+	//ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+	//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+	//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+
+
+	//ImGui::End();
 
 
 }
@@ -369,52 +369,52 @@ void Sprite::CreatLight()
 
 }
 
-void Sprite::CreateTexture(std::wstring textureFilePath)
-{
-	
-	////画像読み込み
-	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(textureFilePath);
-	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
-	textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
-
-	//画像データを送る
-	ID3D12Resource* texture = spriteCommon_->GetIntermediateResource();
-	texture = spriteCommon_->UploadTewtureData(textureResource, mipImages);
-	spriteCommon_->SetIntermediateResource(texture);
-
-
-	////SRV
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = metaData.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = UINT(metaData.mipLevels);
-
-
-
-
-
-
-
-	//SRVを作成するDescriptorHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU =
-		directXCommon_->GetSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	textureSrvHandleGPU =
-		directXCommon_->GetSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
-
-
-
-
-	textureSrvHandleCPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureSrvHandleGPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-
-
-	//SRVの生成
-	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
-
-
-}
+//void Sprite::CreateTexture(std::wstring textureFilePath)
+//{
+//	
+//	////画像読み込み
+//	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(textureFilePath);
+//	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
+//	textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
+//
+//	//画像データを送る
+//	ID3D12Resource* texture = spriteCommon_->GetIntermediateResource();
+//	texture = spriteCommon_->UploadTewtureData(textureResource, mipImages);
+//	spriteCommon_->SetIntermediateResource(texture);
+//
+//
+//	////SRV
+//	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+//	srvDesc.Format = metaData.format;
+//	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+//	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
+//	srvDesc.Texture2D.MipLevels = UINT(metaData.mipLevels);
+//
+//
+//
+//
+//
+//
+//
+//	//SRVを作成するDescriptorHeapの場所を決める
+//	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU =
+//		directXCommon_->GetSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+//	textureSrvHandleGPU =
+//		directXCommon_->GetSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
+//
+//
+//
+//
+//	textureSrvHandleCPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+//	textureSrvHandleGPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+//
+//
+//
+//	//SRVの生成
+//	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
+//
+//
+//}
 
 void Sprite::AdujustTextueSize()
 {

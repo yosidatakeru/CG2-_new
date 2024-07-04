@@ -7,7 +7,7 @@
 #include"base/ResourceObject.h"
 #include"base/TextureManager.h"
 #include"base/Object3dCommon.h"
-
+#include"base/Object3d.h"
 #pragma endregion
 
 //CompilerShader関数
@@ -32,6 +32,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	DirectXCommon* directXCommon = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
 	Object3dCommon* object3dCommon = nullptr;
+	Object3d* object3d = nullptr;
 
 	ImGuiManager* imGuiManager = nullptr;
 	//Sprite* sprite = nullptr;
@@ -87,7 +88,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	object3dCommon = new Object3dCommon();
 	object3dCommon->Initialize(directXCommon);
-
+	object3d = new Object3d();
+	object3d->Initialize(directXCommon, object3dCommon);
+	
 #pragma endregion
 
 
@@ -166,11 +169,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		
 		//オブジェクトの描画
+
+		object3d->Update(object3d->GetTransform(), object3d->GetCameraTransform(), object3d->GetTransformSprite());
+
+
 		object3dCommon->Object3dPreDraw();
 
-
-
-
+		
+		object3d->Draw(directXCommon);
 
 
 
@@ -184,10 +190,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 #pragma region 解放処理
+
+	object3d->Releases();
 	for (int i = 0; i < 5; i++)
 	{
 		sprites[i]->Releases();
 	}
+	
 	object3dCommon->Releases();
 
 	spriteCommon->Releases();
@@ -223,6 +232,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			}
 		}
 	};
+
+	delete object3d;
+
 	for (int i = 0; i < 5; i++)
 	{
 		delete sprites[i];
