@@ -1,6 +1,8 @@
 #include "Object3d.h"
 #include "Base.h"
 #include<cassert>
+#include"Object3dCommon.h"
+#include"TextureManager.h"
 
 void Object3d::Initialize(DirectXCommon* directXCommon, Object3dCommon* Object3dCommon)
 {
@@ -9,11 +11,14 @@ void Object3d::Initialize(DirectXCommon* directXCommon, Object3dCommon* Object3d
 
     modelData = LoadObjFile("Resources", "plane.obj");
 
-
+	
 
 	CreateVertex();
 
-	CreatTexture(ConvertString(modelData.material.textureFilePath));
+	TextureManager::GetInstance()->LoadTexture(ConvertString(modelData.material.textureFilePath));
+
+	modelData.material.textureIndex =
+		TextureManager::GetInstance()->GetTextureIndexFilePath(ConvertString(modelData.material.textureFilePath));
 
 	CreateMAterial();
 
@@ -94,7 +99,7 @@ void Object3d::Draw(DirectXCommon* directXCommon)
 
 
 	
-	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2,  TextureManager::GetInstance()->GetStvHandleGPU(modelData.material.textureIndex));
 	//ライト用
 	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
@@ -116,7 +121,7 @@ void Object3d::Releases()
 	
 	wvpResource->Release();
 	
-	textureResource->Release();
+	//textureResource->Release();
 }
 
 

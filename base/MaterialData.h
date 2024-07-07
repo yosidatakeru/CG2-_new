@@ -3,5 +3,6 @@
 struct  MatrialData
 {
 	std::string textureFilePath;
+	uint32_t textureIndex = 0;
 
 };

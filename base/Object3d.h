@@ -2,7 +2,7 @@
 #include "MaterialData.h"
 #include "ModelData.h"
 #include "DirectXCommon.h"
-#include "Object3dCommon.h"
+
 
 #include"Vector2.h"
 #include<numbers>
@@ -11,16 +11,16 @@
 #include"VertexData.h"
 #include"ModelData.h"
 #include"MaterialData.h"
+#include"TransformationMatrix.h"
 
+#include"externals/DirectXTex/DirectXTex.h"
 
 #include<fstream>
 #include<sstream>
 
-struct TransformationMatrix
-{
-	Matrix4x4 WVP;
-	Matrix4x4 World;
-};
+
+class  Object3dCommon;
+
 
 class Object3d
 {
@@ -126,6 +126,6 @@ private:
 
 	ModelData modelData; // 構築するMaterualData
 
-
+	MatrialData* textureIndex;
 
 };

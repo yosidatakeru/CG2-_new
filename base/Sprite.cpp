@@ -369,52 +369,6 @@ void Sprite::CreatLight()
 
 }
 
-//void Sprite::CreateTexture(std::wstring textureFilePath)
-//{
-//	
-//	////画像読み込み
-//	DirectX::ScratchImage mipImages = spriteCommon_->LoadTexture(textureFilePath);
-//	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
-//	textureResource = spriteCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
-//
-//	//画像データを送る
-//	ID3D12Resource* texture = spriteCommon_->GetIntermediateResource();
-//	texture = spriteCommon_->UploadTewtureData(textureResource, mipImages);
-//	spriteCommon_->SetIntermediateResource(texture);
-//
-//
-//	////SRV
-//	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-//	srvDesc.Format = metaData.format;
-//	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-//	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-//	srvDesc.Texture2D.MipLevels = UINT(metaData.mipLevels);
-//
-//
-//
-//
-//
-//
-//
-//	//SRVを作成するDescriptorHeapの場所を決める
-//	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU =
-//		directXCommon_->GetSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-//	textureSrvHandleGPU =
-//		directXCommon_->GetSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
-//
-//
-//
-//
-//	textureSrvHandleCPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-//	textureSrvHandleGPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-//
-//
-//
-//	//SRVの生成
-//	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
-//
-//
-//}
 
 void Sprite::AdujustTextueSize()
 {

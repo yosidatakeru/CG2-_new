@@ -466,6 +466,6 @@ void Object3dCommon::Releases()
 	pixelShaderBlob->Release();
 
 	vertexShaderBlob->Release();
-	intermediateResource_->Release();
+	//intermediateResource_->Release();
 }
 
