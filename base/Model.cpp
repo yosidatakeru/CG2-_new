@@ -3,6 +3,7 @@
 #include "Base.h"
 #include<cassert>
 
+
 void Model::Initialize(ModelCommon* modelCommon)
 {
 	modelCommon_ = modelCommon;
@@ -17,16 +18,21 @@ void Model::Initialize(ModelCommon* modelCommon)
 
 	CreateMAterial();
 
+	
 	TextureManager::GetInstance()->LoadTexture(ConvertString(modelData.material.textureFilePath));
 
 	modelData.material.textureIndex =
 		TextureManager::GetInstance()->GetTextureIndexFilePath(ConvertString(modelData.material.textureFilePath));
 
-	 modelData.material.textureIndex;
+
+
+
+	
 }
 
 void Model::Draw()
 {
+	
 
 
 	modelCommon_->GetDirectXCmmon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);

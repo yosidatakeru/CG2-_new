@@ -113,55 +113,11 @@ public:
 	//切り抜き関連
 	void SetTextureLeftTop(Vector2 value) { textureLeftTop = value; }
 	void SetTextureSize(Vector2 size) { textureSize = size; }
-
 private:
-	VertexData* vertexData = nullptr;
-	
-
-	ID3D12Resource* textureResource = nullptr;
-	
-
-	TransformationMatrix* wvpData = nullptr;
-
-	Material* materialData = nullptr;
-	Material* materialDataSprit = nullptr;
-
-	SpriteCommon* spriteCommon_ = nullptr;
-	DirectXCommon* directXCommon_ = nullptr;
-	ID3D12Resource* vertexResource = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = nullptr;
-
-
-	ID3D12Resource* materialResource = nullptr;
-	ID3D12Resource* materialResourceSprit = nullptr;
-
-	ID3D12Resource* wvpResource = nullptr;
-	
-	ID3D12Resource* vertexResourceSprite = nullptr;
-
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-
-	////データの書き込み
-	Matrix4x4* transformationMatrixDataSprite = nullptr;
-
-	ID3D12Resource* transformationMatrixResourceSprite = nullptr;
-
-	VertexData* vertexDataSprite = nullptr;
-
-	//頂点バッファリソーソを作る
-	D3D12_VERTEX_BUFFER_VIEW vertexbufferViewSprite{};
-
-	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
-	//
-	
-	ModelData modelData; // 構築するMaterualData
-
-	
-
 
 	float rotation = 0;
 
-	//色パラメーター
+	////色パラメーター
 	Vector4 color_ = {1.0f, 1.0f, 1.0f, 1.0f};
 
 	
@@ -186,50 +142,58 @@ private:
 		 {0.0f, 0.0f, 0.0f},
 	 };
 
+private:
 
-
-	 //画像の保蔵先のアドレス
-	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
-	 D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2;
-
-	 //円形描画用
-	 const uint32_t kSubdivision = 12;
-	 const uint32_t kNumSphereVerices = kSubdivision * kSubdivision * 6;
-	 float pi = std::numbers::pi_v<float>;
-
-	 bool useMonsterBall = true;
-
-	 bool uvSprite = true;
+	DirectXCommon* directXCommon_ = nullptr;
+	SpriteCommon* spriteCommon_ = nullptr;
 	
-	 
-	 D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap * descriptoHeap, uint32_t descriptorSize, uint32_t index)
-	 {
-		 D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptoHeap->GetCPUDescriptorHandleForHeapStart();
-		 handleCPU.ptr += (descriptorSize * index);
-		 return handleCPU;
-	 }
+	uint32_t textureIndex = 0;
 
-	 D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
-	 {
-		 D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-		 handleGPU.ptr += (descriptorSize * index);
-		 return handleGPU;
-	 }
-	 ID3D12Resource* directionalLighlResource = nullptr;
-	 DirectionalLigha* directionalLighlData = nullptr;
-	 Vector3 light = { 0.0f, -1.0f,0.0f };
-	 //切り抜きたい画像内の座標
-	 Vector2 textureLeftTop = { 0,0 };
-	 //切り抜きたい画像内のサイズ
-	  Vector2 textureSize = { 0, 0 };
+	////頂点バッファリソーソを作る
+	ID3D12Resource* vertexResourceSprite = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW vertexbufferViewSprite{};
+	
 
-	 uint32_t textureIndex = 0;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = nullptr;
+	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+	
+	ID3D12Resource* materialResourceSprit = nullptr;
+	Material* materialDataSprit = nullptr;
 
-	 //フリップ
+
+
+	ID3D12Resource* wvpResource = nullptr;
+	TransformationMatrix* wvpData = nullptr;
+
+
+	//////データの書き込み
+	Matrix4x4* transformationMatrixDataSprite = nullptr;
+	ID3D12Resource* transformationMatrixResourceSprite = nullptr;
+
+
+
+	ID3D12Resource* directionalLighlResource = nullptr;
+	DirectionalLigha* directionalLighlData = nullptr;
+	Vector3 light = { 0.0f, -1.0f,0.0f };
+
+
+	//切り抜きたい画像内の座標
+	Vector2 textureLeftTop = { 0,0 };
+	//切り抜きたい画像内のサイズ
+	Vector2 textureSize = { 0, 0 };
+
+	// //フリップ
 	 bool isFlipx_ = false;
 	 bool isFlipy_ = false;
 
-	 Microsoft::WRL::ComPtr<ID3D12Resource> indexResource;
-	 D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+	 VertexData* vertexDataSprite = nullptr;
+
+
+	 bool uvSprite = true;
+
+	
+
+	
+	
 };
 

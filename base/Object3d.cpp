@@ -10,8 +10,6 @@ void Object3d::Initialize(DirectXCommon* directXCommon, Object3dCommon* Object3d
     object3dCommon_ = Object3dCommon;
 
 	
-
-	
 	
 	
 	CreateWVP();
@@ -87,8 +85,8 @@ void Object3d::Draw(DirectXCommon* directXCommon)
 	//wvp用のCBufferの場所を設定
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
-	SetModel(model_);
-
+	
+	//model_に3dモデルのデータを入れれば描画されるかもしれない
 	if (model_) 
 	{
 		model_->Draw();
@@ -106,67 +104,19 @@ void Object3d::Draw(DirectXCommon* directXCommon)
 
 void Object3d::Releases()
 {
-//	vertexResource->Release();
-	
-	
+
+
+
 	wvpResource->Release();
-	
-	//textureResource->Release();
-}
-
-
-
-
-
-
-
-void Object3d::CreatTexture(std::wstring filePath)
-{
-	//////画像読み込み
-	
-	DirectX::ScratchImage mipImages = object3dCommon_->LoadTexture(filePath);
-	const DirectX::TexMetadata& metaData = mipImages.GetMetadata();
-	textureResource = object3dCommon_->CreateTextureResource(directXCommon_->GetDevice(), metaData);
-
-	//画像データを送る
-	ID3D12Resource* texture = object3dCommon_->GetIntermediateResource();
-	texture = object3dCommon_->UploadTewtureData(textureResource, mipImages);
-	object3dCommon_->SetIntermediateResource(texture);
-
-
-	////SRV
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = metaData.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	srvDesc.Texture2D.MipLevels = UINT(metaData.mipLevels);
-
-
-
-
-
-
-
-	//SRVを作成するDescriptorHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU =
-		directXCommon_->GetSrvDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	textureSrvHandleGPU =
-		directXCommon_->GetSrvDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
-
-
-
-
-	textureSrvHandleCPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureSrvHandleGPU.ptr += directXCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-
-
-	//SRVの生成
-	directXCommon_->GetDevice()->CreateShaderResourceView(textureResource, &srvDesc, textureSrvHandleCPU);
-
 
 
 }
+
+
+
+
+
+
 
 
 

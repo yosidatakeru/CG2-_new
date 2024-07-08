@@ -125,35 +125,35 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	vertexDataSprite[3].position = { right, top, 0.0f, 1.0f };   //右上
 	vertexDataSprite[3].texcoord = { tex_right, tex_top };
 		
-	////
-	//////ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+	//
+	////ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 
 
-	//ImGui::Begin("texture");
-	//ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
+	ImGui::Begin("texture");
+	ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
 
 
-	////ImGui::Begin("model");
+	//ImGui::Begin("model");
 
-	////ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
+	//ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
 
-	//ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
+	ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
 
-	////ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
-
-
-	//ImGui::End();
-
-	//ImGui::Checkbox("uvTrasform", &uvSprite);
+	//ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
 
 
-	//ImGui::Begin("texture");
-	//ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-	//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-	//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+	ImGui::End();
+
+	ImGui::Checkbox("uvTrasform", &uvSprite);
 
 
-	//ImGui::End();
+	ImGui::Begin("texture");
+	ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+	ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+	ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+
+
+	ImGui::End();
 
 
 }
@@ -198,16 +198,12 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 
 void Sprite::Releases()
 {
-	//indexResourceSprite->Release();
 	directionalLighlResource->Release();
 	transformationMatrixResourceSprite->Release();
-	vertexResourceSprite->Release();
-	//vertexResource->Release();
+	vertexResourceSprite->Release();	
 	materialResourceSprit->Release();
-	materialResource->Release();
 	wvpResource->Release();
-	//textureResource->Release();
-	//textureResource2->Release();
+	
 }
 
 
@@ -297,15 +293,15 @@ void Sprite::CreateIndex()
 void Sprite::CreateMAterial()
 {
 	
-	//Resourceにデータを書き込む
-	materialResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material) ); ;
+	////Resourceにデータを書き込む
+	//materialResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material) ); ;
 
 
-	//書き込むためのアドレスを取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	materialData->color = color_;
-	materialData->enableLighting = false;
-	materialData->uvTrasform = MakeIdentity4x4();
+	////書き込むためのアドレスを取得
+	//materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	//materialData->color = color_;
+	//materialData->enableLighting = false;
+	//materialData->uvTrasform = MakeIdentity4x4();
 
 
 

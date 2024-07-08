@@ -39,6 +39,8 @@ public:
 
 	ModelData GetModelData() { return modelData; }
 
+	
+
 private:
 	//色パラメーター
 	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -48,6 +50,7 @@ private:
 private:
 	
 	ModelCommon* modelCommon_ = nullptr; 
+	Model* model_ = nullptr;
 
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;

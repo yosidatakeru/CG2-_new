@@ -59,10 +59,12 @@ public:
 	Vector2 GetPosition() { return position; }
 	void SetPosintion(Vector2 pos) { position = pos; }
 
+	Transform GetTransform() { return  transform_; }
+
 	Vector3 GetCameraPosition() { return camerPosition; }
 	void SetCameraPosintion(Vector3 cameraPos) { camerPosition = cameraPos; }
 
-	Transform GetTransform() { return  transform_; }
+
 
 	Transform GetCameraTransform() { return  cameraTransform_; }
 
@@ -97,7 +99,7 @@ private:
 	Object3dCommon* object3dCommon_ = nullptr;
 	Model* model_ = nullptr;
 	
-	
+	ModelData modelData;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	ID3D12Resource* textureResource;

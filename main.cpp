@@ -88,6 +88,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	object3dCommon = new Object3dCommon();
 	object3dCommon->Initialize(directXCommon);
+	
 	object3d = new Object3d();
 	object3d->Initialize(directXCommon, object3dCommon);
 	
