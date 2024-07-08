@@ -75,7 +75,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		else 
 		{
-			sprite->Initialize(directXCommon, spriteCommon, L"Resources/uvChecker.png");
+			sprite->Initialize(directXCommon, spriteCommon, L"Resources/Player5.png");
 		}
 		sprite->SetPosintion({(float)i * 120,0});
 		sprites.push_back(sprite);

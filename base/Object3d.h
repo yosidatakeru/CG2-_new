@@ -2,21 +2,18 @@
 #include "MaterialData.h"
 #include "ModelData.h"
 #include "DirectXCommon.h"
-
+#include"Model.h"
 
 #include"Vector2.h"
 #include<numbers>
 #include"Matrix3x3.h"
-#include"Material.h"
-#include"VertexData.h"
 #include"ModelData.h"
 #include"MaterialData.h"
 #include"TransformationMatrix.h"
 
 #include"externals/DirectXTex/DirectXTex.h"
 
-#include<fstream>
-#include<sstream>
+
 
 
 class  Object3dCommon;
@@ -25,7 +22,7 @@ class  Object3dCommon;
 class Object3d
 {
 public:
-	void Initialize(DirectXCommon* directXCommon, Object3dCommon* object3dCommon_);
+	void Initialize(DirectXCommon* directXCommon, Object3dCommon* object3dCommonme);
 
 
 	void Draw(DirectXCommon* directXCommon);
@@ -34,11 +31,9 @@ public:
 	void Releases();
 private:
 
-	//頂点データの作成関数
-	void CreateVertex();
+	
 
-	//マテリアルの作成関数
-	void CreateMAterial();
+	
 
 	//行列情報の作成
 	//マテリアルの作成関数
@@ -49,17 +44,12 @@ private:
 	//画像データ作成
 	void CreatTexture(std::wstring filePath);
 
-	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
-
-	MatrialData LoadMatrialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
+	
 public:
 
 	ID3D12Resource* GetwvpResource() const { return  wvpResource; }
 
-	//色
-	Vector4 GetColor() { return color_; }
-	void SetColor(Vector4 color) { color_ = color; }
+	
 
 	//回転
 	float GetRotation() { return rotation; }
@@ -78,16 +68,14 @@ public:
 
 	Transform GetTransformSprite() { return  transformSprite; }
 
+	void SetModel(Model* model) { model_ = model; }
 
 private:
 
 
 	float rotation = 0;
 
-	//色パラメーター
-	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-
+	
 	Transform transform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
@@ -103,13 +91,13 @@ private:
 
 private:
 
+	ModelCommon* modelCommon = nullptr;
+
 	DirectXCommon* directXCommon_ = nullptr;
 	Object3dCommon* object3dCommon_ = nullptr;
-
-	ID3D12Resource* vertexResource = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	VertexData* vertexData = nullptr;
-
+	Model* model_ = nullptr;
+	
+	
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	ID3D12Resource* textureResource;
@@ -117,15 +105,13 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 	DirectX::ScratchImage mipImages;
 
-	ID3D12Resource* materialResource = nullptr;
-	Material* materialData = nullptr;
-
+	
 	ID3D12Resource* wvpResource = nullptr;
 
 	TransformationMatrix* wvpData = nullptr;
 
-	ModelData modelData; // 構築するMaterualData
-
+	
 	MatrialData* textureIndex;
 
+	ModelData modelData; // 構築するMaterualData
 };
