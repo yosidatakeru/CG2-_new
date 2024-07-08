@@ -15,6 +15,7 @@ public:
 
 	void Draw();
 
+	
 
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
@@ -36,7 +37,7 @@ public:
 	Vector4 GetColor() { return color_; }
 	void SetColor(Vector4 color) { color_ = color; }
 
-	ModelData GetModelData() { modelData; }
+	ModelData GetModelData() { return modelData; }
 
 private:
 	//色パラメーター

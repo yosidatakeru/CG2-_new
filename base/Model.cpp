@@ -12,7 +12,6 @@ void Model::Initialize(ModelCommon* modelCommon)
 	modelData = LoadObjFile("Resources", "plane.obj");
 	
 
-	
 
 	CreateVertex();
 
@@ -23,6 +22,7 @@ void Model::Initialize(ModelCommon* modelCommon)
 	modelData.material.textureIndex =
 		TextureManager::GetInstance()->GetTextureIndexFilePath(ConvertString(modelData.material.textureFilePath));
 
+	 modelData.material.textureIndex;
 }
 
 void Model::Draw()

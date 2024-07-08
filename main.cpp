@@ -162,9 +162,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		directXCommon->PreDraw();
 
-		spriteCommon->SpritePreDraw();
+		
 		for (int i = 0; i < 5; i++)
 		{
+			spriteCommon->SpritePreDraw();
 			sprites[1]->Draw(directXCommon);
 		}
 		

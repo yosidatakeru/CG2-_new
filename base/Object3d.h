@@ -113,5 +113,4 @@ private:
 	
 	MatrialData* textureIndex;
 
-	ModelData modelData; // 構築するMaterualData
 };

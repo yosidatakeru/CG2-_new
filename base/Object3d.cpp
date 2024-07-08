@@ -9,8 +9,10 @@ void Object3d::Initialize(DirectXCommon* directXCommon, Object3dCommon* Object3d
 	directXCommon_ = directXCommon;
     object3dCommon_ = Object3dCommon;
 
+	
 
-	modelData = model_->LoadObjFile("Resources", "plane.obj");
+	
+	
 	
 	CreateWVP();
 
@@ -85,12 +87,12 @@ void Object3d::Draw(DirectXCommon* directXCommon)
 	//wvp用のCBufferの場所を設定
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
+	SetModel(model_);
 
-
-	//if (model_) 
-	//{
+	if (model_) 
+	{
 		model_->Draw();
-	//}
+	}
 	
 	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
 
