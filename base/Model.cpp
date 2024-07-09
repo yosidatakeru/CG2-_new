@@ -4,12 +4,13 @@
 #include<cassert>
 
 
-void Model::Initialize(ModelCommon* modelCommon)
+void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypath, const std::string& filename)
 {
 	modelCommon_ = modelCommon;	
 	
-	modelData = LoadObjFile("Resources", "plane.obj");
+	modelData = LoadObjFile(directorypath, filename);
 
+	
 	CreateVertex();
 
 	CreateMAterial();
@@ -22,6 +23,7 @@ void Model::Initialize(ModelCommon* modelCommon)
 
 	
 }
+
 
 void Model::Load(const std::string& filePath)
 {

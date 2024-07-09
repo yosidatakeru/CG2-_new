@@ -42,7 +42,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//Sprite* sprite = nullptr;
 #pragma endregion
 
-
+	int spritModel = 5;
 
 
 #pragma region WinApp初期化
@@ -70,7 +70,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	TextureManager::GetInstance()->LoadTexture(L"Resources/Player5.png");
 	TextureManager::GetInstance()->LoadTexture(L"Resources/uvChecker.png");
 	std::vector<Sprite*> sprites;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < spritModel; i++)
 	{
 		Sprite* sprite = new Sprite();
 		if (i == 4)
@@ -102,7 +102,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	modelCommon->Initialze(directXCommon);
 	
 	model = new Model();
-	model->Initialize(modelCommon);
+	model->Initialize(modelCommon, "Resources", "plane.obj");
 
 	
 	
@@ -180,7 +180,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	  //size.y += 0.1f;
 	  //sprite->SetSize(size);
 		
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < spritModel; i++)
 		{
 			sprites[i]->Update(sprites[i]->GetTransform(), sprites[i]->GetCameraTransform(), sprites[i]->GetTransformSprite());
 		}
@@ -188,7 +188,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		directXCommon->PreDraw();
 
 		
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < spritModel; i++)
 		{
 			spriteCommon->SpritePreDraw();
 			sprites[1]->Draw(directXCommon);
@@ -218,7 +218,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region 解放処理
 
 	object3d->Releases();
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < spritModel; i++)
 	{
 		sprites[i]->Releases();
 	}

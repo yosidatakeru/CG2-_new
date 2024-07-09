@@ -11,7 +11,7 @@
 class Model
 {
 public:
-	void Initialize(ModelCommon* modelCommon);
+	void Initialize(ModelCommon* modelCommon, const std::string& directorypath, const std::string& filename);
 	void Load(const std::string& filePath);
 
 	void Draw();
