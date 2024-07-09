@@ -8,18 +8,14 @@ void Object3d::Initialize(DirectXCommon* directXCommon, Object3dCommon* Object3d
 {
 	directXCommon_ = directXCommon;
     object3dCommon_ = Object3dCommon;
-
+	
 	
 	
 	
 	CreateWVP();
-
-	
-	//CreateTransform();
-
-	//CreatLight();*/
-
 }
+
+
 
 void Object3d::Update(Transform transform, Transform cameraTransform, Transform transformSprite)
 {
@@ -32,8 +28,6 @@ void Object3d::Update(Transform transform, Transform cameraTransform, Transform 
 
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix;
-
-
 
 	ImGui::Begin("texture");
 	//ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
@@ -50,10 +44,6 @@ void Object3d::Update(Transform transform, Transform cameraTransform, Transform 
 
 	ImGui::End();
 
-	
-	
-	
-
 
 	ImGui::End();
 
@@ -69,59 +59,29 @@ void Object3d::Draw(DirectXCommon* directXCommon)
 	//回転パラメータ
 	transform_.rotate = { 0,rotation,0 };
 
-	//materialData->color = color_;
-
-
-	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
-	
 	directXCommon_ = directXCommon;
-	
-	
-	
-		
-	
-
 	
 	//wvp用のCBufferの場所を設定
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
-	
-	//model_に3dモデルのデータを入れれば描画されるかもしれない
+	//3Dモデルが割り当てられいれば描画
+	//割り当て方が分からん
+
 	if (model_) 
 	{
 		model_->Draw();
 	}
 	
-	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
-
-
-
-	
-
-
+	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress())
 
 }
+
+
 
 void Object3d::Releases()
 {
-
-
-
-	wvpResource->Release();
-
-
+	
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -131,8 +91,6 @@ void Object3d::CreateWVP()
 	wvpResource = object3dCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix)); ;
 	//書き込むためのアドレスを取得
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-
-
 	wvpData->WVP = MakeIdentity4x4();
 	wvpData->World = MakeIdentity4x4();
 }

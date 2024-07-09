@@ -6,26 +6,26 @@
 
 void Model::Initialize(ModelCommon* modelCommon)
 {
-	modelCommon_ = modelCommon;
+	modelCommon_ = modelCommon;	
 	
-
-
 	modelData = LoadObjFile("Resources", "plane.obj");
-	
-
 
 	CreateVertex();
 
 	CreateMAterial();
 
-	
 	TextureManager::GetInstance()->LoadTexture(ConvertString(modelData.material.textureFilePath));
 
 	modelData.material.textureIndex =
 		TextureManager::GetInstance()->GetTextureIndexFilePath(ConvertString(modelData.material.textureFilePath));
 
 
+	
+}
 
+void Model::Load(const std::string& filePath)
+{
+	
 
 	
 }
@@ -33,7 +33,7 @@ void Model::Initialize(ModelCommon* modelCommon)
 void Model::Draw()
 {
 	
-
+	materialData->color = color_;
 
 	modelCommon_->GetDirectXCmmon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
@@ -61,8 +61,6 @@ void Model::CreateVertex()
 	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
 	//１頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
-
-
 	////Resourceにデータを書き込む
 	//
 	////書き込むためのアドレスを取得

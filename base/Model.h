@@ -12,6 +12,7 @@ class Model
 {
 public:
 	void Initialize(ModelCommon* modelCommon);
+	void Load(const std::string& filePath);
 
 	void Draw();
 
@@ -49,7 +50,7 @@ private:
 
 private:
 	
-	ModelCommon* modelCommon_ = nullptr; 
+	ModelCommon* modelCommon_; 
 	Model* model_ = nullptr;
 
 

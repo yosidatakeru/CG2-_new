@@ -29,28 +29,16 @@ public:
 	void Update(Transform transform, Transform cameraTransform, Transform transformSprite);
 
 	void Releases();
+	
+
 private:
-
-	
-
-	
-
 	//行列情報の作成
-	//マテリアルの作成関数
 	void CreateWVP();
 			
 	//void CreatLight();
-
-	//画像データ作成
-	void CreatTexture(std::wstring filePath);
-
-	
 public:
 
-	ID3D12Resource* GetwvpResource() const { return  wvpResource; }
-
-	
-
+	ID3D12Resource* GetwvpResource() const { return  wvpResource.Get(); }
 	//回転
 	float GetRotation() { return rotation; }
 	void SetRotaion(float rot) { rotation = rot; }
@@ -63,8 +51,6 @@ public:
 
 	Vector3 GetCameraPosition() { return camerPosition; }
 	void SetCameraPosintion(Vector3 cameraPos) { camerPosition = cameraPos; }
-
-
 
 	Transform GetCameraTransform() { return  cameraTransform_; }
 
@@ -89,8 +75,6 @@ private:
 
 	Vector3 camerPosition = { 0, 0, 0 };
 
-
-
 private:
 
 	ModelCommon* modelCommon = nullptr;
@@ -107,8 +91,7 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 	DirectX::ScratchImage mipImages;
 
-	
-	ID3D12Resource* wvpResource = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = nullptr;
 
 	TransformationMatrix* wvpData = nullptr;
 

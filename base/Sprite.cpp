@@ -6,16 +6,11 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 {
 	directXCommon_ = directXCommon;
 	spriteCommon_ = spriteCommon;
-	//モデル読み込み
 	
-	 
 	textureIndex = TextureManager::GetInstance()->GetTextureIndexFilePath(textureFilePath);
 
-
-
 	CreateVertex();
-	
-	
+
 	//インデクス
 	CreateIndex();
 
@@ -36,10 +31,6 @@ void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon
 
 void Sprite::Update(Transform transform, Transform cameraTransform, Transform transformSprite)
 {
-
-
-
-
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 	Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -166,14 +157,8 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon_ = directXCommon;
 #pragma region コマンドを積む
 	
-
-
-
-
 	directXCommon_->GetCommandList()->RSSetViewports(1, directXCommon_->GetViewport());
-
-	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
-	
+    
 	//スプライト
 	directXCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexbufferViewSprite);//VBVの設定
 	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えよう
@@ -181,11 +166,14 @@ void Sprite::Draw(DirectXCommon* directXCommon)
 	directXCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBVを設定
 	//マテリアルCBufferの場所を設定
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprit->GetGPUVirtualAddress());
-	//wvp用のCBufferの場所を設定
+	
     ////TransformationMatrionMatrixCBufferの場所を設定
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+	
 	directXCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetStvHandleGPU(textureIndex));
+	
 	directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress());
+	
 	////描画(DrawCall)３兆点で１つのインスタンス。
 	directXCommon_->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
@@ -210,12 +198,7 @@ void Sprite::Releases()
 
 
 void Sprite::CreateVertex()
-{
-
-	
-
-	
-	
+{	
 	//Sprite用のの頂点リソースを作る
 	vertexResourceSprite = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(VertexData) * 4);
 
@@ -236,17 +219,14 @@ void Sprite::CreateVertex()
 	vertexDataSprite[0].position = { 0.0f, 1.0f, 0.0f, 1.0f };
 	vertexDataSprite[0].texcoord = { 0.0f, 1.0f };
 	
-
 	//上
 	vertexDataSprite[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };
 	vertexDataSprite[1].texcoord = { 0.0f, 0.0f };
-	
 	
 	//右下
 	vertexDataSprite[2].position = { 1.0f, 1.0f, 0.0f, 1.0f };
 	vertexDataSprite[2].texcoord = { 1.0f, 1.0f };
 	
-
 	//左下
 	vertexDataSprite[3].position = { 1.0f, 0.0f, 0.0f, 1.0f };
 	vertexDataSprite[3].texcoord = { 1.0f, 0.0f };
@@ -292,30 +272,13 @@ void Sprite::CreateIndex()
 
 void Sprite::CreateMAterial()
 {
-	
-	////Resourceにデータを書き込む
-	//materialResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material) ); ;
-
-
-	////書き込むためのアドレスを取得
-	//materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	//materialData->color = color_;
-	//materialData->enableLighting = false;
-	//materialData->uvTrasform = MakeIdentity4x4();
-
-
-
 	//Resourceにデータを書き込む
 	materialResourceSprit = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(Material)); ;
 	//書き込むためのアドレスを取得
 	materialResourceSprit->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprit));
 	materialDataSprit->color = color_;
 	materialDataSprit->enableLighting = false;
-	materialDataSprit->uvTrasform = MakeIdentity4x4();
-
-	
-	
-	
+	materialDataSprit->uvTrasform = MakeIdentity4x4();	
 }
 
 
@@ -326,54 +289,38 @@ void Sprite::CreateWVP()
 	wvpResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix)); ;
 	//書き込むためのアドレスを取得
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-
-
 	wvpData->WVP = MakeIdentity4x4();
 	wvpData->World = MakeIdentity4x4();
 
-	
 }
 
 void Sprite::CreateTransform()
 {
 	//Sprite用のTransformationMatrix用のリソースを作るMatrix4x4 1とつぶんのサイズを用意する
 	transformationMatrixResourceSprite = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(TransformationMatrix));
-	
-	
-
 	//書き込みのためのアドレスを取得
 	transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
-
 	//単位行列を書き込む
 	*transformationMatrixDataSprite = MakeIdentity4x4();
-	
 }
 
 void Sprite::CreatLight()
 {
 	////Resourceにデータを書き込む
 	directionalLighlResource = spriteCommon_->CreateBufferResource(directXCommon_->GetDevice(), sizeof(DirectionalLigha)); ;
-
-	// directionalLighlData = nullptr;
-
 	//書き込むためのアドレスを取得
 	directionalLighlResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLighlData));
-
 	directionalLighlData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	directionalLighlData->direction = { 0.0f, -1.0f, 0.0f };
 	directionalLighlData->intensity = 1.0f;
-
 }
 
 
 void Sprite::AdujustTextueSize()
 {
 	const DirectX::TexMetadata& metaDeata = TextureManager::GetInstance()->GetMetaData(textureIndex);
-	
 	textureSize.x = static_cast<float>(metaDeata.width);
-	
 	textureSize.y = static_cast<float>(metaDeata.height);
-	
 	size = textureSize;
 }
 

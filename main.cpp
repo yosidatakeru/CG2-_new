@@ -8,6 +8,8 @@
 #include"base/TextureManager.h"
 #include"base/Object3dCommon.h"
 #include"base/Object3d.h"
+#include"base/Model.h"
+
 #pragma endregion
 
 //CompilerShader関数
@@ -35,6 +37,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Object3d* object3d = nullptr;
 
 	ImGuiManager* imGuiManager = nullptr;
+	ModelCommon* modelCommon = nullptr;
+	Model* model = nullptr;
 	//Sprite* sprite = nullptr;
 #pragma endregion
 
@@ -85,13 +89,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion
 
 #pragma region	3Dオブジェクト(3Dモデル)
+	
+
 
 	object3dCommon = new Object3dCommon();
 	object3dCommon->Initialize(directXCommon);
 	
+
+	modelCommon = new ModelCommon();
+    modelCommon->Initialze(directXCommon);
+	
+	model = new Model();
+	model->Initialize(modelCommon);
+
+	
+	
 	object3d = new Object3d();
 	object3d->Initialize(directXCommon, object3dCommon);
 	
+
+	
+	object3d->SetModel(model);
+
+
+	
+
 #pragma endregion
 
 
@@ -236,7 +258,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	};
 
 	delete object3d;
-
+	
 	for (int i = 0; i < 5; i++)
 	{
 		delete sprites[i];
