@@ -33,6 +33,11 @@ void Model::Load(const std::string& filePath)
 void Model::Draw()
 {
 	
+	transform_.translate = { 0,position.y, 0 };
+	//回転パラメータ
+	transform_.rotate = { 0,rotation,0 };
+
+	
 	materialData->color = color_;
 
 	modelCommon_->GetDirectXCmmon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -45,6 +50,25 @@ void Model::Draw()
 
 	//描画(DrawCall)３兆点で１つのインスタンス。
 	modelCommon_->GetDirectXCmmon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+
+
+	ImGui::Begin("texture");
+	//ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
+
+
+	ImGui::Begin("model");
+
+	ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
+
+	ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
+
+	//ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
+
+
+	ImGui::End();
+
+
+	ImGui::End();
 
 
 }
@@ -156,7 +180,7 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
 				//modelData.vertices.push_back(vertex);
 
 
-				texcoord.y *= -1.0f;
+				texcoord.y = 1.0f - texcoord.y;
 				triangle[faceVertex] = { position, texcoord, normal };
 				position.x *= -1.0f;
 

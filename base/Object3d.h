@@ -26,7 +26,7 @@ public:
 
 
 	void Draw(DirectXCommon* directXCommon);
-	void Update(Transform transform, Transform cameraTransform, Transform transformSprite);
+	void Update(Transform transform, Transform cameraTransform);
 
 	void Releases();
 	
@@ -39,40 +39,28 @@ private:
 public:
 
 	ID3D12Resource* GetwvpResource() const { return  wvpResource.Get(); }
-	//回転
-	float GetRotation() { return rotation; }
-	void SetRotaion(float rot) { rotation = rot; }
-
-	//移動
-	Vector2 GetPosition() { return position; }
-	void SetPosintion(Vector2 pos) { position = pos; }
-
-	Transform GetTransform() { return  transform_; }
+	
+	
 
 	Vector3 GetCameraPosition() { return camerPosition; }
 	void SetCameraPosintion(Vector3 cameraPos) { camerPosition = cameraPos; }
 
 	Transform GetCameraTransform() { return  cameraTransform_; }
 
-	Transform GetTransformSprite() { return  transformSprite; }
-
+	
 	void SetModel(Model* model) { model_ = model; }
 
 private:
 
 
-	float rotation = 0;
 
-	
-	Transform transform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+
 
 	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
-	Transform transformSprite{ {1.0f, 1.0f, 1.0f},{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	
 
-
-	Vector2 position = { 0, 0 };
-
+	
 	Vector3 camerPosition = { 0, 0, 0 };
 
 private:

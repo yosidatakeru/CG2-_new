@@ -17,7 +17,7 @@ void Object3d::Initialize(DirectXCommon* directXCommon, Object3dCommon* Object3d
 
 
 
-void Object3d::Update(Transform transform, Transform cameraTransform, Transform transformSprite)
+void Object3d::Update(Transform transform, Transform cameraTransform)
 {
 
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
@@ -29,23 +29,23 @@ void Object3d::Update(Transform transform, Transform cameraTransform, Transform 
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix;
 
-	ImGui::Begin("texture");
-	//ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
+	//ImGui::Begin("texture");
+	////ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
 
 
-	ImGui::Begin("model");
+	//ImGui::Begin("model");
 
-	ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
+	//ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
 
 	//ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
 
-	//ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
+	////ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
 
 
-	ImGui::End();
+	//ImGui::End();
 
 
-	ImGui::End();
+	//ImGui::End();
 
 
 }
@@ -55,10 +55,7 @@ void Object3d::Update(Transform transform, Transform cameraTransform, Transform 
 void Object3d::Draw(DirectXCommon* directXCommon)
 {
 
-	transform_.translate = { 0,position.y, 0 };
-	//回転パラメータ
-	transform_.rotate = { 0,rotation,0 };
-
+	
 	directXCommon_ = directXCommon;
 	
 	//wvp用のCBufferの場所を設定

@@ -98,6 +98,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	modelCommon = new ModelCommon();
     modelCommon->Initialze(directXCommon);
+
+	modelCommon->Initialze(directXCommon);
 	
 	model = new Model();
 	model->Initialize(modelCommon);
@@ -194,7 +196,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		
 		//オブジェクトの描画
 
-		object3d->Update(object3d->GetTransform(), object3d->GetCameraTransform(), object3d->GetTransformSprite());
+		object3d->Update(model->GetTransform(), object3d->GetCameraTransform());
 
 
 		object3dCommon->Object3dPreDraw();
