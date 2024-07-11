@@ -14,6 +14,7 @@ public:
 	void Initialize(ModelCommon* modelCommon, const std::string& directorypath, const std::string& filename);
 	void Load(const std::string& filePath);
 
+	
 	void Draw();
 
 	
@@ -57,7 +58,7 @@ private:
 
 
 	float rotation = 0;
-	Vector2 position = { 0, 0 };
+	Vector2 position = { 0, 0};
 
 	Transform transform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 

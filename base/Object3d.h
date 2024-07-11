@@ -50,7 +50,8 @@ public:
 
 	Transform GetCameraTransform() { return  cameraTransform_; }
 
-	
+	void SetModels(const std::string& filePath);
+
 	void SetModel(Model* model) { model_ = model; }
 
 private:

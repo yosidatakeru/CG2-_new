@@ -23,6 +23,7 @@
     <ClCompile Include="base\ImGuiManager.cpp" />
     <ClCompile Include="base\Model.cpp" />
     <ClCompile Include="base\ModelCommon.cpp" />
+    <ClCompile Include="base\ModelManager.cpp" />
     <ClCompile Include="base\MyFunction.cpp" />
     <ClCompile Include="base\Object3d.cpp" />
     <ClCompile Include="base\Object3dCommon.cpp" />
@@ -65,6 +66,7 @@
     <ClInclude Include="base\Model.h" />
     <ClInclude Include="base\ModelCommon.h" />
     <ClInclude Include="base\ModelData.h" />
+    <ClInclude Include="base\ModelManager.h" />
     <ClInclude Include="base\MyFunction.h" />
     <ClInclude Include="base\Object3d.h" />
     <ClInclude Include="base\Object3dCommon.h" />

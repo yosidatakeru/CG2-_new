@@ -9,7 +9,7 @@
 #include"base/Object3dCommon.h"
 #include"base/Object3d.h"
 #include"base/Model.h"
-
+#include"base/ModelManager.h"
 #pragma endregion
 
 //CompilerShader関数
@@ -98,29 +98,53 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma region	3Dオブジェクト(3Dモデル)
 
-
+	ModelManager::GetInstance()->Initslize(directXCommon);
+	ModelManager::GetInstance()->LoadModel("plane.obj");
+	ModelManager::GetInstance()->LoadModel("axis.obj");
+	std::vector<Model*> models;
+	std::vector<Object3d*> object3ds;
 
 	object3dCommon = new Object3dCommon();
 	object3dCommon->Initialize(directXCommon);
 
 
+	
 	modelCommon = new ModelCommon();
 	modelCommon->Initialze(directXCommon);
 
 
+	
+	for (int i = 0; i < spritModel; i++)
+	{
 
-	model = new Model();
-	model->Initialize(modelCommon, "Resources", "plane.obj");
-
-
-
-	object3d = new Object3d();
-	object3d->Initialize(object3dCommon);
-
+		
+		model = new Model();
+		object3d = new Object3d();
 
 
-	object3d->SetModel(model);
+		if (i == 4)
+		{
+			model->Initialize(modelCommon, "Resources", "axis.obj");
+			object3d->Initialize(object3dCommon);
+			object3d->SetModels("axis.obj");
+			object3d->SetModel(model);
+		}
+		else
+		{
 
+			model->Initialize(modelCommon, "Resources", "plane.obj");
+			object3d->Initialize(object3dCommon);
+			object3d->SetModels("plane.obj");
+			object3d->SetModel(model);
+		}
+
+		
+		models.push_back(model);
+		object3ds.push_back(object3d);
+
+	}
+		
+	
 
 
 
@@ -167,11 +191,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	//いろいろな処理(色、回転、移動など)	
 	//移動処理
-	 //Vector2 pos = sprite->GetPosition();
-	 //pos.x += 0.05f;
-	 //sprite->SetPosintion(pos);
-		//
-  //   //回転の処理
+	 Vector2 pos = sprites[1]->GetPosition();
+	 pos.x += 0.5f;
+	 sprites[1]->SetPosintion(pos);
+     //回転の処理
 	 //float rot = sprite->GetRotation();
 	 //rot += 0.05f;
 	 //sprite->SetRotaion(rot);
@@ -183,13 +206,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	 sprite->SetColor(color);*/
 
 	  //Vector2 size = sprite->GetSize();
-   //	  size.x += 0.1f;
+      //size.x += 0.1f;
 	  //size.y += 0.1f;
 	  //sprite->SetSize(size);
 		
+	  float rot = models[4]->GetRotation();
+	  rot -=  0.05f;
+	  models[4]->SetRotaion(rot);
 
-		object3d->Update(model->GetTransform(), object3d->GetCameraTransform());
+	  rot = models[3]->GetRotation();
+	  rot += 0.05f;
+	  models[3]->SetRotaion(rot);
+	/*	
+	 Vector2 pos = models[1]->GetPosition();
+	 pos.x += 0.5f;
+	 models[1]->SetPosintion(pos);
+	 */
 
+	 for (int i = 0; i < spritModel; i++)
+	 {
+		 object3ds[i]->Update(models[i]->GetTransform(), object3ds[i]->GetCameraTransform());
+	 }
 		for (int i = 0; i < spritModel; i++)
 		{
 			sprites[i]->Update(sprites[i]->GetTransform(), sprites[i]->GetCameraTransform(), sprites[i]->GetTransformSprite());
@@ -199,10 +236,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 		//オブジェクトの描画
-		object3dCommon->Object3dPreDraw();
-
-
-		object3d->Draw();
+		for (int i = 0; i < spritModel; i++)
+		{
+			object3dCommon->Object3dPreDraw();
+			object3ds[i]->Draw();
+		}
 
 
 		
@@ -211,6 +249,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{
 			spriteCommon->SpritePreDraw();
 			sprites[1]->Draw(directXCommon);
+			
 		}
 		
 		
@@ -230,7 +269,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma region 解放処理
 
-	object3d->Releases();
+	for (int i = 0; i < spritModel; i++)
+	{
+		object3ds[i]->Releases();
+	}
+
 	for (int i = 0; i < spritModel; i++)
 	{
 		sprites[i]->Releases();
@@ -274,6 +317,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	delete object3d;
 	
+	ModelManager::GetInstance()->Finalize();
+
 	for (int i = 0; i < 5; i++)
 	{
 		delete sprites[i];

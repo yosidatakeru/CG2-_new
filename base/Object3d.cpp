@@ -3,7 +3,7 @@
 #include<cassert>
 #include"Object3dCommon.h"
 #include"TextureManager.h"
-
+#include"ModelManager.h"
 void Object3d::Initialize(Object3dCommon* Object3dCommon)
 {
 	this->object3dCommon_ = Object3dCommon;
@@ -28,23 +28,7 @@ void Object3d::Update(Transform transform, Transform cameraTransform)
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix;
 
-	//ImGui::Begin("texture");
-	////ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
-
-
-	//ImGui::Begin("model");
-
-	//ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
-
-	//ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
-
-	////ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
-
-
-	//ImGui::End();
-
-
-	//ImGui::End();
+	model_->GetPosition();
 
 
 }
@@ -86,6 +70,11 @@ void Object3d::CreateWVP()
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	wvpData->WVP = MakeIdentity4x4();
 	wvpData->World = MakeIdentity4x4();
+}
+
+void Object3d::SetModels(const std::string& filePath)
+{
+	model_ = ModelManager::GetInstance()->FindModel(filePath);
 }
 
 
