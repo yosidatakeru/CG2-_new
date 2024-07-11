@@ -28,7 +28,7 @@ void Object3d::Update(Transform transform, Transform cameraTransform)
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix;
 
-	model_->GetPosition();
+
 
 
 }

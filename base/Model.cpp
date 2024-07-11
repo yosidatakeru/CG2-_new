@@ -35,7 +35,7 @@ void Model::Load(const std::string& filePath)
 void Model::Draw()
 {
 	
-	transform_.translate = { 0,position.y, 0 };
+	transform_.translate = { position.x ,position.y, 0 };
 	//回転パラメータ
 	transform_.rotate = { 0,rotation,0 };
 

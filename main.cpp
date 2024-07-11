@@ -138,7 +138,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			object3d->SetModel(model);
 		}
 
-		
+		model->SetPosintion({ (float)i * 2.0f });
 		models.push_back(model);
 		object3ds.push_back(object3d);
 
