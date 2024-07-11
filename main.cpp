@@ -41,9 +41,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Model* model = nullptr;
 	//Sprite* sprite = nullptr;
 #pragma endregion
-
-	int spritModel = 5;
-
+	//スプライト描画数
+	int drawSprit = 5;
+	//モデル描画数
+	int drawmodel = 5;
 
 #pragma region WinApp初期化
 	winApp = new WinApp();
@@ -77,7 +78,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	TextureManager::GetInstance()->LoadTexture(L"Resources/Player5.png");
 	TextureManager::GetInstance()->LoadTexture(L"Resources/uvChecker.png");
 	std::vector<Sprite*> sprites;
-	for (int i = 0; i < spritModel; i++)
+	for (int i = 0; i < drawSprit; i++)
 	{
 		Sprite* sprite = new Sprite();
 		if (i == 4)
@@ -114,7 +115,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 	
-	for (int i = 0; i < spritModel; i++)
+	for (int i = 0; i < drawmodel; i++)
 	{
 
 		
@@ -223,58 +224,60 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	 models[1]->SetPosintion(pos);
 	 */
 
-	 for (int i = 0; i < spritModel; i++)
+	 for (int i = 0; i < drawmodel; i++)
 	 {
-		 object3ds[i]->Update(models[i]->GetTransform(), object3ds[i]->GetCameraTransform());
+		  object3ds[i]->Update(models[i]->GetTransform(), object3ds[i]->GetCameraTransform());
 	 }
-		for (int i = 0; i < spritModel; i++)
-		{
-			sprites[i]->Update(sprites[i]->GetTransform(), sprites[i]->GetCameraTransform(), sprites[i]->GetTransformSprite());
-		}
-
-		directXCommon->PreDraw();
 
 
-		//オブジェクトの描画
-		for (int i = 0; i < spritModel; i++)
-		{
-			object3dCommon->Object3dPreDraw();
-			object3ds[i]->Draw();
-		}
-
-
-		
-
-		for (int i = 0; i < spritModel; i++)
-		{
-			spriteCommon->SpritePreDraw();
-			sprites[1]->Draw(directXCommon);
-			
-		}
-		
-		
-
-
-
-
-
-		imGuiManager->EndFlame(directXCommon);
-		
-		directXCommon->PosDeaw();
-
-		
+	 for (int i = 0; i < drawSprit; i++)
+	 {
+	 	sprites[i]->Update(sprites[i]->GetTransform(), sprites[i]->GetCameraTransform(), sprites[i]->GetTransformSprite());
+	 }
+	    
+	 directXCommon->PreDraw();
+	    
+	    
+	 //オブジェクトの描画
+	 for (int i = 0; i < drawmodel; i++)
+	 {
+	 	object3dCommon->Object3dPreDraw();
+	 	object3ds[i]->Draw();
+	 }
+	    
+	    
+	 
+	    
+	 for (int i = 0; i < drawSprit; i++)
+	 {
+	 	spriteCommon->SpritePreDraw();
+	 	sprites[1]->Draw(directXCommon);
+	 	
+	 }
+	 
+	 
+	    
+	    
+	    
+	    
+	    
+	 imGuiManager->EndFlame(directXCommon);
+	 
+	 directXCommon->PosDeaw();
+	    
+	 
 	}
 
 
 
 #pragma region 解放処理
 
-	for (int i = 0; i < spritModel; i++)
+	for (int i = 0; i < drawmodel; i++)
 	{
 		object3ds[i]->Releases();
 	}
 
-	for (int i = 0; i < spritModel; i++)
+	for (int i = 0; i < drawSprit; i++)
 	{
 		sprites[i]->Releases();
 	}
