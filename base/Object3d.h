@@ -5,6 +5,7 @@
 #include"Model.h"
 
 #include"Vector2.h"
+#include"Vector3.h"
 #include<numbers>
 #include"Matrix3x3.h"
 #include"ModelData.h"
@@ -19,13 +20,15 @@
 class  Object3dCommon;
 
 
+
+
 class Object3d
 {
 public:
-	void Initialize(DirectXCommon* directXCommon, Object3dCommon* object3dCommonme);
+	void Initialize(Object3dCommon* object3dCommonme);
 
 
-	void Draw(DirectXCommon* directXCommon);
+	void Draw();
 	void Update(Transform transform, Transform cameraTransform);
 
 	void Releases();
@@ -67,7 +70,7 @@ private:
 
 	ModelCommon* modelCommon = nullptr;
 
-	DirectXCommon* directXCommon_ = nullptr;
+	
 	Object3dCommon* object3dCommon_ = nullptr;
 	Model* model_ = nullptr;
 	

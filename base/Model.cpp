@@ -42,6 +42,9 @@ void Model::Draw()
 	
 	materialData->color = color_;
 
+	modelCommon_->GetDirectXCmmon()->GetCommandList()->RSSetViewports(1, modelCommon_->GetDirectXCmmon()->GetViewport());
+
+
 	modelCommon_->GetDirectXCmmon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	//マテリアルCBufferの場所を設定

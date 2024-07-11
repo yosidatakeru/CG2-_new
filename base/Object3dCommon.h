@@ -33,7 +33,7 @@ public: //メンバ関数
 
 
 public:
-	//DirectXCommon* GetdirectxCommon() const { return directXCommon_; }
+	DirectXCommon* GetDirectXCommon() const { return directXCommon_; }
 	
 	ID3D12Resource* GetIntermediateResource() { return  intermediateResource_; }
 	void SetIntermediateResource(ID3D12Resource* intermediateResource) { intermediateResource_ = intermediateResource; }

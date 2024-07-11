@@ -59,13 +59,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	directXCommon->Initialize(winApp);
 #pragma endregion
 
+	//テクスチャマネージャー
+	TextureManager::GetInstance()->Initialize(directXCommon);
+
+
+
+
+
+
 
 #pragma region	三角形の描画
 	spriteCommon = new SpriteCommon();
 	spriteCommon->Initialize(directXCommon);
 
-	//テクスチャマネージャー
-	TextureManager::GetInstance()->Initialize(directXCommon);
+	
 	
 	TextureManager::GetInstance()->LoadTexture(L"Resources/Player5.png");
 	TextureManager::GetInstance()->LoadTexture(L"Resources/uvChecker.png");
@@ -88,36 +95,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma endregion
 
+
 #pragma region	3Dオブジェクト(3Dモデル)
-	
+
 
 
 	object3dCommon = new Object3dCommon();
 	object3dCommon->Initialize(directXCommon);
-	
+
 
 	modelCommon = new ModelCommon();
-    modelCommon->Initialze(directXCommon);
-
 	modelCommon->Initialze(directXCommon);
-	
+
+
+
 	model = new Model();
 	model->Initialize(modelCommon, "Resources", "plane.obj");
 
-	
-	
-	object3d = new Object3d();
-	object3d->Initialize(directXCommon, object3dCommon);
-	
 
-	
+
+	object3d = new Object3d();
+	object3d->Initialize(object3dCommon);
+
+
+
 	object3d->SetModel(model);
 
 
-	
+
 
 #pragma endregion
-
 
 
 
@@ -180,6 +187,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	  //size.y += 0.1f;
 	  //sprite->SetSize(size);
 		
+
+		object3d->Update(model->GetTransform(), object3d->GetCameraTransform());
+
 		for (int i = 0; i < spritModel; i++)
 		{
 			sprites[i]->Update(sprites[i]->GetTransform(), sprites[i]->GetCameraTransform(), sprites[i]->GetTransformSprite());
@@ -187,22 +197,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		directXCommon->PreDraw();
 
+
+		//オブジェクトの描画
+		object3dCommon->Object3dPreDraw();
+
+
+		object3d->Draw();
+
+
 		
+
 		for (int i = 0; i < spritModel; i++)
 		{
 			spriteCommon->SpritePreDraw();
 			sprites[1]->Draw(directXCommon);
 		}
 		
-		//オブジェクトの描画
-
-		object3d->Update(model->GetTransform(), object3d->GetCameraTransform());
-
-
-		object3dCommon->Object3dPreDraw();
-
 		
-		object3d->Draw(directXCommon);
+
+
 
 
 
