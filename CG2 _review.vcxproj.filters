@@ -30,7 +30,7 @@
     <ClCompile Include="engine\base\WinApp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="base\SpriteCommon.cpp">
+    <ClCompile Include="engine\2d\SpriteCommon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="base\MyFunction.cpp">
@@ -42,7 +42,7 @@
     <ClCompile Include="base\Model.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="base\Sprite.cpp">
+    <ClCompile Include="engine\2d\Sprite.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="base\TextureManager.cpp">
@@ -103,7 +103,7 @@
     <ClInclude Include="base\MyFunction.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="base\SpriteCommon.h">
+    <ClInclude Include="engine\2d\SpriteCommon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="base\Matrix4x4.h">
@@ -133,7 +133,7 @@
     <ClInclude Include="base\Model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="base\Sprite.h">
+    <ClInclude Include="engine\2d\Sprite.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="base\ModelData.h">
@@ -189,6 +189,12 @@
     </ClInclude>
     <ClInclude Include="engine\base\externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\DirectXCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\WinApp.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

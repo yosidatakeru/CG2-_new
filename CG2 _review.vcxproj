@@ -20,8 +20,8 @@
     <ClCompile Include="base\MyFunction.cpp" />
     <ClCompile Include="base\Object3d.cpp" />
     <ClCompile Include="base\Object3dCommon.cpp" />
-    <ClCompile Include="base\Sprite.cpp" />
-    <ClCompile Include="base\SpriteCommon.cpp" />
+    <ClCompile Include="engine\2d\Sprite.cpp" />
+    <ClCompile Include="engine\2d\SpriteCommon.cpp" />
     <ClCompile Include="base\TextureManager.cpp" />
     <ClCompile Include="engine\base\WinApp.cpp" />
     <ClCompile Include="engine\base\externals\imgui\imgui.cpp" />
@@ -50,6 +50,7 @@
   <ItemGroup>
     <ClInclude Include="base\Base.h" />
     <ClInclude Include="base\DirectXCommon.h" />
+    <ClInclude Include="engine\base\DirectXCommon.h" />
     <ClInclude Include="engine\base\ImGuiManager.h" />
     <ClInclude Include="base\Material.h" />
     <ClInclude Include="base\MaterialData.h" />
@@ -62,8 +63,8 @@
     <ClInclude Include="base\MyFunction.h" />
     <ClInclude Include="base\Object3d.h" />
     <ClInclude Include="base\Object3dCommon.h" />
-    <ClInclude Include="base\Sprite.h" />
-    <ClInclude Include="base\SpriteCommon.h" />
+    <ClInclude Include="engine\2d\Sprite.h" />
+    <ClInclude Include="engine\2d\SpriteCommon.h" />
     <ClInclude Include="base\TextureManager.h" />
     <ClInclude Include="base\Transform.h" />
     <ClInclude Include="base\Vector.h" />
@@ -81,6 +82,7 @@
     <ClInclude Include="engine\base\externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="engine\base\externals\imgui\imstb_textedit.h" />
     <ClInclude Include="engine\base\externals\imgui\imstb_truetype.h" />
+    <ClInclude Include="engine\base\WinApp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Object3d.hlsli" />
