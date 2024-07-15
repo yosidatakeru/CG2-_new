@@ -1,0 +1,2 @@
+C:\class\CG2\CG2 _review\base\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
+C:\class\CG2\CG2 _review\engine\base\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
