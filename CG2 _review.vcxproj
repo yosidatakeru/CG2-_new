@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="engine\base\Input.cpp" />
     <ClCompile Include="engine\mata\Base.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
     <ClCompile Include="engine\3d\Object3d.cpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="engine\base\ImGuiManager.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
+    <ClInclude Include="engine\base\Input.h" />
     <ClInclude Include="engine\mata\Base.h" />
     <ClInclude Include="engine\mata\Material.h" />
     <ClInclude Include="engine\mata\MaterialData.h" />

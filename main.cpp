@@ -1,4 +1,4 @@
-//#include"base/WinApp.h"
+#include"engine/base/Input.h"
 #include"engine/mata/Base.h"
 #include"engine/base/DirectXCommon.h"
 #include"engine/2d/SpriteCommon.h"
@@ -10,6 +10,7 @@
 #include"engine/3d/Object3d.h"
 #include"engine/3d/Model.h"
 #include"engine/3d/ModelManager.h"
+
 //#include <engine/3d/ModelManager.h>
 #pragma endregion
 
@@ -36,7 +37,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	SpriteCommon* spriteCommon = nullptr;
 	Object3dCommon* object3dCommon = nullptr;
 	Object3d* object3d = nullptr;
-
+	Input* input = nullptr;
 	ImGuiManager* imGuiManager = nullptr;
 	ModelCommon* modelCommon = nullptr;
 	Model* model = nullptr;
@@ -60,6 +61,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	directXCommon = new DirectXCommon();
 	directXCommon->Initialize(winApp);
 #pragma endregion
+
+	input = new Input();
+	input->Initialize(winApp);
 
 	//テクスチャマネージャー
 	TextureManager::GetInstance()->Initialize(directXCommon);
@@ -189,6 +193,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		imGuiManager->BeginFlame(directXCommon);
 	  
+		input->Update();
 	//スプライトの描画
 	
 	//いろいろな処理(色、回転、移動など)	
@@ -238,7 +243,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	    
 	 directXCommon->PreDraw();
 	    
+	 // 数字の0キーが押されていたら
+	 if (input->TriggerKey(DIK_K))
+	 {
+		 OutputDebugStringA("Hit 0\n");  // 出力ウィンドウに「Hit 0」と表示
+	 }
 	    
+	 
 	 //オブジェクトの描画
 	 for (int i = 0; i < drawmodel; i++)
 	 {
@@ -331,6 +342,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion
 
 #pragma region delete
+	 delete input;
 	delete winApp;
 	delete directXCommon;
 	//delete spriteCommon;
