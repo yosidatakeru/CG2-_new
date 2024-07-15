@@ -1,6 +1,6 @@
 #include "Sprite.h"
-#include "base/Base.h"
-#include "base/TextureManager.h"
+#include "engine/mata/Base.h"
+#include "engine/mata/TextureManager.h"
 
 void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon, std::wstring textureFilePath)
 {

@@ -1,6 +1,6 @@
-#include "Model.h"
-#include"base/TextureManager.h"
-#include"base/Base.h"
+#include"Model.h"
+#include"engine/mata/TextureManager.h"
+#include"engine/mata/Base.h"
 #include<cassert>
 
 

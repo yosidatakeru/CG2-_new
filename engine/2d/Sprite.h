@@ -1,15 +1,15 @@
 #pragma once
 #include"SpriteCommon.h"
 #include"engine/base/DirectXCommon.h"
-#include"base/Vector2.h"
+#include"engine/mata/Vector2.h"
 #include<numbers>
-#include"base/Matrix3x3.h"
-#include"base/Material.h"
-#include"base/VertexData.h"
+#include"engine/mata/Matrix3x3.h"
+#include"engine/mata/Material.h"
+#include"engine/mata/VertexData.h"
 #include<fstream>
 #include<sstream>
-#include"base/ModelData.h"
-#include"base/MaterialData.h"
+#include"engine/mata/ModelData.h"
+#include"engine/mata/MaterialData.h"
 class Sprite
 {
 public:

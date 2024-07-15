@@ -1,6 +1,6 @@
 #include "SpriteCommon.h"
 #include <cassert>
-#include"base/Base.h"
+#include"engine/mata/Base.h"
 #include"engine/base/externals/DirectXTex/d3dx12.h"
 #include<vector>
 #include <stdexcept>

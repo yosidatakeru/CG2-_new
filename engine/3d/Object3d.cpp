@@ -1,8 +1,8 @@
 #include "Object3d.h"
-#include "base/Base.h"
+#include "engine/mata/Base.h"
 #include<cassert>
 #include"Object3dCommon.h"
-#include"base/TextureManager.h"
+#include"engine/mata/TextureManager.h"
 #include"ModelManager.h"
 void Object3d::Initialize(Object3dCommon* Object3dCommon)
 {

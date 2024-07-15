@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="base\Base.cpp" />
+    <ClCompile Include="engine\mata\Base.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
     <ClCompile Include="engine\3d\Object3d.cpp" />
     <ClCompile Include="engine\3d\Object3dCommon.cpp" />
@@ -19,10 +19,10 @@
     <ClCompile Include="engine\base\ImGuiManager.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
     <ClCompile Include="engine\3d\ModelCommon.cpp" />
-    <ClCompile Include="base\MyFunction.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
-    <ClCompile Include="base\TextureManager.cpp" />
+    <ClCompile Include="engine\mata\MyFunction.cpp" />
+    <ClCompile Include="engine\mata\TextureManager.cpp" />
     <ClCompile Include="engine\base\WinApp.cpp" />
     <ClCompile Include="engine\base\externals\imgui\imgui.cpp" />
     <ClCompile Include="engine\base\externals\imgui\imgui_demo.cpp" />
@@ -48,7 +48,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base\Base.h" />
     <ClInclude Include="base\DirectXCommon.h" />
     <ClInclude Include="engine\3d\Model.h" />
     <ClInclude Include="engine\3d\ModelCommon.h" />
@@ -57,21 +56,23 @@
     <ClInclude Include="engine\3d\Object3dCommon.h" />
     <ClInclude Include="engine\base\DirectXCommon.h" />
     <ClInclude Include="engine\base\ImGuiManager.h" />
-    <ClInclude Include="base\Material.h" />
-    <ClInclude Include="base\MaterialData.h" />
-    <ClInclude Include="base\Matrix3x3.h" />
-    <ClInclude Include="base\Matrix4x4.h" />
-    <ClInclude Include="base\ModelData.h" />
-    <ClInclude Include="base\MyFunction.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
-    <ClInclude Include="base\TextureManager.h" />
-    <ClInclude Include="base\Transform.h" />
-    <ClInclude Include="base\Vector.h" />
-    <ClInclude Include="base\Vector2.h" />
-    <ClInclude Include="base\Vector3.h" />
-    <ClInclude Include="base\Vector4.h" />
-    <ClInclude Include="base\VertexData.h" />
+    <ClInclude Include="engine\mata\Base.h" />
+    <ClInclude Include="engine\mata\Material.h" />
+    <ClInclude Include="engine\mata\MaterialData.h" />
+    <ClInclude Include="engine\mata\Matrix3x3.h" />
+    <ClInclude Include="engine\mata\Matrix4x4.h" />
+    <ClInclude Include="engine\mata\ModelData.h" />
+    <ClInclude Include="engine\mata\MyFunction.h" />
+    <ClInclude Include="engine\mata\TextureManager.h" />
+    <ClInclude Include="engine\mata\Transform.h" />
+    <ClInclude Include="engine\mata\TransformationMatrix.h" />
+    <ClInclude Include="engine\mata\Vector.h" />
+    <ClInclude Include="engine\mata\Vector2.h" />
+    <ClInclude Include="engine\mata\Vector3.h" />
+    <ClInclude Include="engine\mata\Vector4.h" />
+    <ClInclude Include="engine\mata\VertexData.h" />
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Bufftr.h" />
     <ClInclude Include="engine\base\externals\imgui\imconfig.h" />
