@@ -12,7 +12,7 @@
 #include"MaterialData.h"
 #include"TransformationMatrix.h"
 
-#include"externals/DirectXTex/DirectXTex.h"
+#include"engine/base/externals/DirectXTex/DirectXTex.h"
 
 
 

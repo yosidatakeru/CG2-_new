@@ -2,7 +2,7 @@
 #include"Base.h"
 #include <cassert>
 
-#include"externals/DirectXTex/d3dx12.h"
+#include"engine/base/externals/DirectXTex/d3dx12.h"
 #include<vector>
 
 void Object3dCommon::Initialize(DirectXCommon* directxCommon)

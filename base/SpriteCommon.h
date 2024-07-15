@@ -2,9 +2,9 @@
 #include <dxgidebug.h>
 #include <dxcapi.h>
 #include"DirectXCommon.h"
-#include"externals/DirectXTex/DirectXTex.h"
+#include"engine/base/externals/DirectXTex/DirectXTex.h"
 #include <wrl.h>
-#include"externals/DirectXTex/d3dx12.h"
+#include"engine/base/externals/DirectXTex/d3dx12.h"
 #include<vector>
 using namespace Microsoft::WRL;
 

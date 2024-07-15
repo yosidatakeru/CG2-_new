@@ -1,6 +1,6 @@
 #pragma once
 #include"DirectXCommon.h"
-#include "externals/DirectXTex/DirectXTex.h"
+#include "engine/base/externals/DirectXTex/DirectXTex.h"
 
 
 class Object3dCommon

@@ -1,7 +1,7 @@
 #include"DirectXCommon.h"
 #include<string>
 
-#include"externals/DirectXTex/DirectXTex.h"
+#include"engine/base/externals/DirectXTex/DirectXTex.h"
 
 class TextureManager
 {

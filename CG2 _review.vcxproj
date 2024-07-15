@@ -13,13 +13,6 @@
   <ItemGroup>
     <ClCompile Include="base\Base.cpp" />
     <ClCompile Include="base\DirectXCommon.cpp" />
-    <ClCompile Include="base\externals\imgui\imgui.cpp" />
-    <ClCompile Include="base\externals\imgui\imgui_demo.cpp" />
-    <ClCompile Include="base\externals\imgui\imgui_draw.cpp" />
-    <ClCompile Include="base\externals\imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="base\externals\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="base\externals\imgui\imgui_tables.cpp" />
-    <ClCompile Include="base\externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="base\ImGuiManager.cpp" />
     <ClCompile Include="base\Model.cpp" />
     <ClCompile Include="base\ModelCommon.cpp" />
@@ -31,6 +24,13 @@
     <ClCompile Include="base\SpriteCommon.cpp" />
     <ClCompile Include="base\TextureManager.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
+    <ClCompile Include="engine\base\externals\imgui\imgui.cpp" />
+    <ClCompile Include="engine\base\externals\imgui\imgui_demo.cpp" />
+    <ClCompile Include="engine\base\externals\imgui\imgui_draw.cpp" />
+    <ClCompile Include="engine\base\externals\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="engine\base\externals\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="engine\base\externals\imgui\imgui_tables.cpp" />
+    <ClCompile Include="engine\base\externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -50,14 +50,6 @@
   <ItemGroup>
     <ClInclude Include="base\Base.h" />
     <ClInclude Include="base\DirectXCommon.h" />
-    <ClInclude Include="base\externals\imgui\imconfig.h" />
-    <ClInclude Include="base\externals\imgui\imgui.h" />
-    <ClInclude Include="base\externals\imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="base\externals\imgui\imgui_impl_win32.h" />
-    <ClInclude Include="base\externals\imgui\imgui_internal.h" />
-    <ClInclude Include="base\externals\imgui\imstb_rectpack.h" />
-    <ClInclude Include="base\externals\imgui\imstb_textedit.h" />
-    <ClInclude Include="base\externals\imgui\imstb_truetype.h" />
     <ClInclude Include="base\ImGuiManager.h" />
     <ClInclude Include="base\Material.h" />
     <ClInclude Include="base\MaterialData.h" />
@@ -81,17 +73,25 @@
     <ClInclude Include="base\VertexData.h" />
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Bufftr.h" />
+    <ClInclude Include="engine\base\externals\imgui\imconfig.h" />
+    <ClInclude Include="engine\base\externals\imgui\imgui.h" />
+    <ClInclude Include="engine\base\externals\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="engine\base\externals\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="engine\base\externals\imgui\imgui_internal.h" />
+    <ClInclude Include="engine\base\externals\imgui\imstb_rectpack.h" />
+    <ClInclude Include="engine\base\externals\imgui\imstb_textedit.h" />
+    <ClInclude Include="engine\base\externals\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="base\externals\imgui\LICENSE.txt" />
+    <None Include="Object3d.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="base\externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
+    <ProjectReference Include="engine\base\externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Object3d.hlsli" />
+    <Text Include="engine\base\externals\imgui\LICENSE.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -135,6 +135,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,6 +161,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

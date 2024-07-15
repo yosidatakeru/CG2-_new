@@ -1,7 +1,7 @@
 #include "SpriteCommon.h"
 #include <cassert>
 #include"Base.h"
-#include"externals/DirectXTex/d3dx12.h"
+#include"engine/base/externals/DirectXTex/d3dx12.h"
 #include<vector>
 #include <stdexcept>
 #include <d3d12.h>  

@@ -3,7 +3,7 @@
 #include <cassert>
 #include<d3d12.h>
 #include <cassert>
-#include"externals/DirectXTex/DirectXTex.h"
+#include"engine/base/externals/DirectXTex/DirectXTex.h"
 
 //画像最大数
 const uint32_t DirectXCommon::kmixSRVcount = 512;
