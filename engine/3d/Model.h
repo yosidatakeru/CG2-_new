@@ -1,9 +1,9 @@
 #pragma once
-#include"ModelData.h"
+#include"base/ModelData.h"
 #include <cassert>
 #include"ModelCommon.h"
-#include"VertexData.h"
-#include"Material.h"
+#include"base/VertexData.h"
+#include"base/Material.h"
 #include<fstream>
 #include<sstream>
 

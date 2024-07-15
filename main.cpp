@@ -6,10 +6,11 @@
 #include"engine/2d/Sprite.h"
 #include"base/ResourceObject.h"
 #include"base/TextureManager.h"
-#include"base/Object3dCommon.h"
-#include"base/Object3d.h"
-#include"base/Model.h"
-#include"base/ModelManager.h"
+#include"engine/3d/Object3dCommon.h"
+#include"engine/3d/Object3d.h"
+#include"engine/3d/Model.h"
+#include"engine/3d/ModelManager.h"
+//#include <engine/3d/ModelManager.h>
 #pragma endregion
 
 //CompilerShader関数

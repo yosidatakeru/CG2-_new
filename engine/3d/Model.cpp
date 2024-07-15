@@ -1,6 +1,6 @@
 #include "Model.h"
-#include"TextureManager.h"
-#include "Base.h"
+#include"base/TextureManager.h"
+#include"base/Base.h"
 #include<cassert>
 
 

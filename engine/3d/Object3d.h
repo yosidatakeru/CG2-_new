@@ -1,19 +1,19 @@
 #pragma once
-#include "MaterialData.h"
-#include "ModelData.h"
+#include"base/MaterialData.h"
+#include"base/ModelData.h"
 #include"engine/base/DirectXCommon.h"
 #include"Model.h"
 
-#include"Vector2.h"
-#include"Vector3.h"
+#include"base/Vector2.h"
+#include"base/Vector3.h"
 #include<numbers>
-#include"Matrix3x3.h"
-#include"ModelData.h"
-#include"MaterialData.h"
-#include"Transform.h"
+#include"base/Matrix3x3.h"
+#include"base/ModelData.h"
+#include"base/MaterialData.h"
+#include"base/Transform.h"
 
 #include"engine/base/externals/DirectXTex/DirectXTex.h"
-#include "TransformationMatrix.h"
+#include "base/TransformationMatrix.h"
 
 
 

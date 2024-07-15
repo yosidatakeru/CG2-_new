@@ -1,5 +1,5 @@
-#include "Object3dCommon.h"
-#include"Base.h"
+#include"Object3dCommon.h"
+#include"base/Base.h"
 #include <cassert>
 
 #include"engine/base/externals/DirectXTex/d3dx12.h"
