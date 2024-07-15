@@ -24,10 +24,10 @@
     <ClCompile Include="base\Base.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="base\DirectXCommon.cpp">
+    <ClCompile Include="engine\base\DirectXCommon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="base\WinApp.cpp">
+    <ClCompile Include="engine\base\WinApp.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="base\SpriteCommon.cpp">
@@ -36,7 +36,7 @@
     <ClCompile Include="base\MyFunction.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="base\ImGuiManager.cpp">
+    <ClCompile Include="engine\base\ImGuiManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="base\Model.cpp">
@@ -118,7 +118,7 @@
     <ClInclude Include="base\Vector3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="base\ImGuiManager.h">
+    <ClInclude Include="engine\base\ImGuiManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Bufftr.h">

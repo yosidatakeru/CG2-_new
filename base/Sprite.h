@@ -1,6 +1,6 @@
 #pragma once
 #include"SpriteCommon.h"
-#include"DirectXCommon.h"
+#include"engine/base/DirectXCommon.h"
 #include"Vector2.h"
 #include<numbers>
 #include"Matrix3x3.h"

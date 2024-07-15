@@ -1,5 +1,5 @@
-#include "DIrectXCommon.h"
-#include"Base.h"
+#include "engine/base/DirectXCommon.h"
+#include"base/Base.h"
 #include <cassert>
 #include<d3d12.h>
 #include <cassert>

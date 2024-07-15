@@ -1,5 +1,5 @@
 #pragma once
-#include"DirectXCommon.h"
+#include"engine/base/DirectXCommon.h"
 #include "engine/base/externals/DirectXTex/DirectXTex.h"
 
 

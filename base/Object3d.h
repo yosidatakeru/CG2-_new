@@ -1,7 +1,7 @@
 #pragma once
 #include "MaterialData.h"
 #include "ModelData.h"
-#include "DirectXCommon.h"
+#include"engine/base/DirectXCommon.h"
 #include"Model.h"
 
 #include"Vector2.h"
@@ -10,9 +10,10 @@
 #include"Matrix3x3.h"
 #include"ModelData.h"
 #include"MaterialData.h"
-#include"TransformationMatrix.h"
+#include"Transform.h"
 
 #include"engine/base/externals/DirectXTex/DirectXTex.h"
+#include "TransformationMatrix.h"
 
 
 

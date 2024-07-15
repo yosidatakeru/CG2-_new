@@ -1,4 +1,4 @@
-#include"DirectXCommon.h"
+#include"engine/base/DirectXCommon.h"
 class ModelCommon
 {
 public:

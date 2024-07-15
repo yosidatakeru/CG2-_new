@@ -1,7 +1,7 @@
 #pragma once
 #include <dxgidebug.h>
 #include <dxcapi.h>
-#include"DirectXCommon.h"
+#include"engine/base/DirectXCommon.h"
 #include"engine/base/externals/DirectXTex/DirectXTex.h"
 #include <wrl.h>
 #include"engine/base/externals/DirectXTex/d3dx12.h"
