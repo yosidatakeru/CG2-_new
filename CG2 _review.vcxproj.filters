@@ -16,36 +16,39 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{99d30ec9-c5d3-42ca-8ef1-3aa1555ea125}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\engine">
+      <UniqueIdentifier>{c1dcf8ad-48bc-4386-b3ce-a3c45b3ce1d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\engine\2d">
+      <UniqueIdentifier>{22ea3fad-5c82-43ce-ade9-851409ea9218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\engine\3d">
+      <UniqueIdentifier>{d44119a2-de99-4339-9a79-6445cc9c0707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\engine\base">
+      <UniqueIdentifier>{22832325-2c34-4756-95b8-5e772308f460}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\engine\mata">
+      <UniqueIdentifier>{d0483748-806a-4966-9def-e1f59fdb1cea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine">
+      <UniqueIdentifier>{d8a8c773-b912-41fd-9843-d7c7d254a54a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\2d">
+      <UniqueIdentifier>{b5d7083d-acde-4421-a138-f4ecca9cd5e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\3d">
+      <UniqueIdentifier>{f0b2e29f-7f97-4060-beeb-298d78b0be33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\base">
+      <UniqueIdentifier>{107f0fc7-e674-42ce-833d-ee882a1d979f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\engine\mata">
+      <UniqueIdentifier>{56680681-b942-4b7d-95ee-b9000996751d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\mata\Base.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\DirectXCommon.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\WinApp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\SpriteCommon.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\base\ImGuiManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\Model.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\2d\Sprite.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\mata\TextureManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\ModelCommon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\externals\imgui\imgui.cpp">
@@ -69,17 +72,44 @@
     <ClCompile Include="engine\base\externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="engine\base\DirectXCommon.cpp">
+      <Filter>ソース ファイル\engine\base</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\ImGuiManager.cpp">
+      <Filter>ソース ファイル\engine\base</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\WinApp.cpp">
+      <Filter>ソース ファイル\engine\base</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\mata\TextureManager.cpp">
+      <Filter>ソース ファイル\engine\mata</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\mata\Base.cpp">
+      <Filter>ソース ファイル\engine\mata</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\Model.cpp">
+      <Filter>ソース ファイル\engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\ModelCommon.cpp">
+      <Filter>ソース ファイル\engine\3d</Filter>
+    </ClCompile>
     <ClCompile Include="engine\3d\ModelManager.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\Object3d.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\Object3dCommon.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\mata\MyFunction.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\engine\mata</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\SpriteCommon.cpp">
+      <Filter>ソース ファイル\engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\Sprite.cpp">
+      <Filter>ソース ファイル\engine\2d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,33 +121,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base\WinApp.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="base\DirectXCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\SpriteCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\mata\Vector3.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\ImGuiManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Bufftr.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\Sprite.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\mata\VertexData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\mata\TextureManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\base\externals\imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -142,62 +145,83 @@
     <ClInclude Include="engine\base\externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\DirectXCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\WinApp.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Model.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\ModelCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\ModelManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Object3d.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\Object3dCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\mata\TransformationMatrix.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\mata\ModelData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\mata\Base.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
+    </ClInclude>
+    <ClInclude Include="Bufftr.h">
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
     </ClInclude>
     <ClInclude Include="engine\mata\Material.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
     </ClInclude>
     <ClInclude Include="engine\mata\MaterialData.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
     </ClInclude>
     <ClInclude Include="engine\mata\Matrix3x3.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
     </ClInclude>
     <ClInclude Include="engine\mata\Matrix4x4.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\mata\ModelData.h">
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
     </ClInclude>
     <ClInclude Include="engine\mata\MyFunction.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\mata\TextureManager.h">
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\mata\TransformationMatrix.h">
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
     </ClInclude>
     <ClInclude Include="engine\mata\Transform.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
     </ClInclude>
     <ClInclude Include="engine\mata\Vector.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
     </ClInclude>
     <ClInclude Include="engine\mata\Vector2.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\mata\Vector3.h">
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
     </ClInclude>
     <ClInclude Include="engine\mata\Vector4.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\mata\VertexData.h">
+      <Filter>ヘッダー ファイル\engine\mata</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\ImGuiManager.h">
+      <Filter>ヘッダー ファイル\engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\WinApp.h">
+      <Filter>ヘッダー ファイル\engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\Model.h">
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\ModelCommon.h">
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\ModelManager.h">
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\Object3d.h">
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\Object3dCommon.h">
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\DirectXCommon.h">
+      <Filter>ヘッダー ファイル\engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\Sprite.h">
+      <Filter>ヘッダー ファイル\engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\SpriteCommon.h">
+      <Filter>ヘッダー ファイル\engine\2d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

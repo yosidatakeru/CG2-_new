@@ -48,7 +48,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base\DirectXCommon.h" />
     <ClInclude Include="engine\3d\Model.h" />
     <ClInclude Include="engine\3d\ModelCommon.h" />
     <ClInclude Include="engine\3d\ModelManager.h" />
@@ -73,7 +72,6 @@
     <ClInclude Include="engine\mata\Vector3.h" />
     <ClInclude Include="engine\mata\Vector4.h" />
     <ClInclude Include="engine\mata\VertexData.h" />
-    <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Bufftr.h" />
     <ClInclude Include="engine\base\externals\imgui\imconfig.h" />
     <ClInclude Include="engine\base\externals\imgui\imgui.h" />
