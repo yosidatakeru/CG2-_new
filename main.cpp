@@ -10,6 +10,7 @@
 #include"engine/3d/Object3d.h"
 #include"engine/3d/Model.h"
 #include"engine/3d/ModelManager.h"
+#include"engine/base/Camera.h"
 
 //#include <engine/3d/ModelManager.h>
 #pragma endregion
@@ -41,6 +42,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	ImGuiManager* imGuiManager = nullptr;
 	ModelCommon* modelCommon = nullptr;
 	Model* model = nullptr;
+	
 	//Sprite* sprite = nullptr;
 #pragma endregion
 	//スプライト描画数
@@ -65,6 +67,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	input = new Input();
 	input->Initialize(winApp);
 
+	
 	//テクスチャマネージャー
 	TextureManager::GetInstance()->Initialize(directXCommon);
 
@@ -72,7 +75,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
-
+	
 
 #pragma region	三角形の描画
 	spriteCommon = new SpriteCommon();
@@ -198,14 +201,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	//いろいろな処理(色、回転、移動など)	
 	//移動処理
-	 Vector2 pos = sprites[1]->GetPosition();
+	/* Vector2 pos = sprites[1]->GetPosition();
 	 pos.x += 0.5f;
-	 sprites[1]->SetPosintion(pos);
+	 sprites[1]->SetPosintion(pos);*/
      //回転の処理
-	 //float rot = sprite->GetRotation();
-	 //rot += 0.05f;
-	 //sprite->SetRotaion(rot);
-	 //
+	 //Vector3 rot = sprites[1]->GetRotation();
+	 //rot.y += 0.5f;
+	 //sprites[1]->SetRotaion(rot);
+	 ////
 		
 	//色の処理
 	 /*Vector4 color = sprite->GetColor();
@@ -217,18 +220,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	  //size.y += 0.1f;
 	  //sprite->SetSize(size);
 		
-	  float rot = models[4]->GetRotation();
-	  rot -=  0.05f;
+	  Vector3 rot = models[4]->GetRotation();
+	  rot.x -= 0.05f;
 	  models[4]->SetRotaion(rot);
 
-	  rot = models[3]->GetRotation();
+	 /* rot = models[3]->GetRotation();
 	  rot += 0.05f;
-	  models[3]->SetRotaion(rot);
-	/*	
-	 Vector2 pos = models[1]->GetPosition();
-	 pos.x += 0.5f;
+	  models[3]->SetRotaion(rot);*/
+	
+	 Vector3 pos = models[1]->GetPosition();
+	 pos.z += 0.5f;
 	 models[1]->SetPosintion(pos);
-	 */
+	
 
 	 for (int i = 0; i < drawmodel; i++)
 	 {
@@ -244,7 +247,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	 directXCommon->PreDraw();
 	    
 	 // 数字の0キーが押されていたら
-	 if (input->TriggerKey(DIK_K))
+	 if (input->PushKey(DIK_K))
 	 {
 		 OutputDebugStringA("Hit 0\n");  // 出力ウィンドウに「Hit 0」と表示
 	 }

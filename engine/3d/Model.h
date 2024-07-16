@@ -42,12 +42,12 @@ public:
 	ModelData GetModelData() { return modelData; }
 
 	//回転
-	float GetRotation() { return rotation; }
-	void SetRotaion(float rot) { rotation = rot; }
+	Vector3 GetRotation() { return rotation; }
+	void SetRotaion(Vector3 rot) { rotation = rot; }
 
 	//移動
-	Vector2 GetPosition() { return position; }
-	void SetPosintion(Vector2 pos) { position = pos; }
+	Vector3 GetPosition() { return position; }
+	void SetPosintion(Vector3 pos) { position = pos; }
 
 	Transform GetTransform() { return  transform_; }
 	
@@ -57,8 +57,8 @@ private:
 	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 
-	float rotation = 0;
-	Vector2 position = { 0, 0};
+	Vector3 rotation;
+	Vector3 position = { 0, 0, 0};
 
 	Transform transform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 

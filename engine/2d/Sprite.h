@@ -68,8 +68,8 @@ public:
 	void SetColor(Vector4& color) { color_ = color; }
 
 	//回転
-	float GetRotation() { return rotation; }
-	void SetRotaion(float rot) { this->rotation = rot; }
+	Vector3 GetRotation() { return rotation; }
+	void SetRotaion(Vector3 rot) { this->rotation = rot; }
 
 	//移動
 	Vector2 GetPosition() { return position; }
@@ -115,7 +115,7 @@ public:
 	void SetTextureSize(Vector2 size) { textureSize = size; }
 private:
 
-	float rotation = 0;
+	Vector3 rotation;
 
 	////色パラメーター
 	Vector4 color_ = {1.0f, 1.0f, 1.0f, 1.0f};

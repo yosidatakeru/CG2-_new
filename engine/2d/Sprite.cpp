@@ -2,6 +2,7 @@
 #include "engine/mata/Base.h"
 #include "engine/mata/TextureManager.h"
 
+
 void Sprite::Initialize(DirectXCommon* directXCommon, SpriteCommon* spriteCommon, std::wstring textureFilePath)
 {
 	directXCommon_ = directXCommon;
@@ -66,7 +67,7 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 
 	transformSprite_.translate = { position.x,position.y, 0 };
 	//回転パラメータ
-	transformSprite_.rotate = { 0,rotation,0 };
+	transformSprite_.rotate = { rotation.x,rotation.y,rotation.z };
 
 
 

@@ -35,9 +35,9 @@ void Model::Load(const std::string& filePath)
 void Model::Draw()
 {
 	
-	transform_.translate = { position.x ,position.y, 0 };
+	transform_.translate = { position.x ,position.y, position.z };
 	//回転パラメータ
-	transform_.rotate = { 0,rotation,0 };
+	transform_.rotate = { rotation.x,rotation.y,rotation.z };
 
 	
 	materialData->color = color_;
@@ -63,9 +63,9 @@ void Model::Draw()
 
 	ImGui::Begin("model");
 
-	ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
+	/*ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
 
-	ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
+	ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);*/
 
 	//ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
 
