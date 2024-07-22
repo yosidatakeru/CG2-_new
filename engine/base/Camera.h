@@ -1,57 +1,71 @@
 #pragma once
-#include "engine/mata/Transform.h"
-#include "engine/mata/Matrix4x4.h"
-
-class Camera final 
+#include"engine/mata/Vector3.h"
+#include"engine/mata/Vector2.h"
+#include"engine/mata/Transform.h"
+#include"engine/mata/Matrix4x4.h"
+#include"engine/base/Input.h"
+class Camera 
 {
-private:
-	//コンストラクタ
-	Camera();
-
-	//デストラクタ
-	~Camera();
-
-
-public:
-	//シングルインスタンス
-	static Camera* GetInstance();
-
-	//コピーコンストラクタ禁止
-	Camera(const Camera& camera) = delete;
-
-	//代入演算子を無効にする
-	Camera& operator=(const Camera& camera) = delete;
-
-
 public:
 
-	//基本はアクセッサだけにする
-	void SetRotate(Vector3 rotate) {
-		this->cameraTransform_.rotate = rotate;
-	}
+	void Initialize();
 
-	void SetTranslate(Vector3 translate) {
-		this->cameraTransform_.translate = translate;
-	}
+	void CameraUpdate();
 
-	//アフィン行列を取得
-	Matrix4x4 GetAffineMatrix();
+	Matrix4x4  ViewMatrix();
+	Matrix4x4  ProjectionMatrix();
 
-	//ビュー行列を取得
-	Matrix4x4 GetViewMatrix();
+protected:
+	
 
-	//射影行列を取得
-	Matrix4x4 GetProjectionMatrix_();
+	
+
+public:
+	//回転
+	Vector3 GetCameraRotation() { return rotation; }
+	void SetCameraRotaion(Vector3 rot){rotation = rot;}
+
+	//移動
+	Vector3 GetCameraPosition() { return position; }
+	void SetCameraPosintion(Vector3 pos) { position = pos; }
+
+	
+	Vector2 GetCameraSize() { return size; }
+	void SetCameraSize(Vector2 size) { size = size; }
+
+	// ビュー行列を取得
+	Matrix4x4 GetViewMatrix() const { return viewMatrix; }
+	
+	// プロジェクション行列を取得
+	Matrix4x4 GetProjectionMatrix() const { return projectionMatrix; }
+
+	Transform GetcameraTransform() const { return cameraTransform_; }
+	
 
 private:
-	static Camera* instance_;
 
-	Matrix4x4 cameraMatrix_ = {};
-	Matrix4x4 viewMatrix_ = {};
+	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 
-	//遠視投影行列
-	Transform cameraTransform_ = {};
-	Matrix4x4 projectionMatrix_ = {};
+
+	Vector3 position = { 0.0f, 0.0f,-40.0f };
+
+	
+	Vector3 rotation = { 0.0f, 0.0f, 0.0f };
+	
+
+	Vector2 size = { 1280.0f, 720.0f };
+
+
+	Matrix4x4 viewMatrix;
+	Matrix4x4 projectionMatrix;
+
+	Matrix4x4 cameraMatrix;
+
+	float fov = 0.45f; // 視野角（フィールドオブビュー）
+	float aspectRatio = size.x / size.y; // アスペクト比
+	float nearPlane = 0.1f; // 近接平面
+	float farPlane = 100.0f; // 遠方平面
+	
 };
 

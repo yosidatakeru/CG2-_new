@@ -43,12 +43,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	ModelCommon* modelCommon = nullptr;
 	Model* model = nullptr;
 	
-	//Sprite* sprite = nullptr;
+	
 #pragma endregion
 	//スプライト描画数
 	int drawSprit = 5;
 	//モデル描画数
 	int drawmodel = 5;
+
+	
+	
+	
 
 #pragma region WinApp初期化
 	winApp = new WinApp();
@@ -72,9 +76,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	TextureManager::GetInstance()->Initialize(directXCommon);
 
 
-
-
-
+	
 	
 
 #pragma region	三角形の描画
@@ -117,7 +119,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	object3dCommon->Initialize(directXCommon);
 
 
+	////カメラ
 	
+	
+	
+
 	modelCommon = new ModelCommon();
 	modelCommon->Initialze(directXCommon);
 
@@ -167,15 +173,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion
 	
 	
-	Matrix4x4* camera = nullptr;
-
-	//うまくいかないから保留
-	/*Vector3 cameraPos = sprite->GetCameraPosition();
-	cameraPos.z += -0.5f;
-	sprite->SetCameraPosintion(cameraPos);*/
+	
+	
 
 
-	 sprites[1]->GetwvpResource()->Map(0, nullptr, reinterpret_cast<void**>(&camera));
+	 //sprites[1]->GetwvpResource()->Map(0, nullptr, reinterpret_cast<void**>(&camera));
 
 
 	////メインループ
@@ -194,9 +196,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			
 
 		}
+
+		// カメラの更新
+		
+
 		imGuiManager->BeginFlame(directXCommon);
 	  
 		input->Update();
+
+		//camera->Update(input);
 	//スプライトの描画
 	
 	//いろいろな処理(色、回転、移動など)	
@@ -220,24 +228,41 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	  //size.y += 0.1f;
 	  //sprite->SetSize(size);
 		
-	  Vector3 rot = models[4]->GetRotation();
-	  rot.x -= 0.05f;
-	  models[4]->SetRotaion(rot);
+	  
+		if (input->PushKey(DIK_A))
+		{
+			Vector3 pos = models[1]->GetPosition();
+			pos.x = -10.0f;
+			models[1]->SetPosintion(pos);
+		}
 
 	 /* rot = models[3]->GetRotation();
 	  rot += 0.05f;
 	  models[3]->SetRotaion(rot);*/
 	
-	 Vector3 pos = models[1]->GetPosition();
+	 /*Vector3 pos = models[1]->GetPosition();
 	 pos.z += 0.5f;
 	 models[1]->SetPosintion(pos);
-	
+
+		*/
+		
+		Vector3 pos = object3d->GetCameraPosition();
+		pos.x = 0.0f;
+		object3d->SetCameraPosintion(pos);
+		
+		Vector3 rot = object3d->GetCameraRotation();
 
 	 for (int i = 0; i < drawmodel; i++)
 	 {
-		  object3ds[i]->Update(models[i]->GetTransform(), object3ds[i]->GetCameraTransform());
-	 }
 
+		 
+		 object3ds[i]->CameraUpdate(pos,rot);
+		 object3ds[i]->Update(models[i]->GetTransform());
+		
+		 
+	 }
+	
+	
 
 	 for (int i = 0; i < drawSprit; i++)
 	 {
@@ -245,12 +270,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	 }
 	    
 	 directXCommon->PreDraw();
-	    
-	 // 数字の0キーが押されていたら
-	 if (input->PushKey(DIK_K))
-	 {
-		 OutputDebugStringA("Hit 0\n");  // 出力ウィンドウに「Hit 0」と表示
-	 }
+	     
+	 
+	
 	    
 	 
 	 //オブジェクトの描画
@@ -333,6 +355,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 	};
 
+	
 	delete object3d;
 	
 	ModelManager::GetInstance()->Finalize();

@@ -14,23 +14,25 @@
 
 #include"engine/base/externals/DirectXTex/DirectXTex.h"
 #include "engine/mata/TransformationMatrix.h"
+#include"engine/base/Camera.h"
+
+
+
+class  Object3dCommon; 
 
 
 
 
-class  Object3dCommon;
-
-
-
-
-class Object3d
+class Object3d:public Camera
 {
 public:
 	void Initialize(Object3dCommon* object3dCommonme);
 
 
 	void Draw();
-	void Update(Transform transform, Transform cameraTransform);
+	void CameraUpdate(Vector3 pos,Vector3 cameraRotation);
+
+	void Update(Transform transform );
 
 	void Releases();
 	
@@ -46,10 +48,10 @@ public:
 	
 	
 
-	Vector3 GetCameraPosition() { return camerPosition; }
-	void SetCameraPosintion(Vector3 cameraPos) { camerPosition = cameraPos; }
+	//GetCameraPosition() { return camerPosition; }
+	//void SetCameraPosintion(Vector3 cameraPos) { camerPosition = cameraPos; }
 
-	Transform GetCameraTransform() { return  cameraTransform_; }
+	//Transform GetCameraTransform() { return  cameraTransform_; }
 
 	void SetModels(const std::string& filePath);
 
@@ -61,8 +63,6 @@ private:
 
 
 
-	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-120.0f} };
-
 	
 
 	
@@ -71,8 +71,8 @@ private:
 private:
 
 	ModelCommon* modelCommon = nullptr;
-
 	
+	Camera camera;
 	Object3dCommon* object3dCommon_ = nullptr;
 	Model* model_ = nullptr;
 	

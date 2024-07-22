@@ -4,6 +4,7 @@
 #include"Object3dCommon.h"
 #include"engine/mata/TextureManager.h"
 #include"ModelManager.h"
+
 void Object3d::Initialize(Object3dCommon* Object3dCommon)
 {
 	this->object3dCommon_ = Object3dCommon;
@@ -16,20 +17,16 @@ void Object3d::Initialize(Object3dCommon* Object3dCommon)
 
 
 
-void Object3d::Update(Transform transform, Transform cameraTransform)
+void Object3d::Update(Transform transform)
 {
-
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
-	Matrix4x4 viewMatrix = Inverse(cameraMatrix);
-	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.f);
+	
+	Matrix4x4 viewMatrix = camera.ViewMatrix();
+	Matrix4x4 projectionMatrix = camera.ProjectionMatrix();
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix;
-
-
-
 
 }
 
@@ -37,7 +34,7 @@ void Object3d::Update(Transform transform, Transform cameraTransform)
 
 void Object3d::Draw()
 {
-
+	
 	//wvp用のCBufferの場所を設定
 	object3dCommon_->GetDirectXCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 
@@ -51,6 +48,15 @@ void Object3d::Draw()
 	
 	//directXCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLighlResource->GetGPUVirtualAddress())
 
+}
+
+void Object3d::CameraUpdate(Vector3 cameraPosintion, Vector3 cameraRotation)
+{
+	
+	camera.SetCameraPosintion(cameraPosintion);
+	camera.SetCameraRotaion(cameraRotation);
+	camera.CameraUpdate();
+	
 }
 
 
