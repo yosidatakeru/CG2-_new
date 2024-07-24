@@ -1,6 +1,7 @@
 #include "TextureManager.h"
 TextureManager* TextureManager::instance = nullptr;
-uint32_t  TextureManager::kSRVIndexTop = 1;
+//SRV0から登録開始
+uint32_t  TextureManager::kSRVIndexTop = 0;
 
 TextureManager* TextureManager::GetInstance()
 {

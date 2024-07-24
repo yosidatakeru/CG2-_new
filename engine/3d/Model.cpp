@@ -57,23 +57,23 @@ void Model::Draw()
 	modelCommon_->GetDirectXCmmon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
 
-	ImGui::Begin("texture");
-	//ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
+	//ImGui::Begin("texture");
+	////ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
 
 
-	ImGui::Begin("model");
+	//ImGui::Begin("model");
 
-	ImGui::DragFloat3("model", &rotation.x, 1.0f, -1.0f, 3.0f);
+	//ImGui::DragFloat3("model", &rotation.x, 1.0f, -1.0f, 3.0f);
 
-	ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
+	//ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
 
-	//ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
-
-
-	ImGui::End();
+	////ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
 
 
-	ImGui::End();
+	//ImGui::End();
+
+
+	//ImGui::End();
 
 
 }

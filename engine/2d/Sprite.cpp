@@ -124,31 +124,31 @@ void Sprite::Update(Transform transform, Transform cameraTransform, Transform tr
 	////ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 
 
-	ImGui::Begin("texture");
-	ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
+	//ImGui::Begin("texture");
+	//ImGui::DragFloat3("light", &light.x, 0.01f, -1.0f, 1.0f);
 
 
-	//ImGui::Begin("model");
+	////ImGui::Begin("model");
 
-	//ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
+	////ImGui::DragFloat3("model", &rotation, 1.0f, -1.0f, 3.0f);
 
-	ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
+	//ImGui::DragFloat3("model", &position.x, 1.0f, -1.0f, 1000.0f);
 
-	//ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
-
-
-	ImGui::End();
-
-	ImGui::Checkbox("uvTrasform", &uvSprite);
+	////ImGui::DragFloat3("model", &size.x, 1.0f, -1.0f, 1000.0f);
 
 
-	ImGui::Begin("texture");
-	ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-	ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-	ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+	//ImGui::End();
+
+	//ImGui::Checkbox("uvTrasform", &uvSprite);
 
 
-	ImGui::End();
+	//ImGui::Begin("texture");
+	//ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+	//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+	//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+
+
+	//ImGui::End();
 
 
 }
