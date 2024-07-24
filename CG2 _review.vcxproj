@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="engine\base\Camera.cpp" />
     <ClCompile Include="engine\base\Input.cpp" />
+    <ClCompile Include="engine\base\SrvManager.cpp" />
     <ClCompile Include="engine\mata\Base.cpp" />
     <ClCompile Include="engine\3d\ModelManager.cpp" />
     <ClCompile Include="engine\3d\Object3d.cpp" />
@@ -23,7 +24,6 @@
     <ClCompile Include="engine\3d\ModelCommon.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
-    <ClCompile Include="engine\mata\Matrix4x4CalCulation.cpp" />
     <ClCompile Include="engine\mata\MyFunction.cpp" />
     <ClCompile Include="engine\mata\TextureManager.cpp" />
     <ClCompile Include="engine\base\WinApp.cpp" />
@@ -62,12 +62,12 @@
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
     <ClInclude Include="engine\base\Input.h" />
+    <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="engine\mata\Base.h" />
     <ClInclude Include="engine\mata\Material.h" />
     <ClInclude Include="engine\mata\MaterialData.h" />
     <ClInclude Include="engine\mata\Matrix3x3.h" />
     <ClInclude Include="engine\mata\Matrix4x4.h" />
-    <ClInclude Include="engine\mata\Matrix4x4CalCulation.h" />
     <ClInclude Include="engine\mata\ModelData.h" />
     <ClInclude Include="engine\mata\MyFunction.h" />
     <ClInclude Include="engine\mata\TextureManager.h" />

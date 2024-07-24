@@ -48,6 +48,10 @@ public:
 	 ID3D12DescriptorHeap* GetSrvDescriptorHeap() const { return srvDescriptorHeap; }
 
 	 static const uint32_t kmixSRVcount;
+
+	 ID3D12DescriptorHeap* CreateDescriptorHeap
+	 (ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+
 private:
 	//デバイスの初期化
 	void InitializeDevice();
@@ -66,8 +70,7 @@ private:
 	//フェンス
 	void InitializeFence();
 
-	ID3D12DescriptorHeap* CreateDescriptorHeap
-	(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+	
 
 private:
 	HRESULT hr;
