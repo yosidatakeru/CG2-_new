@@ -11,7 +11,7 @@
 #include"engine/3d/Model.h"
 #include"engine/3d/ModelManager.h"
 #include"engine/base/Camera.h"
-
+#include"engine/base/SrvManager.h"
 //#include <engine/3d/ModelManager.h>
 #pragma endregion
 
@@ -42,7 +42,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	ImGuiManager* imGuiManager = nullptr;
 	ModelCommon* modelCommon = nullptr;
 	Model* model = nullptr;
-	
+	SrvManager* srvmanager = nullptr;
 	
 #pragma endregion
 	//スプライト描画数
@@ -68,6 +68,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	directXCommon->Initialize(winApp);
 #pragma endregion
 
+	srvmanager = new SrvManager();
+	srvmanager->Initialize(directXCommon);
 	input = new Input();
 	input->Initialize(winApp);
 
@@ -368,7 +370,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion
 
 #pragma region delete
-	 delete input;
+	delete input;
+	delete srvmanager;
 	delete winApp;
 	delete directXCommon;
 	//delete spriteCommon;
