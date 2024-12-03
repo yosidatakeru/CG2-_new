@@ -23,7 +23,7 @@ public:
 
 	static const uint32_t kMaxcount;
 
-private:
+
 	uint32_t Allocate();
 
 private:

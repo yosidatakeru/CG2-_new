@@ -1,6 +1,6 @@
 #include"engine/base/DirectXCommon.h"
 #include<string>
-
+#include<unordered_map>
 #include"engine/base/externals/DirectXTex/DirectXTex.h"
 
 class TextureManager
@@ -9,9 +9,10 @@ private:
 	//画像描画するために必要のデータ
 	struct TexTureData
 	{
-		std::wstring filePath;
+		//std::wstring filePath;
 		DirectX::TexMetadata metaData;
 		Microsoft::WRL::ComPtr<ID3D12Resource>resource;
+		uint32_t srvIndex;
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
 		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
 	};
